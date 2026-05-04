@@ -16,6 +16,7 @@ interface Node {
   text: string;
   content?: string;
   media?: { type: 'video' | 'images'; src: string | string[] };
+  gallery?: readonly string[];
   connections: string[];
   theme?: 'dark' | 'light' | 'accent';
 }
@@ -75,6 +76,7 @@ const NODES: Record<string, Node> = {
     text: 'Primero aprendí a expresar sin palabras.',
     content: 'El saxofón me enseñó sobre respiración, ritmo, pausas. Cada nota es un momento, cada silencio una decisión.',
     media: { type: 'video', src: MEDIA.video.musica },
+    gallery: MEDIA.images.musica,
     connections: ['estructura', 'mixto', 'mapa'],
     theme: 'dark',
   },
@@ -85,6 +87,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 3',
     text: 'Luego aprendí a pensar en estructuras.',
     content: 'Código, lógica, sistemas. La ingeniería me dio un marco para entender cómo las partes se conectan para formar algo funcional.',
+    gallery: MEDIA.images.ingenieria,
     connections: ['cuerpo', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -95,6 +98,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 4',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto.',
+    gallery: MEDIA.images.pole,
     connections: ['mixto', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -115,6 +119,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 6',
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
     content: 'Moodboards, procesos creativos, desfiles, experimentación. El diseño de modas como lenguaje — no solo técnica, sino forma de pensar y comunicar.',
+    gallery: MEDIA.images.diseno,
     connections: ['identidad', 'estructura', 'proceso', 'mapa'],
     theme: 'dark',
   },
@@ -160,13 +165,13 @@ const NODES: Record<string, Node> = {
   },
 };
 
-// Categorías para el mapa - Paleta oro-rosa
+// Categorías para el mapa - Paleta oro-rosa con borgoña como acento
 const CATEGORIES = {
-  esencia: { label: 'Esencia', color: '#E0B080', nodes: ['esencia'] }, // Oro-rosa claro
+  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia'] }, // Borgoña
   herencia: { label: 'Raíces', color: '#D4A574', nodes: ['herencia', 'arte'] }, // Oro medio
   expresion: { label: 'Expresión', color: '#E8C9A0', nodes: ['sonido', 'estructura', 'cuerpo'] }, // Oro-rosa suave
   transformacion: { label: 'Transformación', color: '#F0D0A0', nodes: ['quiebre', 'diseno', 'identidad'] }, // Oro-rosa claro
-  mixto: { label: 'Conexiones', color: '#C9A06C', nodes: ['mixto', 'proceso'] }, // Oro-rosa intenso
+  mixto: { label: 'Conexiones', color: '#8B0000', nodes: ['mixto', 'proceso'] }, // Borgoña
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -388,7 +393,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.8 }}
-                className="w-24 h-px bg-gradient-to-r from-transparent via-[#E8C9A0] to-transparent mx-auto mb-10"
+                className="w-24 h-px bg-gradient-to-r from-transparent via-[#8B0000] to-transparent mx-auto mb-10"
               />
 
               {/* Título */}
@@ -397,7 +402,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-[#D4A574] text-xs tracking-[0.4em] uppercase mb-4"
+                  className="text-[#8B0000] text-xs tracking-[0.4em] uppercase mb-4"
                 >
                   {node.subtitle}
                 </motion.p>
@@ -413,7 +418,7 @@ export default function Home() {
                   initial={{ opacity: 0, filter: 'blur(4px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 }}
-                  className="font-serif text-xl sm:text-2xl italic text-[#E8C9A0]"
+                  className="font-serif text-xl sm:text-2xl italic text-[#8B0000]"
                 >
                   {node.text}
                 </motion.p>
@@ -436,7 +441,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="w-16 h-px bg-[#D4A574]/40 mx-auto mb-10"
+                className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-10"
               />
 
               {/* Conexiones */}
@@ -445,7 +450,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
               >
-                <p className="text-center text-sm uppercase tracking-wider mb-6 text-[#D4A574]/60">
+                <p className="text-center text-sm uppercase tracking-wider mb-6 text-[#8B0000]/60">
                   ¿A dónde ir?
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
@@ -461,7 +466,7 @@ export default function Home() {
                         onClick={() => navigateTo(connId)}
                         className={`px-6 py-3 border transition-all tracking-wider ${
                           isMap
-                            ? 'border-[#D4A574]/30 text-[#D4A574] hover:border-[#D4A574]/60'
+                            ? 'border-[#8B0000]/30 text-[#8B0000] hover:border-[#8B0000]/60'
                             : 'border-[#E8C9A0]/40 text-[#f5f0e6] hover:bg-[#E8C9A0]/10'
                         }`}
                       >
@@ -529,7 +534,7 @@ export default function Home() {
                   className="mb-10"
                 >
                   {node.media.type === 'video' && (
-                    <div className="aspect-video overflow-hidden bg-[#0a0808] border border-[#D4A574]/20">
+                    <div className="aspect-video overflow-hidden bg-[#0a0808] border border-[#8B0000]/30">
                       <video
                         src={node.media.src as string}
                         autoPlay
@@ -541,6 +546,35 @@ export default function Home() {
                       />
                     </div>
                   )}
+                </motion.div>
+              )}
+
+              {/* Galería de imágenes */}
+              {node.gallery && node.gallery.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="mb-10"
+                >
+                  <div className={`grid grid-cols-${node.gallery.length === 1 ? '1' : node.gallery.length === 2 ? '2' : '3'} gap-4`}>
+                    {node.gallery.map((src, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
+                        className="aspect-square overflow-hidden border border-[#8B0000]/20"
+                      >
+                        <img 
+                          src={src} 
+                          alt={`${node.title} ${index + 1}`}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
               )}
 
@@ -564,7 +598,7 @@ export default function Home() {
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
                 className={`w-16 h-px mx-auto mb-10 ${
-                  node.theme === 'light' ? 'bg-[#D4A574]/20' : 'bg-[#D4A574]/40'
+                  node.theme === 'light' ? 'bg-[#8B0000]/20' : 'bg-gradient-to-r from-[#8B0000]/0 via-[#8B0000]/60 to-[#8B0000]/0'
                 }`}
               />
 
@@ -594,10 +628,10 @@ export default function Home() {
                         className={`px-6 py-3 border transition-all tracking-wider ${
                           isMap
                             ? node.theme === 'light'
-                              ? 'border-[#D4A574]/20 text-[#D4A574]/60 hover:border-[#D4A574]/40'
-                              : 'border-[#D4A574]/20 text-[#D4A574]/60 hover:border-[#D4A574]/40'
+                              ? 'border-[#8B0000]/30 text-[#8B0000]/60 hover:border-[#8B0000]/50'
+                              : 'border-[#8B0000]/30 text-[#8B0000]/60 hover:border-[#8B0000]/50'
                             : node.theme === 'light'
-                              ? 'border-[#D4A574]/40 text-[#D4A574] hover:bg-[#D4A574]/10'
+                              ? 'border-[#8B0000]/40 text-[#8B0000] hover:bg-[#8B0000]/10'
                               : 'border-[#E8C9A0]/50 text-[#f5f0e6] hover:bg-[#E8C9A0]/20'
                         }`}
                       >

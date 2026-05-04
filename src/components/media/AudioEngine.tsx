@@ -17,7 +17,7 @@ export default function AudioEngine() {
 
   return (
     <>
-      {/* Pantalla de inicio - Estética oro-rosa */}
+      {/* Pantalla de inicio - Estética oro-rosa con borgoña */}
       {!hasInteracted && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
@@ -55,7 +55,7 @@ export default function AudioEngine() {
             >
               Hilos
               <br />
-              <span className="text-[#D4A574]">Invisibles</span>
+              <span className="text-[#8B0000]">Invisibles</span>
             </motion.h1>
             
             <motion.p 
@@ -67,12 +67,12 @@ export default function AudioEngine() {
               Lo que se hereda
             </motion.p>
 
-            {/* Línea decorativa inferior - oro-rosa */}
+            {/* Línea decorativa inferior - borgoña */}
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ delay: 1.4, duration: 1, ease: "easeOut" }}
-              className="w-16 h-px bg-[#D4A574]/60 mx-auto mb-8"
+              className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-8"
             />
             
             <motion.div 
