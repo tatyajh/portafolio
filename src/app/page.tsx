@@ -11,7 +11,7 @@ import { MEDIA } from '@/lib/media';
 interface Node {
   id: string;
   title: string;
-  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'mixto';
+  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'mixto' | 'esencia';
   subtitle?: string;
   text: string;
   content?: string;
@@ -41,7 +41,7 @@ const NODES: Record<string, Node> = {
   esencia: {
     id: 'esencia',
     title: 'Esencia',
-    category: 'raiz',
+    category: 'esencia',
     subtitle: 'Lo que define',
     text: 'Antes de saber que quería diseñar, ya estaba diseñando.',
     content: 'Nunca me conformé con lo que encontraba. Buscaba piezas que no existían en las tiendas — lo vintage, lo oscuro, lo que contaba algo. Cuando no las encontraba, iba donde mi abuela. Ella me ayudaba a hacerlas realidad, o me decía a quién mandarlas a hacer. Sin saberlo, ya estaba creando.',
@@ -55,7 +55,6 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 1',
     text: 'Antes de mí, ya había manos que cosían para sostener.',
     content: 'Mi abuela materna sostuvo a su familia con una máquina básica. Mi abuela paterna cosía cobijas para donar. La costura como acto emocional.',
-    media: { type: 'video', src: MEDIA.video.me },
     connections: ['arte', 'esencia', 'mapa', 'sonido'],
     theme: 'dark',
   },
@@ -127,11 +126,12 @@ const NODES: Record<string, Node> = {
   },
   identidad: {
     id: 'identidad',
-    title: 'Identidad',
-    category: 'transformacion',
+    title: 'Tatiana Alejandra',
+    category: 'esencia',
     subtitle: 'Capítulo 7',
     text: 'Todo lo anterior vive en lo que hago.',
     content: 'Música, lógica, cuerpo, herencia — cada capa se integra en las prendas finales. Esto no empezó ahora. Esto siempre estuvo ahí.',
+    media: { type: 'video', src: MEDIA.video.me },
     connections: ['fin', 'mapa', 'mixto'],
     theme: 'light',
   },
@@ -169,10 +169,10 @@ const NODES: Record<string, Node> = {
 
 // Categorías para el mapa - Paleta oro-rosa con borgoña como acento
 const CATEGORIES = {
-  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia'] }, // Borgoña
+  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad'] }, // Borgoña
   herencia: { label: 'Raíces', color: '#D4A574', nodes: ['herencia', 'arte'] }, // Oro medio
   expresion: { label: 'Expresión', color: '#E8C9A0', nodes: ['sonido', 'estructura', 'cuerpo'] }, // Oro-rosa suave
-  transformacion: { label: 'Transformación', color: '#F0D0A0', nodes: ['quiebre', 'diseno', 'identidad'] }, // Oro-rosa claro
+  transformacion: { label: 'Transformación', color: '#F0D0A0', nodes: ['quiebre', 'diseno'] }, // Oro-rosa claro
   mixto: { label: 'Conexiones', color: '#8B0000', nodes: ['mixto', 'proceso'] }, // Borgoña
 };
 
@@ -540,32 +540,11 @@ export default function Home() {
                       <video
                         src={node.media.src as string}
                         autoPlay
-                        muted={false}
+                        muted
                         loop
                         playsInline
                         controls
                         className="w-full h-full object-contain"
-                        onPlay={() => {
-                          // Bajar volumen del audio de fondo cuando el video se reproduce
-                          const lowerVolume = (window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume;
-                          if (lowerVolume) {
-                            lowerVolume();
-                          }
-                        }}
-                        onPause={() => {
-                          // Restaurar volumen del audio de fondo cuando el video se pausa
-                          const restoreVolume = (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume;
-                          if (restoreVolume) {
-                            restoreVolume();
-                          }
-                        }}
-                        onEnded={() => {
-                          // Restaurar volumen del audio de fondo cuando el video termina
-                          const restoreVolume = (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume;
-                          if (restoreVolume) {
-                            restoreVolume();
-                          }
-                        }}
                       />
                     </div>
                   )}
