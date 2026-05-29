@@ -547,20 +547,23 @@ export default function Home() {
                         className="w-full h-full object-contain"
                         onPlay={() => {
                           // Bajar volumen del audio de fondo cuando el video se reproduce
-                          if ((window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume) {
-                            (window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume();
+                          const lowerVolume = (window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume;
+                          if (lowerVolume) {
+                            lowerVolume();
                           }
                         }}
                         onPause={() => {
                           // Restaurar volumen del audio de fondo cuando el video se pausa
-                          if ((window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume) {
-                            (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume();
+                          const restoreVolume = (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume;
+                          if (restoreVolume) {
+                            restoreVolume();
                           }
                         }}
                         onEnded={() => {
                           // Restaurar volumen del audio de fondo cuando el video termina
-                          if ((window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume) {
-                            (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume();
+                          const restoreVolume = (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume;
+                          if (restoreVolume) {
+                            restoreVolume();
                           }
                         }}
                       />
