@@ -55,6 +55,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 1',
     text: 'Antes de mí, ya había manos que cosían para sostener.',
     content: 'Mi abuela materna sostuvo a su familia con una máquina básica. Mi abuela paterna cosía cobijas para donar. La costura como acto emocional.',
+    media: { type: 'video', src: MEDIA.video.me },
     connections: ['arte', 'esencia', 'mapa', 'sonido'],
     theme: 'dark',
   },
@@ -119,6 +120,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 6',
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
     content: 'Moodboards, procesos creativos, desfiles, experimentación. El diseño de modas como lenguaje — no solo técnica, sino forma de pensar y comunicar.',
+    media: { type: 'video', src: MEDIA.video.moda },
     gallery: MEDIA.images.diseno,
     connections: ['identidad', 'estructura', 'proceso', 'mapa'],
     theme: 'dark',
@@ -527,7 +529,7 @@ export default function Home() {
 
               {/* Media */}
               {node.media && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
@@ -538,11 +540,29 @@ export default function Home() {
                       <video
                         src={node.media.src as string}
                         autoPlay
-                        muted
+                        muted={false}
                         loop
                         playsInline
                         controls
                         className="w-full h-full object-contain"
+                        onPlay={() => {
+                          // Bajar volumen del audio de fondo cuando el video se reproduce
+                          if ((window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume) {
+                            (window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume();
+                          }
+                        }}
+                        onPause={() => {
+                          // Restaurar volumen del audio de fondo cuando el video se pausa
+                          if ((window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume) {
+                            (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume();
+                          }
+                        }}
+                        onEnded={() => {
+                          // Restaurar volumen del audio de fondo cuando el video termina
+                          if ((window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume) {
+                            (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume();
+                          }
+                        }}
                       />
                     </div>
                   )}

@@ -1,21 +1,23 @@
 /**
  * Media paths configuration - Estructura tipo streaming
- * 
+ *
  * ESTRUCTURA EN /public/media/:
  * /public/media
  *   /video
- *     musica-01.mp4, pole-01.mp4, mixto-01.mp4
+ *     musica-01.mp4, me-01.mp4, moda-01.mp4, mixto-01.mp4
  *   /images
  *     origen-01.jpg, herencia-01.jpg, arte-01.jpg
  *     musica-01.jpg, musica-02.jpg, musica-03.jpg
  *     pole-01.jpg, ingenieria-01.jpg, diseno-01.jpg
  *   /audio
- *     ambient.mp3, saxo-loop.mp3
+ *     love like you.mp3
  */
 
 export const MEDIA = {
   video: {
     musica: '/media/video/musica-01.mp4',
+    me: '/media/video/me-01.mp4',
+    moda: '/media/video/moda-01.mp4',
     mixto: '/media/video/mixto-01.mp4',
   },
   images: {
@@ -32,8 +34,7 @@ export const MEDIA = {
     diseno: ['/media/images/diseno-01.jpg'],
   },
   audio: {
-    ambient: '/media/audio/ambient.mp3',
-    saxo: '/media/audio/saxo-loop.mp3',
+    background: '/media/audio/love like you.mp3',
   },
 } as const;
 
