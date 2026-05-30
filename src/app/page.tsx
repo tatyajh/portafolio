@@ -16,6 +16,7 @@ interface Node {
   text: string;
   content?: string;
   media?: { type: 'video' | 'images'; src: string | string[] };
+  videos?: readonly string[];
   gallery?: readonly string[];
   connections: string[];
   theme?: 'dark' | 'light' | 'accent';
@@ -45,6 +46,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Lo que define',
     text: 'Antes de saber que quería diseñar, ya estaba diseñando.',
     content: 'Nunca me conformé con lo que encontraba. Buscaba piezas que no existían en las tiendas — lo vintage, lo oscuro, lo que contaba algo. Cuando no las encontraba, iba donde mi abuela. Ella me ayudaba a hacerlas realidad, o me decía a quién mandarlas a hacer. Sin saberlo, ya estaba creando.',
+    gallery: MEDIA.images.esencia,
     connections: ['herencia', 'identidad', 'mapa'],
     theme: 'dark',
   },
@@ -55,6 +57,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 1',
     text: 'Antes de mí, ya había manos que cosían para sostener.',
     content: 'Mi abuela materna sostuvo a su familia con una máquina básica. Mi abuela paterna cosía cobijas para donar. La costura como acto emocional.',
+    gallery: MEDIA.images.herencia,
     connections: ['arte', 'esencia', 'mapa', 'sonido'],
     theme: 'dark',
   },
@@ -64,7 +67,7 @@ const NODES: Record<string, Node> = {
     category: 'herencia',
     subtitle: 'Conexión',
     text: 'El arte siempre estuvo cerca… pero nunca pensé que era para mí.',
-    content: 'Crecí creyendo que no era creativa. Pero el arte ya vivía en mi familia.',
+    gallery: MEDIA.images.arte,
     connections: ['herencia', 'quiebre', 'mapa'],
     theme: 'dark',
   },
@@ -87,7 +90,6 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 3',
     text: 'Luego aprendí a pensar en estructuras.',
     content: 'Código, lógica, sistemas. La ingeniería me dio un marco para entender cómo las partes se conectan para formar algo funcional.',
-    gallery: MEDIA.images.ingenieria,
     connections: ['cuerpo', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -98,7 +100,6 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 4',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto.',
-    gallery: MEDIA.images.pole,
     connections: ['mixto', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -107,8 +108,9 @@ const NODES: Record<string, Node> = {
     title: 'Quiebre',
     category: 'transformacion',
     subtitle: 'Capítulo 5',
-    text: 'Crecí creyendo que no era creativa.',
-    content: 'Pero el arte ya vivía en mi familia. Y la costura también. Un desajuste interno que pedía algo diferente.',
+    text: 'Durante mucho tiempo creí que no era una persona creativa.',
+    content: 'Aprendí a encontrar valor en la lógica, la estructura y las respuestas correctas.\n\nY aunque crecí rodeada de arte, costura e historias de creación, nunca pensé que ese mundo también podía pertenecerme.\n\nLa vida terminó cuestionando esa idea.\n\nEl accidente cerebrovascular de mi padre, la experiencia de vivir lejos de casa y la dificultad de comunicarme en otro idioma me obligaron a mirar las cosas desde otro lugar.\n\nFue entonces cuando entendí algo que había pasado por alto durante años:\n\nlas cosas hechas con las manos también son una forma de lenguaje.\n\nY quizá la creatividad nunca estuvo ausente.\n\nQuizá simplemente había aprendido a no verla.',
+    gallery: MEDIA.images.quiebre,
     connections: ['diseno', 'arte', 'mapa'],
     theme: 'accent',
   },
@@ -120,6 +122,7 @@ const NODES: Record<string, Node> = {
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
     content: 'Moodboards, procesos creativos, desfiles, experimentación. El diseño de modas como lenguaje — no solo técnica, sino forma de pensar y comunicar.',
     media: { type: 'video', src: MEDIA.video.moda },
+    videos: [MEDIA.video.moda, MEDIA.video.moda2, MEDIA.video.moda3, MEDIA.video.moda4, MEDIA.video.moda5],
     gallery: MEDIA.images.diseno,
     connections: ['identidad', 'estructura', 'proceso', 'mapa'],
     theme: 'dark',
@@ -129,11 +132,21 @@ const NODES: Record<string, Node> = {
     title: 'Tatiana Alejandra',
     category: 'esencia',
     subtitle: 'Capítulo 7',
-    text: 'Todo lo anterior vive en lo que hago.',
-    content: 'Música, lógica, cuerpo, herencia — cada capa se integra en las prendas finales. Esto no empezó ahora. Esto siempre estuvo ahí.',
+    text: '',
+    content: 'Aquí no hay proyectos.\n\nNo hay entregas.\n\nNo hay resultados.\n\nSolo recuerdos, lugares, personas y pequeños instantes que también me construyeron.',
     media: { type: 'video', src: MEDIA.video.me },
-    connections: ['fin', 'mapa', 'mixto'],
+    connections: ['perfil', 'fin', 'mapa', 'mixto'],
     theme: 'light',
+  },
+  perfil: {
+    id: 'perfil',
+    title: 'Perfil',
+    category: 'esencia',
+    subtitle: 'Quién soy profesionalmente',
+    text: 'Ingeniera de sistemas con alma creativa.',
+    content: 'Soy ingeniera de sistemas, desarrolladora frontend y estudiante de diseño de modas. Durante años construí soluciones digitales utilizando React, TypeScript y tecnologías web modernas. Con el tiempo descubrí que la necesidad de crear también existía fuera de la pantalla, llevándome a explorar el diseño de modas como una nueva forma de materializar ideas. Hoy mi trabajo se encuentra en la intersección entre estructura y creatividad, tecnología y diseño, lógica e intuición.',
+    connections: ['identidad', 'diseno', 'mapa'],
+    theme: 'dark',
   },
   mixto: {
     id: 'mixto',
@@ -169,7 +182,7 @@ const NODES: Record<string, Node> = {
 
 // Categorías para el mapa - Paleta oro-rosa con borgoña como acento
 const CATEGORIES = {
-  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad'] }, // Borgoña
+  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] }, // Borgoña
   herencia: { label: 'Raíces', color: '#D4A574', nodes: ['herencia', 'arte'] }, // Oro medio
   expresion: { label: 'Expresión', color: '#E8C9A0', nodes: ['sonido', 'estructura', 'cuerpo'] }, // Oro-rosa suave
   transformacion: { label: 'Transformación', color: '#F0D0A0', nodes: ['quiebre', 'diseno'] }, // Oro-rosa claro
@@ -184,7 +197,7 @@ export default function Home() {
   const [history, setHistory] = useState<string[]>(['inicio']);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const node = NODES[currentNode];
+  const node = NODES[currentNode] ?? NODES['inicio'];
 
   const navigateTo = useCallback((nodeId: string) => {
     if (isTransitioning || !NODES[nodeId]) return;
@@ -438,6 +451,28 @@ export default function Home() {
                 </p>
               </motion.div>
 
+              {/* Imágenes */}
+              {node.gallery && node.gallery.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
+                  className="mb-10"
+                >
+                  <div className={`grid gap-3 ${node.gallery.length === 1 ? 'grid-cols-1' : node.gallery.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                    {node.gallery.map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`${node.title} ${i + 1}`}
+                        className="w-full h-auto object-contain border border-[#8B0000]/20"
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
               {/* Línea decorativa */}
               <motion.div 
                 initial={{ scaleX: 0 }}
@@ -527,18 +562,32 @@ export default function Home() {
                 </motion.p>
               </div>
 
-              {/* Media */}
-              {node.media && (
+              {/* Contenido */}
+              {node.content && (
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className={`text-center leading-relaxed mb-12 text-lg whitespace-pre-line ${
+                    node.theme === 'light' ? 'text-[#1a1512]/70' : 'text-[#f5f0e6]/80'
+                  }`}
+                >
+                  {node.content}
+                </motion.p>
+              )}
+
+              {/* Media - múltiples videos si existen */}
+              {(node.videos ?? (node.media ? [node.media.src as string] : [])).length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
-                  className="mb-10"
+                  className="mb-10 flex flex-col gap-4"
                 >
-                  {node.media.type === 'video' && (
-                    <div className="aspect-video overflow-hidden bg-[#0a0808] border border-[#8B0000]/30">
+                  {(node.videos ?? [node.media!.src as string]).map((src, i) => (
+                    <div key={i} className="aspect-video overflow-hidden bg-[#0a0808] border border-[#8B0000]/30">
                       <video
-                        src={node.media.src as string}
+                        src={src}
                         autoPlay
                         muted
                         loop
@@ -547,7 +596,7 @@ export default function Home() {
                         className="w-full h-full object-contain"
                       />
                     </div>
-                  )}
+                  ))}
                 </motion.div>
               )}
 
@@ -559,39 +608,25 @@ export default function Home() {
                   transition={{ delay: 0.5, duration: 0.5 }}
                   className="mb-10"
                 >
-                  <div className={`grid grid-cols-${node.gallery.length === 1 ? '1' : node.gallery.length === 2 ? '2' : '3'} gap-4`}>
+                  <div className={`grid gap-3 ${node.gallery.length === 1 ? 'grid-cols-1' : node.gallery.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                     {node.gallery.map((src, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
-                        className="aspect-square overflow-hidden border border-[#8B0000]/20"
+                        className="overflow-hidden border border-[#8B0000]/20"
                       >
                         <img 
                           src={src} 
                           alt={`${node.title} ${index + 1}`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                          className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
                       </motion.div>
                     ))}
                   </div>
                 </motion.div>
-              )}
-
-              {/* Contenido */}
-              {node.content && (
-                <motion.p 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className={`text-center leading-relaxed mb-12 text-lg ${
-                    node.theme === 'light' ? 'text-[#1a1512]/70' : 'text-[#f5f0e6]/80'
-                  }`}
-                >
-                  {node.content}
-                </motion.p>
               )}
 
               {/* Línea decorativa */}
