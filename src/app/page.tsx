@@ -100,6 +100,8 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 4',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto.',
+    videos: [MEDIA.video.pole],
+    gallery: MEDIA.images.pole,
     connections: ['mixto', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -134,7 +136,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 7',
     text: '',
     content: 'Aquí no hay proyectos.\n\nNo hay entregas.\n\nNo hay resultados.\n\nSolo recuerdos, lugares, personas y pequeños instantes que también me construyeron.',
-    media: { type: 'video', src: MEDIA.video.me },
+    videos: [MEDIA.video.me, MEDIA.video.me2],
     connections: ['perfil', 'fin', 'mapa', 'mixto'],
     theme: 'light',
   },
@@ -144,7 +146,7 @@ const NODES: Record<string, Node> = {
     category: 'esencia',
     subtitle: 'Quién soy profesionalmente',
     text: 'Ingeniera de sistemas con alma creativa.',
-    content: 'Soy ingeniera de sistemas, desarrolladora frontend y estudiante de diseño de modas. Durante años construí soluciones digitales utilizando React, TypeScript y tecnologías web modernas. Con el tiempo descubrí que la necesidad de crear también existía fuera de la pantalla, llevándome a explorar el diseño de modas como una nueva forma de materializar ideas. Hoy mi trabajo se encuentra en la intersección entre estructura y creatividad, tecnología y diseño, lógica e intuición.',
+    content: 'Soy ingeniera de sistemas, desarrolladora frontend y estudiante de diseño de modas. Durante años construí soluciones digitales utilizando React, TypeScript y tecnologías web modernas. Con el tiempo descubrí que la necesidad de crear también existía fuera de la pantalla, llevándome a explorar el diseño de modas como una nueva forma de materializar ideas. Hoy mi trabajo se encuentra en la intersección entre estructura y creatividad, tecnología y diseño, lógica e intuición.\n\nHerramientas digitales: React · TypeScript · Node.js · Git · Supabase · Jest · Playwright · ChatGPT · Copilot\n\nDiseño: Canva · Illustrator · Optitex',
     connections: ['identidad', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -155,7 +157,8 @@ const NODES: Record<string, Node> = {
     subtitle: 'Contenido especial',
     text: 'Cuando las disciplinas se encuentran.',
     content: 'Saxofón + Pole. Dos mundos que parecían separados, unidos en un solo momento.',
-    media: { type: 'video', src: MEDIA.video.mixto },
+    videos: [MEDIA.video.mixto, MEDIA.video.mixto2],
+    gallery: MEDIA.images.mixto,
     connections: ['sonido', 'cuerpo', 'mapa'],
     theme: 'dark',
   },
@@ -459,15 +462,16 @@ export default function Home() {
                   transition={{ delay: 0.7, duration: 0.5 }}
                   className="mb-10"
                 >
-                  <div className={`grid gap-3 ${node.gallery.length === 1 ? 'grid-cols-1' : node.gallery.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  <div className="grid grid-cols-1 gap-4">
                     {node.gallery.map((src, i) => (
-                      <img
-                        key={i}
-                        src={src}
-                        alt={`${node.title} ${i + 1}`}
-                        className="w-full h-auto object-contain border border-[#8B0000]/20"
-                        loading="lazy"
-                      />
+                      <div key={i} className="overflow-hidden border border-[#8B0000]/20">
+                        <img
+                          src={src}
+                          alt={`${node.title} ${i + 1}`}
+                          className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
                     ))}
                   </div>
                 </motion.div>
@@ -608,7 +612,7 @@ export default function Home() {
                   transition={{ delay: 0.5, duration: 0.5 }}
                   className="mb-10"
                 >
-                  <div className={`grid gap-3 ${node.gallery.length === 1 ? 'grid-cols-1' : node.gallery.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  <div className="grid grid-cols-1 gap-4">
                     {node.gallery.map((src, index) => (
                       <motion.div
                         key={index}
@@ -638,6 +642,39 @@ export default function Home() {
                   node.theme === 'light' ? 'bg-[#8B0000]/20' : 'bg-gradient-to-r from-[#8B0000]/0 via-[#8B0000]/60 to-[#8B0000]/0'
                 }`}
               />
+
+              {/* Links externos - solo en perfil */}
+              {node.id === 'perfil' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-wrap justify-center gap-4 mb-12"
+                >
+                  <a
+                    href="https://www.linkedin.com/in/tarjah/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                    LinkedIn
+                  </a>
+                  <a
+                    href="https://www.behance.net/tatianajaramil11"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.051-1.965-5.051-5.0 0-2.937 1.93-5 5.012-5 3.093 0 4.86 1.893 5.14 4.9H17.9c-.073-.854-.557-1.9-2.302-1.9-1.699 0-2.573 1.268-2.573 2.999 0 1.742.875 3 2.577 3 1.617 0 2.191-.938 2.387-2h2.737zM9.5 8.5H6v7h3.5c1.493 0 2.5-.828 2.5-2 0-.874-.455-1.547-1.168-1.836C11.355 11.42 11.75 10.73 11.75 10c0-1.133-.869-1.5-2.25-1.5zM8 10h1.25c.517 0 .75.207.75.58 0 .38-.28.58-.85.58H8v-1.16zm1.5 4H8v-1.5h1.5c.585 0 .875.271.875.75s-.29.75-.875.75zM16.5 5.5h-5v1.5h5V5.5z"/>
+                    </svg>
+                    Behance
+                  </a>
+                </motion.div>
+              )}
 
               {/* Conexiones */}
               <motion.div 

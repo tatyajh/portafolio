@@ -16,12 +16,15 @@ export const MEDIA = {
   video: {
     musica: '/media/video/musica-01.mp4',
     me: '/media/video/me-01.mp4',
+    me2: '/media/video/me-2.mp4',
+    pole: '/media/video/pole-1.mp4',
     moda: '/media/video/moda-01.mp4',
     moda2: '/media/video/moda-02.mp4',
     moda3: '/media/video/moda-03.mp4',
     moda4: '/media/video/moda-04.mp4',
     moda5: '/media/video/moda-05.mp4',
     mixto: '/media/video/mixto-01.mp4',
+    mixto2: '/media/video/mixto-02.mp4',
   },
   images: {
     esencia: [
@@ -37,16 +40,20 @@ export const MEDIA = {
       '/media/images/musica-02.jpg',
       '/media/images/musica-03.jpg',
     ],
+    pole: [
+      '/media/images/pole-1.jpeg',
+      '/media/images/pole-2.jpeg',
+      '/media/images/pole-3.jpeg',
+      '/media/images/pole-5.jpeg',
+      '/media/images/pole-6.jpeg',
+    ],
+    mixto: ['/media/images/mixto-1.jpeg'],
     diseno: [
       '/media/images/figurin-1.png',
-      '/media/images/figurin-2.jpeg',
-      '/media/images/figurin-3.jpeg',
-      '/media/images/figurin-4.jpeg',
+      '/media/images/figurin-2.png',
+      '/media/images/figurin-3.png',
+      '/media/images/figurin-4.png',
       '/media/images/figurin-5.png',
-      '/media/images/ropero-1.jpeg',
-      '/media/images/ropero-2.jpeg',
-      '/media/images/ropero-3.jpeg',
-      '/media/images/ropero-4.jpeg',
     ],
   },
   audio: {
