@@ -32,6 +32,7 @@ export const MEDIA = {
       '/media/images/esencia-2.png',
       '/media/images/esencia-3.png',
     ],
+    perfil: ['/media/perfil-1.jpeg'],
     quiebre: ['/media/images/quiebre-1.png'],
     herencia: ['/media/images/herencia-1.png'],
     arte: ['/media/images/arte-familia-1.png'],

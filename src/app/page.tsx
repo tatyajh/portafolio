@@ -90,6 +90,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 3',
     text: 'Luego aprendí a pensar en estructuras.',
     content: 'Código, lógica, sistemas. La ingeniería me dio un marco para entender cómo las partes se conectan para formar algo funcional.',
+    gallery: MEDIA.images.perfil,
     connections: ['cuerpo', 'diseno', 'mapa'],
     theme: 'dark',
   },
