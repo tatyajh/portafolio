@@ -36,7 +36,7 @@ const NODES: Record<string, Node> = {
     title: 'Explorar',
     category: 'raiz',
     text: 'Elige tu camino. No hay orden correcto.',
-    connections: ['esencia', 'herencia', 'sonido', 'estructura', 'cuerpo', 'quiebre', 'mixto'],
+    connections: ['esencia', 'herencia', 'arte', 'sonido', 'estructura', 'cuerpo', 'quiebre', 'diseno', 'mixto', 'identidad', 'perfil', 'proceso'],
     theme: 'dark',
   },
   esencia: {
@@ -100,7 +100,7 @@ const NODES: Record<string, Node> = {
     category: 'expresion',
     subtitle: 'Capítulo 4',
     text: 'Después entendí el cuerpo desde dentro.',
-    content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto.',
+    content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto. He competido en pole y gané medalla de plata — una de las cosas que más me ha enseñado sobre disciplina, confianza y presencia.\n\nLo que empezó como deporte se convirtió en otra forma de crear.',
     videos: [MEDIA.video.pole],
     gallery: MEDIA.images.pole,
     connections: ['mixto', 'diseno', 'mapa'],
@@ -135,7 +135,7 @@ const NODES: Record<string, Node> = {
     title: 'Tatiana Alejandra',
     category: 'esencia',
     subtitle: 'Capítulo 7',
-    text: '',
+    text: 'Más allá del trabajo y los proyectos.',
     content: 'Aquí no hay proyectos.\n\nNo hay entregas.\n\nNo hay resultados.\n\nSolo recuerdos, lugares, personas y pequeños instantes que también me construyeron.',
     videos: [MEDIA.video.me, MEDIA.video.me2],
     connections: ['perfil', 'fin', 'mapa', 'mixto'],
@@ -169,7 +169,7 @@ const NODES: Record<string, Node> = {
     category: 'mixto',
     subtitle: 'Lo que nutre',
     text: 'También me detengo. Aprender también es observar.',
-    content: 'Lectura constante, anime como influencia visual y narrativa, momentos de pausa con vino o cerveza. No todo es producir — a veces es absorber, reflexionar, vivir.',
+    content: 'Lectura constante, anime como influencia visual y narrativa, momentos de pausa con vino o cerveza. Disfruto escuchar jazz, metal y música clásica. No todo es producir — a veces es absorber, reflexionar, vivir.',
     connections: ['diseno', 'identidad', 'mapa'],
     theme: 'dark',
   },
@@ -186,11 +186,11 @@ const NODES: Record<string, Node> = {
 
 // Categorías para el mapa - Paleta oro-rosa con borgoña como acento
 const CATEGORIES = {
-  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] }, // Borgoña
-  herencia: { label: 'Raíces', color: '#D4A574', nodes: ['herencia', 'arte'] }, // Oro medio
-  expresion: { label: 'Expresión', color: '#E8C9A0', nodes: ['sonido', 'estructura', 'cuerpo'] }, // Oro-rosa suave
-  transformacion: { label: 'Transformación', color: '#F0D0A0', nodes: ['quiebre', 'diseno'] }, // Oro-rosa claro
-  mixto: { label: 'Conexiones', color: '#8B0000', nodes: ['mixto', 'proceso'] }, // Borgoña
+  esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
+  herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia', 'arte'] },
+  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
+  transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
+  mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'proceso', 'fin'] },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -356,10 +356,10 @@ export default function Home() {
               </div>
 
               {/* Grid de categorías */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {Object.entries(CATEGORIES).map(([key, cat]) => (
                   <div key={key} className="space-y-3">
-                    <h3 className="text-sm tracking-wider uppercase opacity-50" style={{ color: cat.color }}>
+                    <h3 className="text-base tracking-widest uppercase font-serif" style={{ color: cat.color }}>
                       {cat.label}
                     </h3>
                     <div className="space-y-2">

@@ -96,9 +96,18 @@ export default function AudioEngine() {
               initial={{ opacity: 0, letterSpacing: '0.2em' }}
               animate={{ opacity: 1, letterSpacing: '0.5em' }}
               transition={{ delay: 0.4, duration: 1.2 }}
-              className="text-[#E8C9A0] text-sm sm:text-base uppercase mb-6 font-light tracking-widest"
+              className="text-[#E8C9A0] text-sm sm:text-base uppercase mb-2 font-light tracking-widest"
             >
               Portafolio
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 1 }}
+              className="text-[#8B0000] text-xs sm:text-sm uppercase tracking-[0.4em] mb-6 font-light"
+            >
+              Tatiana Alejandra Jaramillo
             </motion.p>
 
             <motion.h1
