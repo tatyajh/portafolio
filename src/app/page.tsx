@@ -102,7 +102,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 4',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto. He competido en pole y gané medalla de plata — una de las cosas que más me ha enseñado sobre disciplina, confianza y presencia.\n\nLo que empezó como deporte se convirtió en otra forma de crear.',
-    videos: [MEDIA.video.pole],
+    videos: [MEDIA.video.pole, MEDIA.video.pole2],
     gallery: MEDIA.images.pole,
     connections: ['mixto', 'diseno', 'mapa'],
     theme: 'dark',
@@ -120,7 +120,7 @@ const NODES: Record<string, Node> = {
   },
   diseno: {
     id: 'diseno',
-    title: 'Diseño',
+    title: 'Diseño de Modas',
     category: 'transformacion',
     subtitle: 'Capítulo 6',
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
@@ -606,7 +606,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Diseño</p>
+                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Diseño de Modas</p>
                     <div className="flex flex-wrap justify-center gap-2">
                       {node.tools.diseno.map(tool => (
                         <span key={tool} className="px-3 py-1 border border-[#8B0000]/40 text-[#E8C9A0]/70 text-sm tracking-wide">
@@ -652,20 +652,26 @@ export default function Home() {
                 >
                   <div className="grid grid-cols-1 gap-4">
                     {node.gallery.map((src, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
-                        className="overflow-hidden border border-[#8B0000]/20"
-                      >
-                        <img 
-                          src={src} 
-                          alt={`${node.title} ${index + 1}`}
-                          className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                      </motion.div>
+                      <div key={index}>
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
+                          className="overflow-hidden border border-[#8B0000]/20"
+                        >
+                          <img 
+                            src={src} 
+                            alt={`${node.title} ${index + 1}`}
+                            className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </motion.div>
+                        {node.id === 'estructura' && index === 0 && (
+                          <p className="text-center text-sm italic text-[#E8C9A0]/50 mt-2 mb-2">
+                            El vestido de grado me lo hizo mi abuela. Yo quería estilo años 50.
+                          </p>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </motion.div>
