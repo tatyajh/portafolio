@@ -18,6 +18,7 @@ interface Node {
   media?: { type: 'video' | 'images'; src: string | string[] };
   videos?: readonly string[];
   gallery?: readonly string[];
+  tools?: { digital: string[]; diseno: string[] };
   connections: string[];
   theme?: 'dark' | 'light' | 'accent';
 }
@@ -147,7 +148,11 @@ const NODES: Record<string, Node> = {
     category: 'esencia',
     subtitle: 'Quién soy profesionalmente',
     text: 'Ingeniera de sistemas con alma creativa.',
-    content: 'Soy ingeniera de sistemas, desarrolladora frontend y estudiante de diseño de modas. Durante años construí soluciones digitales utilizando React, TypeScript y tecnologías web modernas. Con el tiempo descubrí que la necesidad de crear también existía fuera de la pantalla, llevándome a explorar el diseño de modas como una nueva forma de materializar ideas. Hoy mi trabajo se encuentra en la intersección entre estructura y creatividad, tecnología y diseño, lógica e intuición.\n\nHerramientas digitales: React · TypeScript · Node.js · Git · Supabase · Jest · Playwright · ChatGPT · Copilot\n\nDiseño: Canva · Illustrator · Optitex',
+    content: 'Soy ingeniera de sistemas, desarrolladora frontend y estudiante de diseño de modas. Durante años construí soluciones digitales utilizando React, TypeScript y tecnologías web modernas. Con el tiempo descubrí que la necesidad de crear también existía fuera de la pantalla, llevándome a explorar el diseño de modas como una nueva forma de materializar ideas. Hoy mi trabajo se encuentra en la intersección entre estructura y creatividad, tecnología y diseño, lógica e intuición.',
+    tools: {
+      digital: ['React', 'TypeScript', 'Node.js', 'Git', 'Supabase', 'Jest', 'Playwright', 'ChatGPT', 'Copilot'],
+      diseno: ['Canva', 'Illustrator', 'Optitex'],
+    },
     connections: ['identidad', 'diseno', 'mapa'],
     theme: 'dark',
   },
@@ -157,7 +162,7 @@ const NODES: Record<string, Node> = {
     category: 'mixto',
     subtitle: 'Contenido especial',
     text: 'Cuando las disciplinas se encuentran.',
-    content: 'Saxofón + Pole. Dos mundos que parecían separados, unidos en un solo momento.',
+    content: 'Hay momentos en que todo lo que soy converge en un solo instante. El cuerpo, el sonido, el movimiento. Sin separación.',
     videos: [MEDIA.video.mixto, MEDIA.video.mixto2],
     gallery: MEDIA.images.mixto,
     connections: ['sonido', 'cuerpo', 'mapa'],
@@ -179,7 +184,7 @@ const NODES: Record<string, Node> = {
     title: 'Gracias',
     category: 'raiz',
     text: 'Gracias por explorar mi historia.',
-    content: 'Cada prenda que creo lleva todas estas capas. Cada decisión viene de un proceso que no empezó en un taller, sino en una vida.',
+    content: 'Cada prenda que creo lleva todas estas capas. Cada decisión viene de un proceso que no empezó en un taller, sino en una vida.\n\nEsto no es un portafolio de llegadas. Es un mapa de lo que me trajo hasta aquí.\n\nGracias por caminar un rato por él.',
     connections: ['mapa', 'inicio'],
     theme: 'dark',
   },
@@ -580,6 +585,37 @@ export default function Home() {
                 >
                   {node.content}
                 </motion.p>
+              )}
+
+              {/* Chips de herramientas - solo en perfil */}
+              {node.tools && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="w-full mb-12 space-y-6"
+                >
+                  <div>
+                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Desarrollo</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {node.tools.digital.map(tool => (
+                        <span key={tool} className="px-3 py-1 border border-[#E8C9A0]/20 text-[#E8C9A0]/70 text-sm tracking-wide">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Diseño</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {node.tools.diseno.map(tool => (
+                        <span key={tool} className="px-3 py-1 border border-[#8B0000]/40 text-[#E8C9A0]/70 text-sm tracking-wide">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
               {/* Media - múltiples videos si existen */}
