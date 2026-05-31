@@ -170,6 +170,7 @@ const NODES: Record<string, Node> = {
     subtitle: 'Lo que nutre',
     text: 'También me detengo. Aprender también es observar.',
     content: 'Lectura constante, anime como influencia visual y narrativa, momentos de pausa con vino o cerveza. Disfruto escuchar jazz, metal y música clásica. No todo es producir — a veces es absorber, reflexionar, vivir.',
+    gallery: MEDIA.images.anexo,
     connections: ['diseno', 'identidad', 'mapa'],
     theme: 'dark',
   },
