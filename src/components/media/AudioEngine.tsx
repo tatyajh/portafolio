@@ -8,7 +8,12 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 const PLAYLIST = [
   '/media/audio/love like you.mp3',
   '/media/audio/red swan.mp3',
+  '/media/audio/porco.mp3',
+  '/media/audio/maritza.mp3',
 ];
+
+// Inicio aleatorio
+const INITIAL_TRACK = Math.floor(Math.random() * PLAYLIST.length);
 
 /**
  * AudioEngine - Motor de audio para el portafolio
@@ -17,7 +22,7 @@ const PLAYLIST = [
 export default function AudioEngine() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState(0);
+  const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -31,7 +36,7 @@ export default function AudioEngine() {
     const audio = audioRef.current;
     if (audio) {
       audio.volume = 0.3;
-      audio.src = PLAYLIST[0];
+      audio.src = PLAYLIST[INITIAL_TRACK];
       audio.play().then(() => {
         setIsPlaying(true);
       }).catch(() => {

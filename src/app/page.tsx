@@ -472,7 +472,7 @@ function GalleryRenderer({ nodeId, gallery, theme }: { nodeId: string; gallery: 
     );
   }
   
-  // ESTRUCTURA: solo caption del vestido, debajo
+  // ESTRUCTURA: caption debajo de estructura-1, resto sin caption
   if (nodeId === 'estructura') {
     return (
       <motion.div 
@@ -481,31 +481,49 @@ function GalleryRenderer({ nodeId, gallery, theme }: { nodeId: string; gallery: 
         transition={{ delay: 0.5, duration: 0.5 }}
         className="mb-12"
       >
-        <div className="grid grid-cols-1 gap-4">
-          {gallery.map((src, index) => (
+        <div className="flex flex-col gap-4">
+          {/* Estructura-1 con caption */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="flex flex-col gap-2"
+          >
+            <div className="overflow-hidden border border-[#8B0000]/10">
+              <img 
+                src={gallery[0]} 
+                alt="estructura 1"
+                className="w-full h-auto object-contain"
+                loading="lazy"
+              />
+            </div>
+            {captions[0] && (
+              <p className={`text-sm sm:text-base italic text-center ${
+                theme === 'light' ? 'caption-glow-dark' : 'caption-glow'
+              }`}>
+                — {captions[0]} —
+              </p>
+            )}
+          </motion.div>
+
+          {/* Resto de imágenes sin caption */}
+          {gallery.slice(1).map((src, index) => (
             <motion.div 
-              key={index}
+              key={index + 1}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+              transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
               className="overflow-hidden border border-[#8B0000]/10"
             >
               <img 
                 src={src} 
-                alt={`${nodeId} ${index + 1}`}
+                alt={`estructura ${index + 2}`}
                 className="w-full h-auto object-contain"
                 loading="lazy"
               />
             </motion.div>
           ))}
         </div>
-        {captions[0] && (
-          <p className={`text-sm sm:text-base italic text-center mt-4 ${
-            theme === 'light' ? 'caption-glow-dark' : 'caption-glow'
-          }`}>
-            — {captions[0]} —
-          </p>
-        )}
       </motion.div>
     );
   }
