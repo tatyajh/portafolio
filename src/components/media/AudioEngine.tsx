@@ -1,8 +1,14 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
-import { MEDIA } from '@/lib/media';
+import { useState, useRef, useEffect, useCallback } from 'react';
+
+// Múltiples canciones para loop
+// Para agregar más canciones, colócalas en /public/audio/ y añádelas aquí
+const PLAYLIST = [
+  '/media/audio/love like you.mp3',
+  '/media/audio/red swan.mp3',
+];
 
 /**
  * AudioEngine - Motor de audio para el portafolio
@@ -11,14 +17,65 @@ import { MEDIA } from '@/lib/media';
 export default function AudioEngine() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Cambiar a la siguiente canción
+  const nextTrack = useCallback(() => {
+    setCurrentTrack((prev) => (prev + 1) % PLAYLIST.length);
+  }, []);
+
+  // Intentar autoplay al montar (pantalla de inicio)
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.3;
+      audio.src = PLAYLIST[0];
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        setAutoplayBlocked(true);
+      });
+    }
+  }, []);
+
+  // Manejar fin de canción
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      const handleEnded = () => {
+        nextTrack();
+      };
+      audio.addEventListener('ended', handleEnded);
+      return () => audio.removeEventListener('ended', handleEnded);
+    }
+  }, [nextTrack]);
+
+  // Reproducir cuando cambia la canción (skip initial mount handled by autoplay effect)
+  const hasStartedRef = useRef(false);
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      return;
+    }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.src = PLAYLIST[currentTrack];
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  }, [currentTrack]);
 
   const handleFirstInteraction = () => {
     setHasInteracted(true);
-    if (audioRef.current) {
+    // Si autoplay fue bloqueado, iniciar música ahora
+    if (autoplayBlocked && audioRef.current) {
       audioRef.current.volume = 0.3;
-      audioRef.current.play();
-      setIsPlaying(true);
+      audioRef.current.src = PLAYLIST[currentTrack];
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        setAutoplayBlocked(false);
+      }).catch(() => {});
     }
   };
 
@@ -62,22 +119,196 @@ export default function AudioEngine() {
 
   return (
     <>
-      {/* Audio de fondo */}
+      {/* Audio de fondo - sin loop para permitir playlist */}
       <audio
         ref={audioRef}
-        src={MEDIA.audio.background}
-        loop
         preload="auto"
         style={{ display: 'none' }}
       />
 
-      {/* Pantalla de inicio - Estética oro-rosa con borgoña */}
+      {/* Pantalla de inicio - Estética oro-rosa con borgoña y formas */}
       {!hasInteracted && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden"
           style={{ background: 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' }}
           onClick={handleFirstInteraction}
         >
+          {/* Fondo tipo constelación/aurora boreal con hilos */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Aurora boreal - colores verdes, azules, rosas */}
+            {/* Capa verde tipo aurora */}
+            <motion.div
+              animate={{ 
+                x: ['-30%', '110%'],
+                opacity: [0.15, 0.35, 0.15],
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[15%] -left-[40%] w-[90vw] h-[50vh]"
+              style={{ 
+                background: 'linear-gradient(90deg, transparent, rgba(57,255,20,0.25), rgba(0,255,65,0.3), rgba(0,217,255,0.2), transparent)',
+                filter: 'blur(50px)',
+                transform: 'rotate(-8deg)'
+              }}
+            />
+            {/* Capa azul */}
+            <motion.div
+              animate={{ 
+                x: ['110%', '-30%'],
+                opacity: [0.12, 0.3, 0.12],
+              }}
+              transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+              className="absolute top-[40%] -left-[20%] w-[85vw] h-[45vh]"
+              style={{ 
+                background: 'linear-gradient(90deg, transparent, rgba(0,153,255,0.25), rgba(0,217,255,0.3), rgba(57,255,20,0.2), transparent)',
+                filter: 'blur(45px)',
+                transform: 'rotate(5deg)'
+              }}
+            />
+            {/* Capa rosa/magenta */}
+            <motion.div
+              animate={{ 
+                x: ['-20%', '120%'],
+                opacity: [0.1, 0.25, 0.1],
+              }}
+              transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+              className="absolute top-[60%] -left-[50%] w-[95vw] h-[40vh]"
+              style={{ 
+                background: 'linear-gradient(90deg, transparent, rgba(255,20,147,0.2), rgba(255,105,180,0.25), rgba(0,217,255,0.15), transparent)',
+                filter: 'blur(55px)',
+                transform: 'rotate(-3deg)'
+              }}
+            />
+            {/* Capa verde inferior */}
+            <motion.div
+              animate={{ 
+                y: ['120%', '-10%'],
+                opacity: [0.08, 0.2, 0.08],
+              }}
+              transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: 8 }}
+              className="absolute -bottom-[10%] left-[20%] w-[60vw] h-[55vh]"
+              style={{ 
+                background: 'radial-gradient(ellipse, rgba(0,255,65,0.2), rgba(57,255,20,0.15), transparent 70%)',
+                filter: 'blur(50px)',
+              }}
+            />
+            {/* Capa azul/rosa mezclada */}
+            <motion.div
+              animate={{ 
+                y: ['-20%', '100%'],
+                opacity: [0.1, 0.22, 0.1],
+              }}
+              transition={{ duration: 24, repeat: Infinity, ease: "easeInOut", delay: 12 }}
+              className="absolute -top-[15%] right-[10%] w-[50vw] h-[50vh]"
+              style={{ 
+                background: 'radial-gradient(ellipse, rgba(0,217,255,0.2), rgba(255,105,180,0.15), transparent 70%)',
+                filter: 'blur(45px)',
+              }}
+            />
+
+            {/* Hilos sutiles cruzando */}
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={`hilo-${i}`}
+                initial={{ opacity: 0, pathLength: 0 }}
+                animate={{ 
+                  opacity: [0.05, 0.12, 0.05],
+                }}
+                transition={{ 
+                  duration: 4 + i * 0.8, 
+                  repeat: Infinity, 
+                  ease: "easeInOut",
+                  delay: i * 0.4
+                }}
+                className="absolute h-[1px]"
+                style={{ 
+                  top: `${8 + i * 8}%`,
+                  left: 0,
+                  width: '100%',
+                  background: `linear-gradient(90deg, transparent, ${['#E8C9A0', '#8B0000', '#C4874A', '#D4A574'][i % 4]}40, transparent)`,
+                  transform: `rotate(${-2 + (i % 3)}deg)`,
+                }}
+              />
+            ))}
+
+            {/* Constelación de puntos luminosos */}
+            {[...Array(40)].map((_, i) => {
+              const x = 10 + (i * 37) % 80;
+              const y = 5 + (i * 23) % 90;
+              return (
+                <motion.div
+                  key={`estrella-${i}`}
+                  animate={{ 
+                    opacity: [0.2, 0.8, 0.2],
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{ 
+                    duration: 2 + (i % 4), 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    delay: i * 0.15
+                  }}
+                  className="absolute rounded-full"
+                  style={{ 
+                    width: i % 3 === 0 ? '3px' : '2px',
+                    height: i % 3 === 0 ? '3px' : '2px',
+                    left: `${x}%`,
+                    top: `${y}%`,
+                    background: ['#E8C9A0', '#f5f0e6', '#C4874A'][i % 3],
+                    boxShadow: `0 0 ${i % 5 === 0 ? '8px' : '4px'} ${['#E8C9A0', '#C4874A', '#f5f0e6'][i % 3]}40`,
+                  }}
+                />
+              );
+            })}
+
+            {/* Hilos que conectan algunos puntos (constelación) */}
+            <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.1 }}>
+              {[...Array(8)].map((_, i) => (
+                <motion.line
+                  key={`conexion-${i}`}
+                  x1={`${15 + (i * 11) % 70}%`}
+                  y1={`${10 + (i * 13) % 80}%`}
+                  x2={`${25 + (i * 17) % 60}%`}
+                  y2={`${20 + (i * 19) % 60}%`}
+                  stroke="#E8C9A0"
+                  strokeWidth="1"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: [0, 1, 0], opacity: [0, 0.3, 0] }}
+                  transition={{ 
+                    duration: 8 + i * 2, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    delay: i * 1.5
+                  }}
+                />
+              ))}
+            </svg>
+
+            {/* Círculos difusos de fondo */}
+            <motion.div
+              animate={{ 
+                scale: [1, 1.3, 1],
+                opacity: [0.05, 0.1, 0.05],
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[10%] left-[10%] w-[50vh] h-[50vh] rounded-full"
+              style={{ 
+                background: 'radial-gradient(circle, #8B0000 0%, transparent 70%)',
+                filter: 'blur(80px)'
+              }}
+            />
+            <motion.div
+              animate={{ 
+                scale: [1.2, 1, 1.2],
+                opacity: [0.05, 0.1, 0.05],
+              }}
+              transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 5 }}
+              className="absolute bottom-[15%] right-[15%] w-[40vh] h-[40vh] rounded-full"
+              style={{ 
+                background: 'radial-gradient(circle, #E8C9A0 0%, transparent 70%)',
+                filter: 'blur(70px)'
+              }}
+            />
+          </div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -121,35 +352,45 @@ export default function AudioEngine() {
               <span className="text-[#8B0000]">Invisibles</span>
             </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 1 }}
-              className="font-serif text-xl sm:text-2xl md:text-3xl text-[#E8C9A0]/70 italic mb-16"
-            >
-              Lo que se hereda
-            </motion.p>
-
             {/* Línea decorativa inferior - borgoña */}
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 1.4, duration: 1, ease: "easeOut" }}
+              transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
               className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-8"
             />
 
+            {/* Botones de navegación */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 0.8 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <motion.p
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                className="text-[#E8C9A0]/50 text-xs sm:text-sm tracking-[0.2em] uppercase"
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setHasInteracted(true);
+                  // Emitir evento personalizado para navegar
+                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'start' } }));
+                }}
+                className="px-8 py-4 bg-[#E8C9A0] text-[#0a0808] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#f5f0e6] min-w-[200px]"
               >
-                Click para explorar
-              </motion.p>
+                ▶ Seguir la historia
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setHasInteracted(true);
+                  // Emitir evento personalizado para explorar
+                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+                }}
+                className="px-8 py-4 border border-[#E8C9A0]/50 text-[#E8C9A0] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#E8C9A0]/10 hover:border-[#E8C9A0] min-w-[200px]"
+              >
+                ✥ Explorar libremente
+              </motion.button>
             </motion.div>
           </motion.div>
         </div>

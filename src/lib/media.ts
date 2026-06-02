@@ -35,9 +35,12 @@ export const MEDIA = {
       '/media/images/esencia-4.jpeg',
     ],
     perfil: [
-      '/media/images/perfil-1.jpeg',
-      '/media/images/perfil-2.jpeg',
-      '/media/images/perfil-3.jpeg',
+      '/media/images/hoja de vida.jpeg',
+    ],
+    estructura: [
+      '/media/images/estructura-1.jpeg',
+      '/media/images/estructura-2.jpeg',
+      '/media/images/estructura-3.jpeg',
     ],
     anexo: ['/media/images/anexo-1.png'],
     quiebre: ['/media/images/quiebre-1.png'],
@@ -81,6 +84,10 @@ export const MEDIA = {
       '/media/images/figurin-4.png',
       '/media/images/figurin-5.png',
       '/media/images/figurin-6.jpeg',
+      '/media/images/diseño-1.jpeg',
+      '/media/images/diseño-2.jpeg',
+      '/media/images/diseño-3.jpeg',
+      '/media/images/diseño-4.jpeg',
     ],
   },
   audio: {

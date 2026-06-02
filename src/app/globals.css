@@ -69,3 +69,45 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
+
+/* Leyendas con efecto decorativo */
+.caption-glow {
+  font-family: 'Playfair Display', serif;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #E8C9A0 0%,
+    #f5e6d0 25%,
+    #E8C9A0 50%,
+    #D4A574 75%,
+    #E8C9A0 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: caption-shimmer 6s ease-in-out infinite;
+}
+
+.caption-glow-dark {
+  background: linear-gradient(
+    90deg,
+    #8B0000 0%,
+    #c44040 25%,
+    #8B0000 50%,
+    #6B0000 75%,
+    #8B0000 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: caption-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes caption-shimmer {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
