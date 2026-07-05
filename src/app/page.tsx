@@ -20,7 +20,7 @@ interface Node {
   gallery?: readonly string[];
   tools?: { digital: string[]; diseno: string[] };
   connections: string[];
-  theme?: 'dark' | 'light' | 'accent';
+  theme?: 'dark' | 'light' | 'accent' | 'paper';
 }
 
 const NODES: Record<string, Node> = {
@@ -37,8 +37,8 @@ const NODES: Record<string, Node> = {
     title: 'Explorar',
     category: 'raiz',
     text: 'Elige tu camino. No hay orden correcto.',
-    connections: ['esencia', 'herencia', 'arte', 'sonido', 'estructura', 'cuerpo', 'quiebre', 'diseno', 'mixto', 'identidad', 'perfil', 'proceso'],
-    theme: 'dark',
+    connections: ['esencia', 'herencia', 'arte', 'sonido', 'estructura', 'cuerpo', 'quiebre', 'diseno', 'juego', 'mixto', 'identidad', 'perfil', 'proceso'],
+    theme: 'paper',
   },
   esencia: {
     id: 'esencia',
@@ -157,11 +157,21 @@ const NODES: Record<string, Node> = {
     connections: ['identidad', 'diseno', 'mapa'],
     theme: 'dark',
   },
+  juego: {
+    id: 'juego',
+    title: '¡Qué Más Parcero!',
+    category: 'transformacion',
+    subtitle: 'Capítulo 11',
+    text: 'Cuando el código aprendió a jugar.',
+    content: 'Mi primer videojuego publicado: un runner 2D con sabor colombiano donde un frijol corre por los tejados de la comuna esquivando enemigos y recolectando empanadas.\n\nLo rescaté de un proyecto viejo lleno de bugs: lo migré a Unity 6, reescribí las mecánicas de salto (coyote time, jump buffer), agregué dificultad progresiva y efectos de daño estilo Mario. Aquí la estructura y el juego se encontraron.',
+    connections: ['estructura', 'diseno', 'mapa'],
+    theme: 'paper',
+  },
   mixto: {
     id: 'mixto',
     title: 'Conexiones',
     category: 'mixto',
-    subtitle: 'Capítulo 11',
+    subtitle: 'Capítulo 12',
     text: 'Cuando las disciplinas se encuentran.',
     content: 'Hay momentos en que todo lo que soy converge en un solo instante. El cuerpo, el sonido, el movimiento. Sin separación.',
     videos: [MEDIA.video.mixto, MEDIA.video.mixto2],
@@ -173,7 +183,7 @@ const NODES: Record<string, Node> = {
     id: 'proceso',
     title: 'Fuera del proceso',
     category: 'mixto',
-    subtitle: 'Capítulo 12',
+    subtitle: 'Capítulo 13',
     text: 'También me detengo. Aprender también es observar.',
     content: 'Lectura constante, anime como influencia visual y narrativa, momentos de pausa con vino o cerveza. Disfruto escuchar jazz, metal y música clásica. No todo es producir — a veces es absorber, reflexionar, vivir.',
     gallery: MEDIA.images.anexo,
@@ -196,8 +206,18 @@ const CATEGORIES = {
   esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
   herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia', 'arte'] },
   expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
-  transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
+  transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno', 'juego'] },
   mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'proceso', 'fin'] },
+};
+
+//Versión oscurecida de los colores de categoría para que se lean
+//sobre el papel crema del mapa collage
+const STAMP_COLORS: Record<string, string> = {
+  '#8B0000': '#8B0000',
+  '#A0522D': '#A0522D',
+  '#C4874A': '#A66325',
+  '#D4A574': '#B07A3A',
+  '#E8C9A0': '#A8814F',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -218,9 +238,10 @@ const LINEAR_ORDER = [
   // Temp 4 - Transformación
   'quiebre',    // Cap 9
   'diseno',     // Cap 10
+  'juego',      // Cap 11
   // Temp 5 - Conexiones
-  'mixto',      // Cap 11
-  'proceso',    // Cap 12
+  'mixto',      // Cap 12
+  'proceso',    // Cap 13
   'fin',        // Cierre
 ] as const;
 
@@ -236,8 +257,9 @@ const SEASONS: Record<string, { name: string; total: number }> = {
   sonido: { name: 'Temporada 3: Expresión', total: 3 },
   estructura: { name: 'Temporada 3: Expresión', total: 3 },
   cuerpo: { name: 'Temporada 3: Expresión', total: 3 },
-  quiebre: { name: 'Temporada 4: Transformación', total: 2 },
-  diseno: { name: 'Temporada 4: Transformación', total: 2 },
+  quiebre: { name: 'Temporada 4: Transformación', total: 3 },
+  diseno: { name: 'Temporada 4: Transformación', total: 3 },
+  juego: { name: 'Temporada 4: Transformación', total: 3 },
   mixto: { name: 'Temporada 5: Conexiones', total: 3 },
   proceso: { name: 'Temporada 5: Conexiones', total: 3 },
   fin: { name: 'Temporada 5: Conexiones', total: 3 },
@@ -758,11 +780,13 @@ export default function Home() {
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-[#1a1512]'; // Gris con tinte dorado
     if (node.theme === 'light') return 'bg-[#faf5f0]'; // Crema muy claro
+    if (node.theme === 'paper') return 'paper-bg'; // Papel collage
     return 'bg-[#0a0808]'; // Negro profundo
   };
 
   const getTextClass = () => {
     if (node.theme === 'light') return 'text-[#1a1512]';
+    if (node.theme === 'paper') return 'text-[#2a2018]'; // Tinta sobre papel
     return 'text-[#f5f0e6]'; // Marfil
   };
 
@@ -811,453 +835,113 @@ export default function Home() {
           {/* ═══ MAPA INTERACTIVO ═══ */}
           {currentNode === 'mapa' && (
             <div className="w-full max-w-5xl relative">
-              {/* Patrón ULTRA denso tipo tela estampada - fondo decorativo */}
+              {/* Decoración collage: papel, puntadas y recortes */}
               <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-                {/* Hilos horizontales densos */}
-                {[...Array(20)].map((_, i) => (
-                  <motion.div
-                    key={`hilo-h-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.02, 0.07, 0.02] }}
-                    transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }}
-                    className="absolute w-full h-[1px]"
-                    style={{ 
-                      top: `${2 + i * 5}%`,
-                      background: `linear-gradient(90deg, transparent, ${i % 4 === 0 ? '#E8C9A0' : i % 4 === 1 ? '#8B0000' : i % 4 === 2 ? '#C4874A' : '#D4A574'}50, transparent)`,
-                    }}
-                  />
-                ))}
-                {/* Hilos verticales densos */}
-                {[...Array(18)].map((_, i) => (
-                  <motion.div
-                    key={`hilo-v-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.02, 0.06, 0.02] }}
-                    transition={{ duration: 4 + i * 0.35, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-                    className="absolute h-full w-[1px]"
-                    style={{ 
-                      left: `${1 + i * 5.5}%`,
-                      background: `linear-gradient(180deg, transparent, ${i % 4 === 0 ? '#D4A574' : i % 4 === 1 ? '#E8C9A0' : i % 4 === 2 ? '#8B0000' : '#C4874A'}40, transparent)`,
-                    }}
-                  />
-                ))}
-                
-                {/* Líneas diagonales */}
-                {[...Array(10)].map((_, i) => (
-                  <motion.div
-                    key={`diag-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.01, 0.04, 0.01] }}
-                    transition={{ duration: 5 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
-                    className="absolute w-[150%] h-[1px]"
-                    style={{ 
-                      top: `${10 + i * 8}%`,
-                      left: '-25%',
-                      background: `linear-gradient(90deg, transparent, ${['#E8C9A0', '#8B0000', '#C4874A'][i % 3]}30, transparent)`,
-                      transform: 'rotate(25deg)',
-                    }}
-                  />
-                ))}
-                
-                {/* TIJERAS - muchas más */}
-                {[...Array(18)].map((_, i) => (
-                  <motion.div
-                    key={`tijeras-${i}`}
-                    animate={{ 
-                      rotate: [0, 20 - i * 3, 0, -20 + i * 3, 0], 
-                      y: [0, -10 + i * 1.5, 0],
-                      opacity: [0.05, 0.15, 0.05]
-                    }}
-                    transition={{ 
-                      duration: 4 + i * 0.4, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.6
-                    }}
-                    className="absolute text-lg"
+                {/* Blobs orgánicos recortados */}
+                <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-[0.08]" style={{ background: '#8B0000' }} />
+                <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] rounded-[45%] opacity-[0.10]" style={{ background: '#D4A574' }} />
+                <div className="absolute -bottom-32 left-1/4 w-80 h-80 rounded-[40%] opacity-[0.07]" style={{ background: '#A0522D' }} />
+                <div className="absolute top-16 right-1/4 w-40 h-40 rounded-full opacity-[0.06]" style={{ background: '#C4874A' }} />
+
+                {/* Hilos de puntada cruzando el papel */}
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={`puntada-$${i}`}
+                    className="absolute w-[140%]"
                     style={{
-                      top: `${1 + (i * 7) % 96}%`,
-                      left: `${0.5 + (i * 11) % 98}%`,
-                      color: i % 4 === 0 ? '#E8C9A0' : i % 4 === 1 ? '#8B0000' : i % 4 === 2 ? '#C4874A' : '#D4A574',
+                      top: `$${12 + i * 20}%`,
+                      left: '-20%',
+                      borderTop: `2px dashed rgba(139, 0, 0, $${0.10 + (i % 2) * 0.05})`,
+                      transform: `rotate($${-6 + i * 3}deg)`,
+                    }}
+                  />
+                ))}
+
+                {/* Recortes sutiles: costura, música, código */}
+                {['✂️', '🪡', '🧶', '🎷', '🎮', '✂️'].map((emoji, i) => (
+                  <motion.div
+                    key={`recorte-$${i}`}
+                    animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.10, 0.18, 0.10] }}
+                    transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.8 }}
+                    className="absolute text-2xl"
+                    style={{
+                      top: `$${8 + (i * 16) % 84}%`,
+                      left: `$${5 + (i * 17) % 90}%`,
                     }}
                   >
-                    ✂️
+                    {emoji}
                   </motion.div>
-                ))}
-                
-                {/* MÁQUINAS DE COSER */}
-                {[...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={`maquina-${i}`}
-                    animate={{ 
-                      opacity: [0.04, 0.12, 0.04],
-                      scale: [1, 1.15, 1],
-                      rotate: [0, 10, 0, -10, 0]
-                    }}
-                    transition={{ 
-                      duration: 5 + i * 0.7, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.9
-                    }}
-                    className="absolute text-xl"
-                    style={{
-                      top: `${5 + (i * 8) % 90}%`,
-                      right: `${2 + (i * 10) % 93}%`,
-                      color: ['#D4A574', '#8B0000', '#E8C9A0', '#C4874A', '#A0522D', '#E8C9A0'][i % 6],
-                    }}
-                  >
-                    🪡
-                  </motion.div>
-                ))}
-                
-                {/* SAXOFONES */}
-                {[...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={`saxo-${i}`}
-                    animate={{ 
-                      rotate: [0, 8 - i, 0, -8 + i, 0], 
-                      scale: [1, 1.12, 1],
-                      opacity: [0.04, 0.12, 0.04]
-                    }}
-                    transition={{ 
-                      duration: 6 + i * 0.9, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 1.1
-                    }}
-                    className="absolute text-xl"
-                    style={{
-                      top: `${3 + (i * 9) % 92}%`,
-                      left: `${4 + (i * 13) % 90}%`,
-                      color: ['#C4874A', '#D4A574', '#E8C9A0', '#8B0000', '#A0522D', '#E8C9A0'][i % 6],
-                    }}
-                  >
-                    🎷
-                  </motion.div>
-                ))}
-                
-                {/* BAILARINAS */}
-                {[...Array(10)].map((_, i) => (
-                  <motion.div
-                    key={`bailarina-${i}`}
-                    animate={{ 
-                      rotate: [0, 25, 0, -25, 0], 
-                      y: [0, -20, 0],
-                      opacity: [0.05, 0.12, 0.05]
-                    }}
-                    transition={{ 
-                      duration: 3 + i * 0.5, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.7
-                    }}
-                    className="absolute text-lg"
-                    style={{
-                      top: `${6 + (i * 10) % 85}%`,
-                      left: `${7 + (i * 15) % 85}%`,
-                      color: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574', '#A0522D'][i % 5],
-                    }}
-                  >
-                    💃
-                  </motion.div>
-                ))}
-                
-                {/* TEJIDOS / LANA */}
-                {[...Array(8)].map((_, i) => (
-                  <motion.div
-                    key={`lana-${i}`}
-                    animate={{ 
-                      opacity: [0.05, 0.1, 0.05],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{ 
-                      duration: 4 + i * 0.6, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.8
-                    }}
-                    className="absolute text-lg"
-                    style={{
-                      top: `${10 + (i * 12) % 80}%`,
-                      right: `${8 + (i * 14) % 85}%`,
-                      color: ['#E8C9A0', '#C4874A', '#D4A574', '#8B0000'][i % 4],
-                    }}
-                  >
-                    🧶
-                  </motion.div>
-                ))}
-                
-                {/* MÁS PATRONES PARA LLENAR ESPACIOS */}
-                
-                {/* Puntos brillantes adicionales */}
-                {[...Array(50)].map((_, i) => (
-                  <motion.div
-                    key={`brillo-${i}`}
-                    animate={{ 
-                      opacity: [0.1, 0.4, 0.1],
-                      scale: [0.8, 1.3, 0.8]
-                    }}
-                    transition={{ 
-                      duration: 2 + (i % 5) * 0.4, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.12
-                    }}
-                    className="absolute w-[2px] h-[2px] rounded-full"
-                    style={{
-                      top: `${(i * 2.1) % 100}%`,
-                      left: `${(i * 3.7 + 1) % 100}%`,
-                      backgroundColor: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574', '#A0522D', '#E8C9A0'][i % 6],
-                      boxShadow: '0 0 4px currentColor',
-                    }}
-                  />
-                ))}
-                
-                {/* Líneas cruzadas adicionales */}
-                {[...Array(15)].map((_, i) => (
-                  <motion.div
-                    key={`cruz-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.01, 0.03, 0.01] }}
-                    transition={{ duration: 6 + i * 0.6, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-                    className="absolute w-[150%] h-[1px]"
-                    style={{ 
-                      top: `${15 + i * 6}%`,
-                      left: '-25%',
-                      background: `linear-gradient(90deg, transparent, ${['#E8C9A0', '#8B0000', '#C4874A'][i % 3]}20, transparent)`,
-                      transform: `rotate(${-20 + (i % 5) * 10}deg)`,
-                    }}
-                  />
-                ))}
-                
-                {/* BAILARINAS */}
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={`bailarina-${i}`}
-                    animate={{ 
-                      rotate: [0, 20, 0, -20, 0], 
-                      y: [0, -15, 0],
-                      opacity: [0.06, 0.12, 0.06]
-                    }}
-                    transition={{ 
-                      duration: 4 + i * 0.6, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.9
-                    }}
-                    className="absolute text-xl"
-                    style={{
-                      top: `${10 + (i * 15) % 80}%`,
-                      left: `${8 + (i * 21) % 84}%`,
-                      color: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574', '#A0522D', '#E8C9A0'][i],
-                    }}
-                  >
-                    💃
-                  </motion.div>
-                ))}
-                
-                {/* BINARIO - MUCHOS MÁS NÚMEROS */}
-                {[...Array(30)].map((_, i) => (
-                  <motion.div
-                    key={`bin-${i}`}
-                    animate={{ 
-                      opacity: [0.04, 0.1, 0.04],
-                      y: [0, -15 - (i % 7) * 3, 0],
-                      x: [0, (i % 5 - 2) * 3, 0]
-                    }}
-                    transition={{ 
-                      duration: 2.5 + (i % 5) * 0.5, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.2
-                    }}
-                    className="absolute font-mono text-xs"
-                    style={{
-                      top: `${1 + (i * 3.3) % 98}%`,
-                      left: `${0.5 + (i * 7.3) % 99}%`,
-                      color: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574', '#A0522D'][i % 5],
-                      fontSize: '10px',
-                    }}
-                  >
-                    {['10', '01', '101', '010', '110', '001', '111', '000'][i % 8]}
-                  </motion.div>
-                ))}
-                
-                {/* Puntos de costura densos */}
-                {[...Array(35)].map((_, i) => (
-                  <motion.div
-                    key={`punto-${i}`}
-                    animate={{ 
-                      scale: [1, 1.8, 1],
-                      opacity: [0.08, 0.15, 0.08]
-                    }}
-                    transition={{ 
-                      duration: 1.5 + (i % 4) * 0.3, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.15
-                    }}
-                    className="absolute w-1 h-1 rounded-full"
-                    style={{
-                      top: `${(i * 2.9) % 100}%`,
-                      left: `${(i * 4.1 + 2) % 100}%`,
-                      backgroundColor: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574', '#A0522D'][i % 5],
-                    }}
-                  />
-                ))}
-                
-                {/* Círculos sutiles de fondo */}
-                {[...Array(8)].map((_, i) => (
-                  <motion.div
-                    key={`circulo-${i}`}
-                    animate={{ 
-                      scale: [1, 1.3, 1],
-                      opacity: [0.03, 0.06, 0.03]
-                    }}
-                    transition={{ 
-                      duration: 10 + i * 2, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 1.5
-                    }}
-                    className="absolute rounded-full border"
-                    style={{
-                      top: `${5 + (i * 12) % 80}%`,
-                      left: `${3 + (i * 14) % 85}%`,
-                      width: `${30 + (i * 10)}px`,
-                      height: `${30 + (i * 10)}px`,
-                      borderColor: ['#E8C9A020', '#8B000020', '#C4874A20'][i % 3],
-                    }}
-                  />
-                ))}
-                
-                {/* MÁS ELEMENTOS PARA LLENAR ESPACIOS */}
-                
-                {/* Más binario */}
-                {[...Array(25)].map((_, i) => (
-                  <motion.div
-                    key={`extra-bin-${i}`}
-                    animate={{ 
-                      opacity: [0.03, 0.08, 0.03],
-                      y: [0, -8, 0],
-                    }}
-                    transition={{ 
-                      duration: 2 + (i % 3), 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.15
-                    }}
-                    className="absolute font-mono text-[10px]"
-                    style={{
-                      top: `${(i * 4.1) % 100}%`,
-                      left: `${(i * 5.3) % 100}%`,
-                      color: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574'][i % 4],
-                    }}
-                  >
-                    {['10', '01', '101', '010', '110'][i % 5]}
-                  </motion.div>
-                ))}
-                
-                {/* Puntos extra */}
-                {[...Array(40)].map((_, i) => (
-                  <motion.div
-                    key={`extra-punto-${i}`}
-                    animate={{ 
-                      scale: [1, 2, 1],
-                      opacity: [0.06, 0.15, 0.06]
-                    }}
-                    transition={{ 
-                      duration: 1.5 + (i % 3) * 0.3, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      delay: i * 0.1
-                    }}
-                    className="absolute w-[3px] h-[3px] rounded-full"
-                    style={{
-                      top: `${(i * 2.5) % 100}%`,
-                      left: `${(i * 3.1 + 2) % 100}%`,
-                      backgroundColor: ['#E8C9A0', '#8B0000', '#C4874A', '#D4A574'][i % 4],
-                    }}
-                  />
-                ))}
-                
-                {/* Hilos curvos simulados con múltiples divs */}
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={`curva-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.02, 0.05, 0.02] }}
-                    transition={{ duration: 8 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
-                    className="absolute w-[200%] h-[2px]"
-                    style={{ 
-                      top: `${20 + i * 12}%`,
-                      left: '-50%',
-                      background: `linear-gradient(90deg, transparent 0%, ${['#E8C9A0', '#8B0000'][i % 2]}15 30%, ${['#E8C9A0', '#8B0000'][i % 2]}25 50%, ${['#E8C9A0', '#8B0000'][i % 2]}15 70%, transparent 100%)`,
-                      transform: `rotate(${-15 + i * 5}deg) translateY(${i * 3}px)`,
-                    }}
-                  />
                 ))}
               </div>
 
               <div className="text-center mb-12">
-                <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#E8C9A0] to-transparent mx-auto mb-8" />
-                <h2 className="font-serif text-4xl sm:text-5xl mb-4 text-[#f5f0e6]">Explora</h2>
-                <p className="text-[#D4A574]/80">Elige cualquier nodo. No hay orden correcto.</p>
+                <p className="font-script text-2xl sm:text-3xl text-[#8B0000]/70 -rotate-2 mb-1">los hilos de mi historia…</p>
+                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-[#2a2018]">Índice</h2>
+                <div className="stitch-line w-40 mx-auto mb-4" />
+                <p className="text-[#6b5540]">Elige cualquier nodo. No hay orden correcto.</p>
               </div>
 
               {/* Grid de categorías */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {Object.entries(CATEGORIES).map(([key, cat]) => (
-                  <div key={key} className="space-y-3">
-                    <h3 className="text-base tracking-widest uppercase font-serif" style={{ color: cat.color }}>
-                      {cat.label}
-                    </h3>
-                    <div className="space-y-2">
-                      {cat.nodes.map(nodeId => {
+                {Object.entries(CATEGORIES).map(([key, cat]) => {
+                  const stampColor = STAMP_COLORS[cat.color] ?? cat.color;
+                  return (
+                  <div key={key} className="space-y-4">
+                    {/* Sello de categoría tipo estampilla */}
+                    <div className="flex justify-center">
+                      <div
+                        className="stamp w-20 h-20 px-2 text-[10px] tracking-[0.15em] uppercase font-serif bg-[#f7f1e4]/60"
+                        style={{ color: stampColor }}
+                      >
+                        {cat.label}
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {cat.nodes.map((nodeId, cardIdx) => {
                         const n = NODES[nodeId];
                         const visited = history.includes(nodeId);
+                        const chapterNum = LINEAR_ORDER.indexOf(nodeId as typeof LINEAR_ORDER[number]) + 1;
                         return (
                           <motion.button
                             key={nodeId}
-                            whileHover={{ scale: 1.02, x: 8 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: 1.03, rotate: 0 }}
+                            whileTap={{ scale: 0.97 }}
                             onClick={() => navigateTo(nodeId)}
-                            className="w-full text-left p-4 border transition-all"
+                            className={`w-full text-left p-4 paper-card stitch-border transition-all ${cardIdx % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
                             style={{
-                              borderColor: visited ? `${cat.color}60` : `${cat.color}30`,
-                              backgroundColor: visited ? `${cat.color}15` : 'transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = `${cat.color}80`;
-                              e.currentTarget.style.backgroundColor = `${cat.color}10`;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = visited ? `${cat.color}60` : `${cat.color}30`;
-                              e.currentTarget.style.backgroundColor = visited ? `${cat.color}15` : 'transparent';
+                              borderColor: visited ? `${stampColor}90` : undefined,
+                              backgroundColor: visited ? '#fdf9ef' : undefined,
                             }}
                           >
-                            <div className="flex items-center justify-between">
-                              <span className="font-serif text-lg" style={{ color: cat.color }}>{n.title}</span>
-                              {visited && (
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={cat.color} strokeWidth="2">
-                                  <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                              )}
+                            <div className="flex items-start gap-3">
+                              <span className="font-serif text-3xl leading-none" style={{ color: `${stampColor}CC` }}>
+                                {nodeId === 'fin' ? '✦' : String(chapterNum).padStart(2, '0')}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-serif text-lg text-[#2a2018]">{n.title}</span>
+                                  {visited && (
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={stampColor} strokeWidth="3">
+                                      <path d="M20 6L9 17l-5-5"/>
+                                    </svg>
+                                  )}
+                                </div>
+                                <p className="font-script text-base leading-tight text-[#6b5540] line-clamp-2">{n.text}</p>
+                              </div>
                             </div>
-                            <p className="text-sm mt-1 line-clamp-1" style={{ color: `${cat.color}99` }}>{n.text}</p>
                           </motion.button>
                         );
                       })}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Progreso */}
               <div className="mt-12 text-center">
-                <p className="text-sm opacity-40">
-                  Explorado: {new Set(history).size - 1} / {Object.keys(NODES).length - 2} nodos
+                <p className="font-script text-xl text-[#6b5540]/80">
+                  hilvanado: {new Set(history).size - 1} / {Object.keys(NODES).length - 2} nodos
                 </p>
               </div>
 
@@ -1268,11 +952,11 @@ export default function Home() {
                 transition={{ delay: 1.2, duration: 1 }}
                 className="mt-16 text-center max-w-md mx-auto"
               >
-                <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8B0000]/40 to-transparent mx-auto mb-5" />
-                <p className="font-serif text-sm italic text-[#E8C9A0]/35 leading-relaxed">
-                  Hecho con <span className="text-[#E8C9A0]/60">React</span>, <span className="text-[#E8C9A0]/60">Next.js</span> y <span className="text-[#E8C9A0]/60">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
+                <div className="stitch-line w-12 mx-auto mb-5" />
+                <p className="font-serif text-sm italic text-[#6b5540] leading-relaxed">
+                  Hecho con <span className="text-[#8B0000]">React</span>, <span className="text-[#8B0000]">Next.js</span> y <span className="text-[#8B0000]">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
                 </p>
-                <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8B0000]/40 to-transparent mx-auto mt-5" />
+                <div className="stitch-line w-12 mx-auto mt-5" />
               </motion.div>
             </div>
           )}
@@ -1402,7 +1086,158 @@ export default function Home() {
           )}
 
           {/* ═══ NODO DE CONTENIDO NORMAL ═══ */}
-          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && (
+          {/* ═══ NODO JUEGO - tarjeta game dev estilo collage ═══ */}
+          {currentNode === 'juego' && (
+            <div className="w-full max-w-3xl">
+              {/* Cabecera */}
+              <div className="text-center mb-12">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#8B0000]/50"
+                >
+                  Temporada 4: Transformación
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xs tracking-[0.3em] uppercase mb-4 text-[#A0522D]"
+                >
+                  {node.subtitle}
+                </motion.p>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-[#2a2018]"
+                >
+                  {node.title}
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
+                  transition={{ delay: 0.5 }}
+                  className="font-script text-3xl text-[#8B0000] -rotate-1 inline-block"
+                >
+                  {node.text}
+                </motion.p>
+              </div>
+
+              {/* Tarjeta de papel con la ficha del juego */}
+              <motion.div
+                initial={{ opacity: 0, y: 20, rotate: -2 }}
+                animate={{ opacity: 1, y: 0, rotate: -1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="paper-card stitch-border relative p-6 sm:p-10 mb-12"
+              >
+                {/* Cintas washi */}
+                <div className="tape -top-3 left-8 -rotate-6" />
+                <div className="tape -top-3 right-8 rotate-3" />
+
+                {/* Sello game dev */}
+                <div className="absolute -top-9 -right-3 sm:-right-9 stamp w-24 h-24 px-2 text-[9px] uppercase tracking-[0.15em] font-serif text-[#8B0000] bg-[#efe7d8]">
+                  Game · Dev · 2026
+                </div>
+
+                <p className="text-[#2a2018]/80 leading-relaxed whitespace-pre-line mb-10 text-base sm:text-lg">
+                  {node.content}
+                </p>
+
+                {/* Ficha técnica */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-center">
+                  {[
+                    { label: 'Rol', value: 'Programadora' },
+                    { label: 'Motor', value: 'Unity 6' },
+                    { label: 'Lenguaje', value: 'C#' },
+                    { label: 'Género', value: 'Runner 2D' },
+                  ].map(item => (
+                    <div key={item.label} className="stitch-border-gold p-3 bg-[#efe7d8]/50">
+                      <p className="text-[10px] uppercase tracking-widest text-[#A0522D] mb-1">{item.label}</p>
+                      <p className="font-serif text-[#2a2018]">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Banderín de enlaces */}
+                <p className="font-script text-2xl text-[#8B0000] mb-4 -rotate-1">Enlaces para ver más…</p>
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href="https://tarjah.itch.io/quemasparcero"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-4 bg-[#8B0000] text-[#f7f1e4] font-serif tracking-wider hover:bg-[#6B0000] transition-all flex items-center gap-3"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Jugar en itch.io
+                  </a>
+                  <a
+                    href="https://github.com/tatyajh/QueMasParceroBeta"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-4 stitch-border text-[#2a2018] font-serif tracking-wider hover:bg-[#8B0000]/5 transition-all flex items-center gap-3"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    Ver el código
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Nota manuscrita */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="font-script text-xl text-center text-[#6b5540] rotate-1 mb-12"
+              >
+                * pronto por aquí: un gif del frijol en acción *
+              </motion.p>
+
+              {/* Navegación inferior */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="space-y-4"
+              >
+                <p className="text-center text-xs uppercase tracking-[0.3em] text-[#8B0000]/40">
+                  {LINEAR_ORDER.indexOf('juego') + 1} / {LINEAR_ORDER.length}
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={goToNext}
+                    className="px-8 py-4 border transition-all tracking-wider flex items-center gap-3 bg-[#8B0000] text-[#f7f1e4] border-[#8B0000] hover:bg-[#6B0000]"
+                  >
+                    <span>{NODES[LINEAR_ORDER[LINEAR_ORDER.indexOf('juego') + 1]]?.title}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigateTo('mapa')}
+                    className="px-6 py-3 stitch-border transition-all tracking-wider flex items-center gap-2 text-[#8B0000] hover:bg-[#8B0000]/5"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                    </svg>
+                    <span>Volver al mapa</span>
+                  </motion.button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && (
             <div className="w-full max-w-3xl">
               {/* Línea decorativa */}
               <motion.div

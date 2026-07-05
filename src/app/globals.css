@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&family=Caveat:wght@400..700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -111,3 +111,72 @@ body {
   50% { background-position: 100% center; }
   100% { background-position: 0% center; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ESTILO COLLAGE / SCRAPBOOK — "Hilos Invisibles"
+   Papel, puntadas, sellos y notas manuscritas
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Fuente manuscrita para acentos y captions */
+.font-script {
+  font-family: 'Caveat', cursive;
+}
+
+/* Fondo de papel crema con textura sutil */
+.paper-bg {
+  background-color: #efe7d8;
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(212, 165, 116, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(139, 0, 0, 0.05) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.30 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Tarjeta de papel recortado */
+.paper-card {
+  background-color: #f7f1e4;
+  box-shadow:
+    0 1px 3px rgba(42, 32, 24, 0.12),
+    0 6px 16px rgba(42, 32, 24, 0.08);
+}
+
+/* Borde de puntada de costura */
+.stitch-border {
+  border: 2px dashed rgba(139, 0, 0, 0.35);
+}
+
+.stitch-border-gold {
+  border: 2px dashed rgba(160, 110, 60, 0.45);
+}
+
+/* Línea de puntada horizontal */
+.stitch-line {
+  height: 0;
+  border-top: 2px dashed rgba(139, 0, 0, 0.30);
+}
+
+/* Sello circular tipo estampilla */
+.stamp {
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  outline: 1px dashed currentColor;
+  outline-offset: -7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transform: rotate(-8deg);
+}
+
+/* Cinta washi semitransparente */
+.tape {
+  position: absolute;
+  width: 90px;
+  height: 26px;
+  background: rgba(212, 165, 116, 0.55);
+  box-shadow: 0 1px 2px rgba(42, 32, 24, 0.15);
+  backdrop-filter: blur(1px);
+}
+
+/* Rotaciones suaves de recorte pegado */
+.tilt-l { transform: rotate(-1.5deg); }
+.tilt-r { transform: rotate(1.5deg); }
