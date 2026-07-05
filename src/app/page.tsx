@@ -11,7 +11,7 @@ import { MEDIA } from '@/lib/media';
 interface Node {
   id: string;
   title: string;
-  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'mixto' | 'esencia';
+  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'videojuegos' | 'mixto' | 'esencia';
   subtitle?: string;
   text: string;
   content?: string;
@@ -160,7 +160,7 @@ const NODES: Record<string, Node> = {
   juego: {
     id: 'juego',
     title: '¡Qué Más Parcero!',
-    category: 'transformacion',
+    category: 'videojuegos',
     subtitle: 'Capítulo 11',
     text: 'Cuando el código aprendió a jugar.',
     content: 'Mi primer videojuego publicado: un runner 2D con sabor colombiano donde un frijol corre por los tejados de la comuna esquivando enemigos y recolectando empanadas.\n\nLo rescaté de un proyecto viejo lleno de bugs: lo migré a Unity 6, reescribí las mecánicas de salto (coyote time, jump buffer), agregué dificultad progresiva y efectos de daño estilo Mario. Aquí la estructura y el juego se encontraron.',
@@ -206,18 +206,129 @@ const CATEGORIES = {
   esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
   herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia', 'arte'] },
   expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
-  transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno', 'juego'] },
+  transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
+  videojuegos: { label: 'Videojuegos', color: '#2F6B5E', nodes: ['juego'] },
   mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'proceso', 'fin'] },
 };
 
 //Versión oscurecida de los colores de categoría para que se lean
 //sobre el papel crema del mapa collage
+//Decoración collage de fondo: blobs, puntadas, flores prensadas,
+//botones de costura, retazos de tela y recortes
+function CollageDecor() {
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+      {/* Blobs orgánicos recortados */}
+      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-[0.12]" style={{ background: '#8B0000' }} />
+      <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] rounded-[45%] opacity-[0.14]" style={{ background: '#A0522D' }} />
+      <div className="absolute -bottom-32 left-1/4 w-80 h-80 rounded-[40%] opacity-[0.10]" style={{ background: '#2F6B5E' }} />
+      <div className="absolute top-16 right-1/4 w-40 h-40 rounded-full opacity-[0.09]" style={{ background: '#C4874A' }} />
+      <div className="absolute bottom-1/4 -left-16 w-56 h-56 rounded-[48%] opacity-[0.08]" style={{ background: '#2F6B5E' }} />
+
+      {/* Hilos de puntada cruzando el papel */}
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={`puntada-${i}`}
+          className="absolute w-[140%]"
+          style={{
+            top: `${8 + i * 17}%`,
+            left: '-20%',
+            borderTop: `2px dashed rgba(139, 0, 0, ${0.12 + (i % 2) * 0.06})`,
+            transform: `rotate(${-6 + i * 3}deg)`,
+          }}
+        />
+      ))}
+
+      {/* Flores prensadas (esquinas) */}
+      <svg className="absolute -top-6 -right-10 w-48 h-48 opacity-30" viewBox="0 0 100 100" style={{ transform: 'rotate(25deg)' }}>
+        <path d="M50 90 Q48 60 50 30" stroke="#5a6b3f" strokeWidth="2" fill="none" />
+        <path d="M50 55 Q35 48 28 36" stroke="#5a6b3f" strokeWidth="1.5" fill="none" />
+        <path d="M50 45 Q65 40 72 30" stroke="#5a6b3f" strokeWidth="1.5" fill="none" />
+        <ellipse cx="26" cy="33" rx="7" ry="4" fill="#5a6b3f" transform="rotate(-35 26 33)" />
+        <ellipse cx="74" cy="27" rx="7" ry="4" fill="#5a6b3f" transform="rotate(30 74 27)" />
+        {[0, 60, 120, 180, 240, 300].map(a => (
+          <ellipse key={a} cx="50" cy="21" rx="4.5" ry="9" fill="#8B0000" opacity="0.8" transform={`rotate(${a} 50 30)`} />
+        ))}
+        <circle cx="50" cy="30" r="4" fill="#C4874A" />
+      </svg>
+      <svg className="absolute bottom-8 -left-8 w-40 h-40 opacity-25" viewBox="0 0 100 100" style={{ transform: 'rotate(-15deg)' }}>
+        <path d="M50 95 Q52 60 48 25" stroke="#5a6b3f" strokeWidth="2" fill="none" />
+        {[0, 72, 144, 216, 288].map(a => (
+          <ellipse key={a} cx="48" cy="16" rx="4" ry="8" fill="#A0522D" opacity="0.85" transform={`rotate(${a} 48 25)`} />
+        ))}
+        <circle cx="48" cy="25" r="3.5" fill="#8B0000" />
+        <ellipse cx="38" cy="55" rx="8" ry="4" fill="#5a6b3f" transform="rotate(-30 38 55)" />
+        <ellipse cx="60" cy="45" rx="8" ry="4" fill="#5a6b3f" transform="rotate(25 60 45)" />
+      </svg>
+
+      {/* Botones de costura */}
+      {[
+        { top: '18%', left: '8%', color: '#8B0000', size: 34, rot: 12 },
+        { top: '68%', left: '88%', color: '#2F6B5E', size: 28, rot: -8 },
+        { top: '86%', left: '14%', color: '#A0522D', size: 24, rot: 20 },
+      ].map((b, i) => (
+        <svg
+          key={`boton-${i}`}
+          className="absolute opacity-30"
+          style={{ top: b.top, left: b.left, width: b.size, height: b.size, transform: `rotate(${b.rot}deg)` }}
+          viewBox="0 0 40 40"
+        >
+          <circle cx="20" cy="20" r="18" fill="none" stroke={b.color} strokeWidth="3" />
+          <circle cx="20" cy="20" r="13" fill="none" stroke={b.color} strokeWidth="1" strokeDasharray="2 3" />
+          <circle cx="15" cy="15" r="2.2" fill={b.color} />
+          <circle cx="25" cy="15" r="2.2" fill={b.color} />
+          <circle cx="15" cy="25" r="2.2" fill={b.color} />
+          <circle cx="25" cy="25" r="2.2" fill={b.color} />
+        </svg>
+      ))}
+
+      {/* Retazos de tela */}
+      {[
+        { top: '38%', left: '3%', w: 70, h: 50, color: '139, 0, 0', rot: -8 },
+        { top: '10%', left: '72%', w: 60, h: 44, color: '47, 107, 94', rot: 14 },
+        { top: '78%', left: '70%', w: 64, h: 46, color: '160, 82, 45', rot: -12 },
+      ].map((r, i) => (
+        <div
+          key={`retazo-${i}`}
+          className="absolute"
+          style={{
+            top: r.top,
+            left: r.left,
+            width: r.w,
+            height: r.h,
+            transform: `rotate(${r.rot}deg)`,
+            border: `2px dashed rgba(${r.color}, 0.4)`,
+            background: `repeating-linear-gradient(45deg, rgba(${r.color}, 0.14) 0 6px, rgba(${r.color}, 0.05) 6px 12px)`,
+          }}
+        />
+      ))}
+
+      {/* Recortes: costura, música, código, juego */}
+      {['✂️', '🪡', '🧶', '🎷', '🎮', '🌸', '🍂', '📷', '🧵', '✂️'].map((emoji, i) => (
+        <motion.div
+          key={`recorte-${i}`}
+          animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
+          className="absolute text-2xl"
+          style={{
+            top: `${6 + (i * 19) % 88}%`,
+            left: `${4 + (i * 23) % 92}%`,
+          }}
+        >
+          {emoji}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 const STAMP_COLORS: Record<string, string> = {
   '#8B0000': '#8B0000',
   '#A0522D': '#A0522D',
   '#C4874A': '#A66325',
   '#D4A574': '#B07A3A',
   '#E8C9A0': '#A8814F',
+  '#2F6B5E': '#2F6B5E',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -257,12 +368,12 @@ const SEASONS: Record<string, { name: string; total: number }> = {
   sonido: { name: 'Temporada 3: Expresión', total: 3 },
   estructura: { name: 'Temporada 3: Expresión', total: 3 },
   cuerpo: { name: 'Temporada 3: Expresión', total: 3 },
-  quiebre: { name: 'Temporada 4: Transformación', total: 3 },
-  diseno: { name: 'Temporada 4: Transformación', total: 3 },
-  juego: { name: 'Temporada 4: Transformación', total: 3 },
-  mixto: { name: 'Temporada 5: Conexiones', total: 3 },
-  proceso: { name: 'Temporada 5: Conexiones', total: 3 },
-  fin: { name: 'Temporada 5: Conexiones', total: 3 },
+  quiebre: { name: 'Temporada 4: Transformación', total: 2 },
+  diseno: { name: 'Temporada 4: Transformación', total: 2 },
+  juego: { name: 'Temporada 5: Videojuegos', total: 1 },
+  mixto: { name: 'Temporada 6: Conexiones', total: 3 },
+  proceso: { name: 'Temporada 6: Conexiones', total: 3 },
+  fin: { name: 'Temporada 6: Conexiones', total: 3 },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -835,44 +946,7 @@ export default function Home() {
           {/* ═══ MAPA INTERACTIVO ═══ */}
           {currentNode === 'mapa' && (
             <div className="w-full max-w-5xl relative">
-              {/* Decoración collage: papel, puntadas y recortes */}
-              <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-                {/* Blobs orgánicos recortados */}
-                <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-[0.08]" style={{ background: '#8B0000' }} />
-                <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] rounded-[45%] opacity-[0.10]" style={{ background: '#D4A574' }} />
-                <div className="absolute -bottom-32 left-1/4 w-80 h-80 rounded-[40%] opacity-[0.07]" style={{ background: '#A0522D' }} />
-                <div className="absolute top-16 right-1/4 w-40 h-40 rounded-full opacity-[0.06]" style={{ background: '#C4874A' }} />
-
-                {/* Hilos de puntada cruzando el papel */}
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={`puntada-$${i}`}
-                    className="absolute w-[140%]"
-                    style={{
-                      top: `$${12 + i * 20}%`,
-                      left: '-20%',
-                      borderTop: `2px dashed rgba(139, 0, 0, $${0.10 + (i % 2) * 0.05})`,
-                      transform: `rotate($${-6 + i * 3}deg)`,
-                    }}
-                  />
-                ))}
-
-                {/* Recortes sutiles: costura, música, código */}
-                {['✂️', '🪡', '🧶', '🎷', '🎮', '✂️'].map((emoji, i) => (
-                  <motion.div
-                    key={`recorte-$${i}`}
-                    animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.10, 0.18, 0.10] }}
-                    transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.8 }}
-                    className="absolute text-2xl"
-                    style={{
-                      top: `$${8 + (i * 16) % 84}%`,
-                      left: `$${5 + (i * 17) % 90}%`,
-                    }}
-                  >
-                    {emoji}
-                  </motion.div>
-                ))}
-              </div>
+              <CollageDecor />
 
               <div className="text-center mb-12">
                 <p className="font-script text-2xl sm:text-3xl text-[#8B0000]/70 -rotate-2 mb-1">los hilos de mi historia…</p>
@@ -882,7 +956,7 @@ export default function Home() {
               </div>
 
               {/* Grid de categorías */}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Object.entries(CATEGORIES).map(([key, cat]) => {
                   const stampColor = STAMP_COLORS[cat.color] ?? cat.color;
                   return (
@@ -890,7 +964,7 @@ export default function Home() {
                     {/* Sello de categoría tipo estampilla */}
                     <div className="flex justify-center">
                       <div
-                        className="stamp w-20 h-20 px-2 text-[10px] tracking-[0.15em] uppercase font-serif bg-[#f7f1e4]/60"
+                        className="stamp w-20 h-20 px-2 text-[10px] tracking-[0.15em] uppercase font-serif bg-[#eadfc2]/70"
                         style={{ color: stampColor }}
                       >
                         {cat.label}
@@ -910,7 +984,7 @@ export default function Home() {
                             className={`w-full text-left p-4 paper-card stitch-border transition-all ${cardIdx % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
                             style={{
                               borderColor: visited ? `${stampColor}90` : undefined,
-                              backgroundColor: visited ? '#fdf9ef' : undefined,
+                              backgroundColor: visited ? '#f3e8cb' : undefined,
                             }}
                           >
                             <div className="flex items-start gap-3">
@@ -1089,6 +1163,7 @@ export default function Home() {
           {/* ═══ NODO JUEGO - tarjeta game dev estilo collage ═══ */}
           {currentNode === 'juego' && (
             <div className="w-full max-w-3xl">
+              <CollageDecor />
               {/* Cabecera */}
               <div className="text-center mb-12">
                 <motion.p
@@ -1097,7 +1172,7 @@ export default function Home() {
                   transition={{ delay: 0.1 }}
                   className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#8B0000]/50"
                 >
-                  Temporada 4: Transformación
+                  Temporada 5: Videojuegos
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
@@ -1137,7 +1212,7 @@ export default function Home() {
                 <div className="tape -top-3 right-8 rotate-3" />
 
                 {/* Sello game dev */}
-                <div className="absolute -top-9 -right-3 sm:-right-9 stamp w-24 h-24 px-2 text-[9px] uppercase tracking-[0.15em] font-serif text-[#8B0000] bg-[#efe7d8]">
+                <div className="absolute -top-9 -right-3 sm:-right-9 stamp w-24 h-24 px-2 text-[9px] uppercase tracking-[0.15em] font-serif text-[#8B0000] bg-[#d9c49c]">
                   Game · Dev · 2026
                 </div>
 
@@ -1153,7 +1228,7 @@ export default function Home() {
                     { label: 'Lenguaje', value: 'C#' },
                     { label: 'Género', value: 'Runner 2D' },
                   ].map(item => (
-                    <div key={item.label} className="stitch-border-gold p-3 bg-[#efe7d8]/50">
+                    <div key={item.label} className="stitch-border-gold p-3 bg-[#d9c49c]/50">
                       <p className="text-[10px] uppercase tracking-widest text-[#A0522D] mb-1">{item.label}</p>
                       <p className="font-serif text-[#2a2018]">{item.value}</p>
                     </div>
@@ -1420,6 +1495,17 @@ export default function Home() {
                       <path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.051-1.965-5.051-5.0 0-2.937 1.93-5 5.012-5 3.093 0 4.86 1.893 5.14 4.9H17.9c-.073-.854-.557-1.9-2.302-1.9-1.699 0-2.573 1.268-2.573 2.999 0 1.742.875 3 2.577 3 1.617 0 2.191-.938 2.387-2h2.737zM9.5 8.5H6v7h3.5c1.493 0 2.5-.828 2.5-2 0-.874-.455-1.547-1.168-1.836C11.355 11.42 11.75 10.73 11.75 10c0-1.133-.869-1.5-2.25-1.5zM8 10h1.25c.517 0 .75.207.75.58 0 .38-.28.58-.85.58H8v-1.16zm1.5 4H8v-1.5h1.5c.585 0 .875.271.875.75s-.29.75-.875.75zM16.5 5.5h-5v1.5h5V5.5z"/>
                     </svg>
                     Behance
+                  </a>
+                  <a
+                    href="https://github.com/tatyajh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    GitHub
                   </a>
                 </motion.div>
               )}
