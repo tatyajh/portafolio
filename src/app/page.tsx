@@ -11,7 +11,7 @@ import { MEDIA } from '@/lib/media';
 interface Node {
   id: string;
   title: string;
-  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'videojuegos' | 'mixto' | 'esencia';
+  category: 'raiz' | 'herencia' | 'expresion' | 'transformacion' | 'mixto' | 'esencia';
   subtitle?: string;
   text: string;
   content?: string;
@@ -38,6 +38,14 @@ const NODES: Record<string, Node> = {
     category: 'raiz',
     text: 'Elige tu camino. No hay orden correcto.',
     connections: ['esencia', 'herencia', 'arte', 'sonido', 'estructura', 'cuerpo', 'quiebre', 'diseno', 'juego', 'mixto', 'identidad', 'perfil', 'proceso'],
+    theme: 'paper',
+  },
+  tecnico: {
+    id: 'tecnico',
+    title: 'Lo técnico',
+    category: 'raiz',
+    text: 'La ruta corta: perfil, código y juego.',
+    connections: ['perfil', 'estructura', 'juego', 'mapa'],
     theme: 'paper',
   },
   esencia: {
@@ -99,7 +107,7 @@ const NODES: Record<string, Node> = {
     id: 'cuerpo',
     title: 'Cuerpo',
     category: 'expresion',
-    subtitle: 'Capítulo 8',
+    subtitle: 'Capítulo 9',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto. He competido en pole y gané medalla de plata — una de las cosas que más me ha enseñado sobre disciplina, confianza y presencia.\n\nLo que empezó como deporte se convirtió en otra forma de crear.',
     videos: [MEDIA.video.pole, MEDIA.video.pole2],
@@ -111,7 +119,7 @@ const NODES: Record<string, Node> = {
     id: 'quiebre',
     title: 'Quiebre',
     category: 'transformacion',
-    subtitle: 'Capítulo 9',
+    subtitle: 'Capítulo 10',
     text: 'Durante mucho tiempo creí que no era una persona creativa.',
     content: 'Aprendí a encontrar valor en la lógica, la estructura y las respuestas correctas.\n\nY aunque crecí rodeada de arte, costura e historias de creación, nunca pensé que ese mundo también podía pertenecerme.\n\nLa vida terminó cuestionando esa idea.\n\nEl accidente cerebrovascular de mi padre, la experiencia de vivir lejos de casa y la dificultad de comunicarme en otro idioma me obligaron a mirar las cosas desde otro lugar.\n\nFue entonces cuando entendí algo que había pasado por alto durante años:\n\nlas cosas hechas con las manos también son una forma de lenguaje.\n\nY quizá la creatividad nunca estuvo ausente.\n\nQuizá simplemente había aprendido a no verla.',
     gallery: MEDIA.images.quiebre,
@@ -122,7 +130,7 @@ const NODES: Record<string, Node> = {
     id: 'diseno',
     title: 'Diseño de Modas',
     category: 'transformacion',
-    subtitle: 'Capítulo 10',
+    subtitle: 'Capítulo 11',
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
     content: 'Moodboards, procesos creativos, desfiles, experimentación. El diseño de modas como lenguaje — no solo técnica, sino forma de pensar y comunicar.',
     media: { type: 'video', src: MEDIA.video.moda },
@@ -159,12 +167,12 @@ const NODES: Record<string, Node> = {
   },
   juego: {
     id: 'juego',
-    title: '¡Qué Más Parcero!',
-    category: 'videojuegos',
-    subtitle: 'Capítulo 11',
+    title: 'Juegos',
+    category: 'expresion',
+    subtitle: 'Capítulo 8',
     text: 'Cuando el código aprendió a jugar.',
-    content: 'Mi primer videojuego publicado: un runner 2D con sabor colombiano donde un frijol corre por los tejados de la comuna esquivando enemigos y recolectando empanadas.\n\nLo rescaté de un proyecto viejo lleno de bugs: lo migré a Unity 6, reescribí las mecánicas de salto (coyote time, jump buffer), agregué dificultad progresiva y efectos de daño estilo Mario. Aquí la estructura y el juego se encontraron.',
-    connections: ['estructura', 'diseno', 'mapa'],
+    content: 'Lo que construyo cuando la lógica se vuelve juego: mundos pequeños, hechos en Unity y C#, jugables en el navegador.',
+    connections: ['estructura', 'cuerpo', 'diseno', 'mapa'],
     theme: 'paper',
   },
   mixto: {
@@ -205,11 +213,27 @@ const NODES: Record<string, Node> = {
 const CATEGORIES = {
   esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
   herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia', 'arte'] },
-  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
+  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'juego', 'cuerpo'] },
   transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
-  videojuegos: { label: 'Videojuegos', color: '#2F6B5E', nodes: ['juego'] },
   mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'proceso', 'fin'] },
 };
+
+//Galería de videojuegos del Capítulo 8: para agregar un juego nuevo,
+//solo añade otra entrada a esta lista
+const GAMES = [
+  {
+    id: 'quemasparcero',
+    title: '¡Qué Más Parcero!',
+    year: '2026',
+    desc: 'Un paisa recorre los tejados de una comuna esquivando frijoles saltarines y recolectando empanadas. Salta, usa el súper salto gastando maná, recupera vida con pociones y aguanta: entre más lejos llegues, más rápido va todo. Hecho para el curso de Ubicua.',
+    rol: 'Programadora',
+    motor: 'Unity 6',
+    lenguaje: 'C#',
+    genero: 'Runner 2D',
+    playUrl: 'https://tarjah.itch.io/quemasparcero',
+    codeUrl: 'https://github.com/tatyajh/QueMasParceroBeta',
+  },
+];
 
 //Versión oscurecida de los colores de categoría para que se lean
 //sobre el papel crema del mapa collage
@@ -239,27 +263,41 @@ function CollageDecor() {
         />
       ))}
 
-      {/* Flores prensadas (esquinas) */}
-      <svg className="absolute -top-6 -right-10 w-48 h-48 opacity-30" viewBox="0 0 100 100" style={{ transform: 'rotate(25deg)' }}>
-        <path d="M50 90 Q48 60 50 30" stroke="#5a6b3f" strokeWidth="2" fill="none" />
-        <path d="M50 55 Q35 48 28 36" stroke="#5a6b3f" strokeWidth="1.5" fill="none" />
-        <path d="M50 45 Q65 40 72 30" stroke="#5a6b3f" strokeWidth="1.5" fill="none" />
-        <ellipse cx="26" cy="33" rx="7" ry="4" fill="#5a6b3f" transform="rotate(-35 26 33)" />
-        <ellipse cx="74" cy="27" rx="7" ry="4" fill="#5a6b3f" transform="rotate(30 74 27)" />
-        {[0, 60, 120, 180, 240, 300].map(a => (
-          <ellipse key={a} cx="50" cy="21" rx="4.5" ry="9" fill="#8B0000" opacity="0.8" transform={`rotate(${a} 50 30)`} />
-        ))}
-        <circle cx="50" cy="30" r="4" fill="#C4874A" />
+      {/* Cinta métrica (costura) */}
+      <svg className="absolute -top-4 -right-14 w-72 h-40 opacity-35" viewBox="0 0 240 80" style={{ transform: 'rotate(18deg)' }}>
+        <path d="M0 40 Q60 15 120 38 T240 30" stroke="#D4A574" strokeWidth="18" fill="none" strokeLinecap="round" />
+        <path d="M0 40 Q60 15 120 38 T240 30" stroke="#8B0000" strokeWidth="1" fill="none" opacity="0.5" />
+        {[...Array(16)].map((_, i) => {
+          const x = 8 + i * 15;
+          const y = 40 - Math.sin((x / 240) * Math.PI) * 10;
+          return <line key={i} x1={x} y1={y - (i % 5 === 0 ? 8 : 5)} x2={x} y2={y + 2} stroke="#2a2018" strokeWidth="1.5" opacity="0.7" />;
+        })}
+        {[0, 5, 10, 15].map(i => {
+          const x = 8 + i * 15;
+          const y = 40 - Math.sin((x / 240) * Math.PI) * 10;
+          return <text key={i} x={x + 2} y={y + 12} fontSize="8" fill="#2a2018" opacity="0.7">{i * 5}</text>;
+        })}
       </svg>
-      <svg className="absolute bottom-8 -left-8 w-40 h-40 opacity-25" viewBox="0 0 100 100" style={{ transform: 'rotate(-15deg)' }}>
-        <path d="M50 95 Q52 60 48 25" stroke="#5a6b3f" strokeWidth="2" fill="none" />
-        {[0, 72, 144, 216, 288].map(a => (
-          <ellipse key={a} cx="48" cy="16" rx="4" ry="8" fill="#A0522D" opacity="0.85" transform={`rotate(${a} 48 25)`} />
-        ))}
-        <circle cx="48" cy="25" r="3.5" fill="#8B0000" />
-        <ellipse cx="38" cy="55" rx="8" ry="4" fill="#5a6b3f" transform="rotate(-30 38 55)" />
-        <ellipse cx="60" cy="45" rx="8" ry="4" fill="#5a6b3f" transform="rotate(25 60 45)" />
+
+      {/* Patrón de costura (pieza de molde con puntadas) */}
+      <svg className="absolute bottom-6 -left-10 w-52 h-52 opacity-30" viewBox="0 0 100 100" style={{ transform: 'rotate(-12deg)' }}>
+        <path d="M25 10 Q50 2 75 10 L82 55 Q70 62 68 90 L32 90 Q30 62 18 55 Z"
+              fill="rgba(212, 165, 116, 0.25)" stroke="#D4A574" strokeWidth="1.5" strokeDasharray="4 3" />
+        <path d="M40 30 L45 55 M60 30 L55 55" stroke="#8B0000" strokeWidth="1" strokeDasharray="3 2" opacity="0.8" />
+        <circle cx="50" cy="20" r="1.5" fill="#8B0000" />
+        <text x="38" y="75" fontSize="7" fill="#D4A574" fontStyle="italic">delantero</text>
+        <line x1="30" y1="14" x2="26" y2="8" stroke="#D4A574" strokeWidth="1.5" />
+        <line x1="70" y1="14" x2="74" y2="8" stroke="#D4A574" strokeWidth="1.5" />
       </svg>
+
+      {/* Recortes de código */}
+      <div className="absolute top-[26%] right-[6%] font-mono text-xl opacity-25 rotate-6" style={{ color: '#D4A574' }}>{'</>'}</div>
+      <div className="absolute bottom-[18%] right-[28%] font-mono text-2xl opacity-20 -rotate-12" style={{ color: '#8B0000' }}>{'{ }'}</div>
+      <div className="absolute top-[55%] left-[4%] font-mono text-sm opacity-25 rotate-3" style={{ color: '#E8C9A0' }}>while(viva) crear();</div>
+
+      {/* Notas musicales */}
+      <div className="absolute top-[12%] left-[30%] text-2xl opacity-25 -rotate-12" style={{ color: '#D4A574' }}>♪</div>
+      <div className="absolute bottom-[32%] right-[10%] text-3xl opacity-20 rotate-6" style={{ color: '#E8C9A0' }}>♫</div>
 
       {/* Botones de costura */}
       {[
@@ -303,8 +341,8 @@ function CollageDecor() {
         />
       ))}
 
-      {/* Recortes: costura, música, código, juego */}
-      {['✂️', '🪡', '🧶', '🎷', '🎮', '🌸', '🍂', '📷', '🧵', '✂️'].map((emoji, i) => (
+      {/* Recortes: costura, música, código, el paisa y sus frijoles */}
+      {['✂️', '🪡', '🧶', '🎷', '🎮', '🫘', '🥟', '👗', '🧵', '📷'].map((emoji, i) => (
         <motion.div
           key={`recorte-${i}`}
           animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.15, 0.25, 0.15] }}
@@ -328,7 +366,6 @@ const STAMP_COLORS: Record<string, string> = {
   '#C4874A': '#A66325',
   '#D4A574': '#B07A3A',
   '#E8C9A0': '#A8814F',
-  '#2F6B5E': '#2F6B5E',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -345,11 +382,11 @@ const LINEAR_ORDER = [
   // Temp 3 - Expresión
   'sonido',     // Cap 6
   'estructura', // Cap 7
-  'cuerpo',     // Cap 8
+  'juego',      // Cap 8
+  'cuerpo',     // Cap 9
   // Temp 4 - Transformación
-  'quiebre',    // Cap 9
-  'diseno',     // Cap 10
-  'juego',      // Cap 11
+  'quiebre',    // Cap 10
+  'diseno',     // Cap 11
   // Temp 5 - Conexiones
   'mixto',      // Cap 12
   'proceso',    // Cap 13
@@ -365,15 +402,15 @@ const SEASONS: Record<string, { name: string; total: number }> = {
   perfil: { name: 'Temporada 1: Esencia', total: 3 },
   herencia: { name: 'Temporada 2: Raíces', total: 2 },
   arte: { name: 'Temporada 2: Raíces', total: 2 },
-  sonido: { name: 'Temporada 3: Expresión', total: 3 },
-  estructura: { name: 'Temporada 3: Expresión', total: 3 },
-  cuerpo: { name: 'Temporada 3: Expresión', total: 3 },
+  sonido: { name: 'Temporada 3: Expresión', total: 4 },
+  estructura: { name: 'Temporada 3: Expresión', total: 4 },
+  juego: { name: 'Temporada 3: Expresión', total: 4 },
+  cuerpo: { name: 'Temporada 3: Expresión', total: 4 },
   quiebre: { name: 'Temporada 4: Transformación', total: 2 },
   diseno: { name: 'Temporada 4: Transformación', total: 2 },
-  juego: { name: 'Temporada 5: Videojuegos', total: 1 },
-  mixto: { name: 'Temporada 6: Conexiones', total: 3 },
-  proceso: { name: 'Temporada 6: Conexiones', total: 3 },
-  fin: { name: 'Temporada 6: Conexiones', total: 3 },
+  mixto: { name: 'Temporada 5: Conexiones', total: 3 },
+  proceso: { name: 'Temporada 5: Conexiones', total: 3 },
+  fin: { name: 'Temporada 5: Conexiones', total: 3 },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -882,6 +919,8 @@ export default function Home() {
         navigateTo('mapa');
       } else if (detail?.target === 'start') {
         navigateTo('esencia');
+      } else if (detail?.target === 'tecnico') {
+        navigateTo('tecnico');
       }
     };
     window.addEventListener('navigateTo', handleNavigate);
@@ -897,7 +936,7 @@ export default function Home() {
 
   const getTextClass = () => {
     if (node.theme === 'light') return 'text-[#1a1512]';
-    if (node.theme === 'paper') return 'text-[#2a2018]'; // Tinta sobre papel
+    if (node.theme === 'paper') return 'text-[#f5f0e6]'; // Marfil sobre mesa oscura
     return 'text-[#f5f0e6]'; // Marfil
   };
 
@@ -949,10 +988,16 @@ export default function Home() {
               <CollageDecor />
 
               <div className="text-center mb-12">
-                <p className="font-script text-2xl sm:text-3xl text-[#8B0000]/70 -rotate-2 mb-1">los hilos de mi historia…</p>
-                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-[#2a2018]">Índice</h2>
+                <p className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-2 mb-1">los hilos de mi historia…</p>
+                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-[#f5f0e6]">Índice</h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
-                <p className="text-[#6b5540]">Elige cualquier nodo. No hay orden correcto.</p>
+                <p className="text-[#E8C9A0]/70">Elige cualquier nodo. No hay orden correcto.</p>
+                <button
+                  onClick={() => navigateTo('tecnico')}
+                  className="mt-3 font-script text-xl text-[#D4A574] hover:text-[#E8C9A0] transition-colors underline decoration-dashed underline-offset-4"
+                >
+                  ¿vienes por lo técnico? atajo por aquí →
+                </button>
               </div>
 
               {/* Grid de categorías */}
@@ -1014,8 +1059,8 @@ export default function Home() {
 
               {/* Progreso */}
               <div className="mt-12 text-center">
-                <p className="font-script text-xl text-[#6b5540]/80">
-                  hilvanado: {new Set(history).size - 1} / {Object.keys(NODES).length - 2} nodos
+                <p className="font-script text-xl text-[#D4A574]/70">
+                  hilvanado: {new Set(history).size - 1} / {Object.keys(NODES).length - 3} nodos
                 </p>
               </div>
 
@@ -1027,8 +1072,8 @@ export default function Home() {
                 className="mt-16 text-center max-w-md mx-auto"
               >
                 <div className="stitch-line w-12 mx-auto mb-5" />
-                <p className="font-serif text-sm italic text-[#6b5540] leading-relaxed">
-                  Hecho con <span className="text-[#8B0000]">React</span>, <span className="text-[#8B0000]">Next.js</span> y <span className="text-[#8B0000]">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
+                <p className="font-serif text-sm italic text-[#E8C9A0]/50 leading-relaxed">
+                  Hecho con <span className="text-[#D4A574]">React</span>, <span className="text-[#D4A574]">Next.js</span> y <span className="text-[#D4A574]">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
                 </p>
                 <div className="stitch-line w-12 mx-auto mt-5" />
               </motion.div>
@@ -1160,6 +1205,92 @@ export default function Home() {
           )}
 
           {/* ═══ NODO DE CONTENIDO NORMAL ═══ */}
+          {/* ═══ NODO TÉCNICO - atajo directo para perfiles técnicos ═══ */}
+          {currentNode === 'tecnico' && (
+            <div className="w-full max-w-3xl">
+              <CollageDecor />
+
+              <div className="text-center mb-12">
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-2 mb-1"
+                >
+                  sin rodeos…
+                </motion.p>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="font-serif text-5xl sm:text-6xl mb-4 text-[#f5f0e6]"
+                >
+                  Lo técnico
+                </motion.h2>
+                <div className="stitch-line w-40 mx-auto mb-4" />
+                <p className="text-[#E8C9A0]/70">Perfil, código y juego. La historia completa te espera en el mapa.</p>
+              </div>
+
+              <div className="space-y-5 mb-12">
+                {[
+                  { id: 'perfil', num: '03', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
+                  { id: 'estructura', num: '07', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
+                  { id: 'juego', num: '08', title: 'Juegos', desc: 'Videojuegos en Unity y C#, publicados y jugables en el navegador.' },
+                ].map((item, i) => (
+                  <motion.button
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.15 }}
+                    whileHover={{ scale: 1.03, rotate: 0 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => navigateTo(item.id)}
+                    className={`w-full text-left p-5 paper-card stitch-border ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="font-serif text-4xl leading-none text-[#8B0000]/80">{item.num}</span>
+                      <div>
+                        <span className="font-serif text-xl text-[#2a2018]">{item.title}</span>
+                        <p className="font-script text-lg leading-tight text-[#6b5540]">{item.desc}</p>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="flex flex-wrap justify-center gap-4"
+              >
+                <a
+                  href="https://github.com/tatyajh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-[#E8C9A0] text-[#0a0808] font-serif tracking-wider hover:bg-[#F0D0A0] transition-all flex items-center gap-3"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  </svg>
+                  GitHub
+                </a>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigateTo('mapa')}
+                  className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-[#E8C9A0] hover:bg-[#E8C9A0]/10"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                  </svg>
+                  <span>Ver toda la historia</span>
+                </motion.button>
+              </motion.div>
+            </div>
+          )}
+
           {/* ═══ NODO JUEGO - tarjeta game dev estilo collage ═══ */}
           {currentNode === 'juego' && (
             <div className="w-full max-w-3xl">
@@ -1170,15 +1301,15 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#8B0000]/50"
+                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#E8C9A0]/50"
                 >
-                  Temporada 5: Videojuegos
+                  Temporada 3: Expresión
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-xs tracking-[0.3em] uppercase mb-4 text-[#A0522D]"
+                  className="text-xs tracking-[0.3em] uppercase mb-4 text-[#D4A574]"
                 >
                   {node.subtitle}
                 </motion.p>
@@ -1186,7 +1317,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-[#2a2018]"
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-[#f5f0e6]"
                 >
                   {node.title}
                 </motion.h2>
@@ -1194,83 +1325,98 @@ export default function Home() {
                   initial={{ opacity: 0, filter: 'blur(4px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 }}
-                  className="font-script text-3xl text-[#8B0000] -rotate-1 inline-block"
+                  className="font-script text-3xl text-[#D4A574] -rotate-1 inline-block"
                 >
                   {node.text}
                 </motion.p>
               </div>
 
-              {/* Tarjeta de papel con la ficha del juego */}
-              <motion.div
-                initial={{ opacity: 0, y: 20, rotate: -2 }}
-                animate={{ opacity: 1, y: 0, rotate: -1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="paper-card stitch-border relative p-6 sm:p-10 mb-12"
+              {/* Intro del capítulo */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-center text-[#f5f0e6]/80 leading-relaxed mb-12 text-base sm:text-lg max-w-xl mx-auto"
               >
-                {/* Cintas washi */}
-                <div className="tape -top-3 left-8 -rotate-6" />
-                <div className="tape -top-3 right-8 rotate-3" />
+                {node.content}
+              </motion.p>
 
-                {/* Sello game dev */}
-                <div className="absolute -top-9 -right-3 sm:-right-9 stamp w-24 h-24 px-2 text-[9px] uppercase tracking-[0.15em] font-serif text-[#8B0000] bg-[#d9c49c]">
-                  Game · Dev · 2026
-                </div>
+              {/* Galería: una tarjeta de papel por juego */}
+              {GAMES.map((game, gi) => (
+                <motion.div
+                  key={game.id}
+                  initial={{ opacity: 0, y: 20, rotate: gi % 2 === 0 ? -2 : 2 }}
+                  animate={{ opacity: 1, y: 0, rotate: gi % 2 === 0 ? -1 : 1 }}
+                  transition={{ delay: 0.6 + gi * 0.2, duration: 0.5 }}
+                  className="paper-card stitch-border relative p-6 sm:p-10 mb-12"
+                >
+                  {/* Cintas washi */}
+                  <div className="tape -top-3 left-8 -rotate-6" />
+                  <div className="tape -top-3 right-8 rotate-3" />
 
-                <p className="text-[#2a2018]/80 leading-relaxed whitespace-pre-line mb-10 text-base sm:text-lg">
-                  {node.content}
-                </p>
+                  {/* Sello game dev */}
+                  <div className="absolute -top-9 -right-3 sm:-right-9 stamp w-24 h-24 px-2 text-[9px] uppercase tracking-[0.15em] font-serif text-[#8B0000] bg-[#d9c49c]">
+                    Game · Dev · {game.year}
+                  </div>
 
-                {/* Ficha técnica */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-center">
-                  {[
-                    { label: 'Rol', value: 'Programadora' },
-                    { label: 'Motor', value: 'Unity 6' },
-                    { label: 'Lenguaje', value: 'C#' },
-                    { label: 'Género', value: 'Runner 2D' },
-                  ].map(item => (
-                    <div key={item.label} className="stitch-border-gold p-3 bg-[#d9c49c]/50">
-                      <p className="text-[10px] uppercase tracking-widest text-[#A0522D] mb-1">{item.label}</p>
-                      <p className="font-serif text-[#2a2018]">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
+                  <h3 className="font-serif text-3xl sm:text-4xl text-[#2a2018] mb-5">{game.title}</h3>
 
-                {/* Banderín de enlaces */}
-                <p className="font-script text-2xl text-[#8B0000] mb-4 -rotate-1">Enlaces para ver más…</p>
-                <div className="flex flex-wrap gap-4">
-                  <a
-                    href="https://tarjah.itch.io/quemasparcero"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-4 bg-[#8B0000] text-[#f7f1e4] font-serif tracking-wider hover:bg-[#6B0000] transition-all flex items-center gap-3"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                    Jugar en itch.io
-                  </a>
-                  <a
-                    href="https://github.com/tatyajh/QueMasParceroBeta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-4 stitch-border text-[#2a2018] font-serif tracking-wider hover:bg-[#8B0000]/5 transition-all flex items-center gap-3"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                    </svg>
-                    Ver el código
-                  </a>
-                </div>
-              </motion.div>
+                  <p className="text-[#2a2018]/80 leading-relaxed mb-10 text-base sm:text-lg">
+                    {game.desc}
+                  </p>
+
+                  {/* Ficha técnica */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-center">
+                    {[
+                      { label: 'Rol', value: game.rol },
+                      { label: 'Motor', value: game.motor },
+                      { label: 'Lenguaje', value: game.lenguaje },
+                      { label: 'Género', value: game.genero },
+                    ].map(item => (
+                      <div key={item.label} className="stitch-border-gold p-3 bg-[#d9c49c]/50">
+                        <p className="text-[10px] uppercase tracking-widest text-[#A0522D] mb-1">{item.label}</p>
+                        <p className="font-serif text-[#2a2018]">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Banderín de enlaces */}
+                  <p className="font-script text-2xl text-[#8B0000] mb-4 -rotate-1">Enlaces para ver más…</p>
+                  <div className="flex flex-wrap gap-4">
+                    <a
+                      href={game.playUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-8 py-4 bg-[#8B0000] text-[#f7f1e4] font-serif tracking-wider hover:bg-[#6B0000] transition-all flex items-center gap-3"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                      Jugar en itch.io
+                    </a>
+                    <a
+                      href={game.codeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-8 py-4 stitch-border text-[#2a2018] font-serif tracking-wider hover:bg-[#8B0000]/5 transition-all flex items-center gap-3"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                      </svg>
+                      Ver el código
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
 
               {/* Nota manuscrita */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9 }}
-                className="font-script text-xl text-center text-[#6b5540] rotate-1 mb-12"
+                className="font-script text-xl text-center text-[#D4A574]/80 rotate-1 mb-12"
               >
-                * pronto por aquí: un gif del frijol en acción *
+                * pronto por aquí: un gif del paisa en acción *
               </motion.p>
 
               {/* Navegación inferior */}
@@ -1280,7 +1426,7 @@ export default function Home() {
                 transition={{ delay: 0.6 }}
                 className="space-y-4"
               >
-                <p className="text-center text-xs uppercase tracking-[0.3em] text-[#8B0000]/40">
+                <p className="text-center text-xs uppercase tracking-[0.3em] text-[#E8C9A0]/40">
                   {LINEAR_ORDER.indexOf('juego') + 1} / {LINEAR_ORDER.length}
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
@@ -1299,7 +1445,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigateTo('mapa')}
-                    className="px-6 py-3 stitch-border transition-all tracking-wider flex items-center gap-2 text-[#8B0000] hover:bg-[#8B0000]/5"
+                    className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-[#E8C9A0] hover:bg-[#E8C9A0]/10"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="12" r="3"/>
@@ -1312,7 +1458,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && (
+          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && currentNode !== 'tecnico' && (
             <div className="w-full max-w-3xl">
               {/* Línea decorativa */}
               <motion.div
