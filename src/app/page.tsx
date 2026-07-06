@@ -107,7 +107,7 @@ const NODES: Record<string, Node> = {
     id: 'cuerpo',
     title: 'Cuerpo',
     category: 'expresion',
-    subtitle: 'Capítulo 9',
+    subtitle: 'Capítulo 8',
     text: 'Después entendí el cuerpo desde dentro.',
     content: 'El pole dance me enseñó movimiento, fuerza, control. Sentir el cuerpo como territorio, no como objeto. He competido en pole y gané medalla de plata — una de las cosas que más me ha enseñado sobre disciplina, confianza y presencia.\n\nLo que empezó como deporte se convirtió en otra forma de crear.',
     videos: [MEDIA.video.pole, MEDIA.video.pole2],
@@ -119,7 +119,7 @@ const NODES: Record<string, Node> = {
     id: 'quiebre',
     title: 'Quiebre',
     category: 'transformacion',
-    subtitle: 'Capítulo 10',
+    subtitle: 'Capítulo 9',
     text: 'Durante mucho tiempo creí que no era una persona creativa.',
     content: 'Aprendí a encontrar valor en la lógica, la estructura y las respuestas correctas.\n\nY aunque crecí rodeada de arte, costura e historias de creación, nunca pensé que ese mundo también podía pertenecerme.\n\nLa vida terminó cuestionando esa idea.\n\nEl accidente cerebrovascular de mi padre, la experiencia de vivir lejos de casa y la dificultad de comunicarme en otro idioma me obligaron a mirar las cosas desde otro lugar.\n\nFue entonces cuando entendí algo que había pasado por alto durante años:\n\nlas cosas hechas con las manos también son una forma de lenguaje.\n\nY quizá la creatividad nunca estuvo ausente.\n\nQuizá simplemente había aprendido a no verla.',
     gallery: MEDIA.images.quiebre,
@@ -130,7 +130,7 @@ const NODES: Record<string, Node> = {
     id: 'diseno',
     title: 'Diseño de Modas',
     category: 'transformacion',
-    subtitle: 'Capítulo 11',
+    subtitle: 'Capítulo 10',
     text: 'Ya no solo construía estructuras. Empecé a construir ideas.',
     content: 'Moodboards, procesos creativos, desfiles, experimentación. El diseño de modas como lenguaje — no solo técnica, sino forma de pensar y comunicar.',
     media: { type: 'video', src: MEDIA.video.moda },
@@ -167,9 +167,9 @@ const NODES: Record<string, Node> = {
   },
   juego: {
     id: 'juego',
-    title: 'Juegos',
-    category: 'expresion',
-    subtitle: 'Capítulo 8',
+    title: 'Videojuegos',
+    category: 'mixto',
+    subtitle: 'Capítulo 12',
     text: 'Cuando el código aprendió a jugar.',
     content: 'Lo que construyo cuando la lógica se vuelve juego: mundos pequeños, hechos en Unity y C#, jugables en el navegador.',
     connections: ['estructura', 'cuerpo', 'diseno', 'mapa'],
@@ -179,7 +179,7 @@ const NODES: Record<string, Node> = {
     id: 'mixto',
     title: 'Conexiones',
     category: 'mixto',
-    subtitle: 'Capítulo 12',
+    subtitle: 'Capítulo 11',
     text: 'Cuando las disciplinas se encuentran.',
     content: 'Hay momentos en que todo lo que soy converge en un solo instante. El cuerpo, el sonido, el movimiento. Sin separación.',
     videos: [MEDIA.video.mixto, MEDIA.video.mixto2],
@@ -213,18 +213,33 @@ const NODES: Record<string, Node> = {
 const CATEGORIES = {
   esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
   herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia', 'arte'] },
-  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'juego', 'cuerpo'] },
+  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
   transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
-  mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'proceso', 'fin'] },
+  mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'juego', 'proceso', 'fin'] },
 };
 
-//Galería de videojuegos del Capítulo 8: para agregar un juego nuevo,
+//Galería de videojuegos del Capítulo 12: para agregar un juego nuevo,
 //solo añade otra entrada a esta lista
-const GAMES = [
+interface Game {
+  id: string;
+  title: string;
+  year: string;
+  desc: string;
+  rol: string;
+  motor: string;
+  lenguaje: string;
+  genero: string;
+  playUrl: string;
+  codeUrl: string;
+  video?: string;
+}
+
+const GAMES: Game[] = [
   {
     id: 'quemasparcero',
     title: '¡Qué Más Parcero!',
     year: '2026',
+    video: '/media/video/juego-01.mp4',
     desc: 'Un paisa recorre los tejados de una comuna esquivando frijoles saltarines y recolectando empanadas. Salta, usa el súper salto gastando maná, recupera vida con pociones y aguanta: entre más lejos llegues, más rápido va todo. Hecho para el curso de Ubicua.',
     rol: 'Programadora',
     motor: 'Unity 6',
@@ -232,6 +247,35 @@ const GAMES = [
     genero: 'Runner 2D',
     playUrl: 'https://tarjah.itch.io/quemasparcero',
     codeUrl: 'https://github.com/tatyajh/QueMasParceroBeta',
+  },
+];
+
+//Proyectos de desarrollo del Capítulo 7 (Estructura): para agregar
+//uno nuevo, solo añade otra entrada a esta lista
+const PROJECTS = [
+  {
+    id: 'mivaquita',
+    title: 'Mi Vaquita',
+    desc: 'Aplicación full-stack para gestionar gastos compartidos entre amigos: frontend en React y API REST en Express con arquitectura de 3 capas.',
+    stack: 'React · Express · Node.js',
+    links: [
+      { label: 'Frontend', url: 'https://github.com/tatyajh/Mi-Vaquita-FE' },
+      { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
+    ],
+  },
+  {
+    id: 'venux',
+    title: 'Venux',
+    desc: 'App de citas móvil: swipe de perfiles, matches y chat en 7 pantallas, construida con React Native y Expo.',
+    stack: 'React Native · Expo',
+    links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
+  },
+  {
+    id: 'portafolio',
+    title: 'Hilos Invisibles',
+    desc: 'Este mismo portafolio: una experiencia narrativa interactiva con nodos, música y collage — mi demo frontend viviente.',
+    stack: 'Next.js · TypeScript · Framer Motion',
+    links: [{ label: 'Código', url: 'https://github.com/tatyajh/portafolio' }],
   },
 ];
 
@@ -382,13 +426,13 @@ const LINEAR_ORDER = [
   // Temp 3 - Expresión
   'sonido',     // Cap 6
   'estructura', // Cap 7
-  'juego',      // Cap 8
-  'cuerpo',     // Cap 9
+  'cuerpo',     // Cap 8
   // Temp 4 - Transformación
-  'quiebre',    // Cap 10
-  'diseno',     // Cap 11
+  'quiebre',    // Cap 9
+  'diseno',     // Cap 10
   // Temp 5 - Conexiones
-  'mixto',      // Cap 12
+  'mixto',      // Cap 11
+  'juego',      // Cap 12
   'proceso',    // Cap 13
   'fin',        // Cierre
 ] as const;
@@ -402,15 +446,15 @@ const SEASONS: Record<string, { name: string; total: number }> = {
   perfil: { name: 'Temporada 1: Esencia', total: 3 },
   herencia: { name: 'Temporada 2: Raíces', total: 2 },
   arte: { name: 'Temporada 2: Raíces', total: 2 },
-  sonido: { name: 'Temporada 3: Expresión', total: 4 },
-  estructura: { name: 'Temporada 3: Expresión', total: 4 },
-  juego: { name: 'Temporada 3: Expresión', total: 4 },
-  cuerpo: { name: 'Temporada 3: Expresión', total: 4 },
+  sonido: { name: 'Temporada 3: Expresión', total: 3 },
+  estructura: { name: 'Temporada 3: Expresión', total: 3 },
+  cuerpo: { name: 'Temporada 3: Expresión', total: 3 },
   quiebre: { name: 'Temporada 4: Transformación', total: 2 },
   diseno: { name: 'Temporada 4: Transformación', total: 2 },
-  mixto: { name: 'Temporada 5: Conexiones', total: 3 },
-  proceso: { name: 'Temporada 5: Conexiones', total: 3 },
-  fin: { name: 'Temporada 5: Conexiones', total: 3 },
+  mixto: { name: 'Temporada 5: Conexiones', total: 4 },
+  juego: { name: 'Temporada 5: Conexiones', total: 4 },
+  proceso: { name: 'Temporada 5: Conexiones', total: 4 },
+  fin: { name: 'Temporada 5: Conexiones', total: 4 },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1235,7 +1279,7 @@ export default function Home() {
                 {[
                   { id: 'perfil', num: '03', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
                   { id: 'estructura', num: '07', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
-                  { id: 'juego', num: '08', title: 'Juegos', desc: 'Videojuegos en Unity y C#, publicados y jugables en el navegador.' },
+                  { id: 'juego', num: '12', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
@@ -1303,7 +1347,7 @@ export default function Home() {
                   transition={{ delay: 0.1 }}
                   className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#E8C9A0]/50"
                 >
-                  Temporada 3: Expresión
+                  Temporada 5: Conexiones
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
@@ -1361,6 +1405,20 @@ export default function Home() {
 
                   <h3 className="font-serif text-3xl sm:text-4xl text-[#2a2018] mb-5">{game.title}</h3>
 
+                  {/* Gameplay en loop */}
+                  {game.video && (
+                    <div className="mb-8 stitch-border-gold overflow-hidden">
+                      <video
+                        src={game.video}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  )}
+
                   <p className="text-[#2a2018]/80 leading-relaxed mb-10 text-base sm:text-lg">
                     {game.desc}
                   </p>
@@ -1408,16 +1466,6 @@ export default function Home() {
                   </div>
                 </motion.div>
               ))}
-
-              {/* Nota manuscrita */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
-                className="font-script text-xl text-center text-[#D4A574]/80 rotate-1 mb-12"
-              >
-                * pronto por aquí: un gif del paisa en acción *
-              </motion.p>
 
               {/* Navegación inferior */}
               <motion.div
@@ -1528,6 +1576,46 @@ export default function Home() {
                 >
                   {node.content}
                 </motion.p>
+              )}
+
+              {/* Proyectos de desarrollo - solo en estructura */}
+              {node.id === 'estructura' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="mb-12 space-y-6"
+                >
+                  <p className="font-script text-2xl text-center text-[#D4A574] -rotate-1">
+                    algunas cosas que he construido…
+                  </p>
+                  {PROJECTS.map((p, i) => (
+                    <div
+                      key={p.id}
+                      className={`paper-card stitch-border relative p-5 sm:p-6 ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
+                    >
+                      <div className="tape -top-3 left-8 -rotate-6" />
+                      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                        <h3 className="font-serif text-2xl text-[#2a2018]">{p.title}</h3>
+                        <span className="text-[10px] uppercase tracking-widest text-[#A0522D]">{p.stack}</span>
+                      </div>
+                      <p className="font-script text-lg text-[#6b5540] leading-snug mb-4">{p.desc}</p>
+                      <div className="flex flex-wrap gap-3">
+                        {p.links.map(l => (
+                          <a
+                            key={l.label}
+                            href={l.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-[#8B0000] hover:bg-[#8B0000]/5 transition-all"
+                          >
+                            {l.label} ↗
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
               )}
 
               {/* Chips de herramientas - solo en perfil */}
