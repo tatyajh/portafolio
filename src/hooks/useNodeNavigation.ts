@@ -41,6 +41,15 @@ export function useNodeNavigation() {
     }
   }, [currentNode, navigateTo]);
 
+  // Volver al inicio: le avisa a AudioEngine que vuelva a mostrar el
+  // splash (que de otro modo no tiene forma de reactivarse una vez
+  // hasInteracted queda en true) antes de vaciar el contenido.
+  const goHome = useCallback(() => {
+    if (isTransitioning) return;
+    window.dispatchEvent(new CustomEvent('returnToSplash'));
+    navigateTo('inicio');
+  }, [isTransitioning, navigateTo]);
+
   const isFirstInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === 0;
   const isLastInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === LINEAR_ORDER.length - 1;
   const isInLinear = LINEAR_ORDER.includes(currentNode as typeof LINEAR_ORDER[number]);
@@ -67,6 +76,7 @@ export function useNodeNavigation() {
     history,
     isTransitioning,
     navigateTo,
+    goHome,
     goToNext,
     goToPrevious,
     isFirstInLinear,

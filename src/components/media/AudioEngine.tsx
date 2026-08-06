@@ -122,6 +122,15 @@ export default function AudioEngine() {
     };
   }, []);
 
+  // Volver a mostrar el splash cuando la navegación pide "Home"
+  // (hasInteracted no tiene otra forma de resetearse una vez es true).
+  // El audio de fondo sigue sonando igual, solo vuelve el overlay.
+  useEffect(() => {
+    const handleReturnToSplash = () => setHasInteracted(false);
+    window.addEventListener('returnToSplash', handleReturnToSplash);
+    return () => window.removeEventListener('returnToSplash', handleReturnToSplash);
+  }, []);
+
   return (
     <>
       {/* Audio de fondo - sin loop para permitir playlist */}
