@@ -15,5 +15,17 @@ export const GAMES: Game[] = [
     genero: 'Runner 2D',
     playUrl: 'https://tarjah.itch.io/quemasparcero',
     codeUrl: 'https://github.com/tatyajh/QueMasParceroBeta',
+    // architecture: cada item reformula mínimamente (label + reordenado) una
+    // viñeta literal de "Características técnicas" del README real del
+    // proyecto (D:\Generation\Unity\QueMasParceroBeta\README.md). No se
+    // añade ninguna afirmación técnica que no esté en ese README.
+    architecture: [
+      { label: 'Nivel procedural', detail: 'Bloques prefabricados que se instancian y destruyen dinámicamente a medida que el jugador avanza.' },
+      { label: 'Máquina de estados', detail: 'Menú, en juego y game over, controlados por un GameManager singleton.' },
+      { label: 'Física 2D', detail: 'Rigidbody2D, raycast para detección de suelo y capas de colisión.' },
+      { label: 'Vida y maná', detail: 'Barras de UI para vida y maná; el súper salto tiene costo de maná.' },
+      { label: 'Persistencia', detail: 'El puntaje máximo se guarda con PlayerPrefs.' },
+      { label: 'Cámara', detail: 'Seguimiento suavizado del jugador con SmoothDamp.' },
+    ],
   },
 ];

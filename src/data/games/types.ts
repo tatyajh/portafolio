@@ -10,4 +10,5 @@ export interface Game {
   playUrl: string;
   codeUrl: string;
   video?: string;
+  architecture?: { label: string; detail: string }[];
 }
