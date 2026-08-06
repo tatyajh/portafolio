@@ -1,0 +1,12 @@
+# Never apply line-ending conversion to binary media — corrupts the file.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.mp3 binary
+*.mp4 binary
+*.mov binary
+*.zip binary
