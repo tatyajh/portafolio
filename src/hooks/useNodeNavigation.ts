@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from 'react';
-import { NODES, LINEAR_ORDER } from '@/data/nodes';
+import { NODES, LINEAR_ORDER, TECH_ROUTE_ORDER } from '@/data/nodes';
 
 export function useNodeNavigation() {
   const [currentNode, setCurrentNode] = useState<string>('inicio');
@@ -9,6 +9,18 @@ export function useNodeNavigation() {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const node = NODES[currentNode] ?? NODES['esencia'];
+
+  // Si el nodo actual pertenece a la ruta técnica Y se llegó a él desde
+  // esa misma ruta (el nodo previo en el historial es "tecnico" u otro
+  // paso de la ruta), siguiente/anterior avanzan dentro de esa ruta
+  // corta en vez de saltar al orden narrativo completo — evita que
+  // desde Perfil "siguiente" aterrice en un capítulo emocional sin
+  // relación (ej. Herencia) cuando el visitante venía por lo técnico.
+  const previousNode = history.length >= 2 ? history[history.length - 2] : undefined;
+  const isTechRouteContext =
+    (TECH_ROUTE_ORDER as readonly string[]).includes(currentNode) &&
+    (previousNode === 'tecnico' || (TECH_ROUTE_ORDER as readonly string[]).includes(previousNode ?? ''));
+  const activeOrder: readonly string[] = isTechRouteContext ? TECH_ROUTE_ORDER : LINEAR_ORDER;
 
   const navigateTo = useCallback((nodeId: string) => {
     if (isTransitioning || !NODES[nodeId]) return;
@@ -26,20 +38,20 @@ export function useNodeNavigation() {
     }, 300);
   }, [isTransitioning, currentNode]);
 
-  // Navegación lineal
+  // Navegación lineal (narrativa o ruta técnica, según el contexto)
   const goToNext = useCallback(() => {
-    const currentIndex = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]);
-    if (currentIndex >= 0 && currentIndex < LINEAR_ORDER.length - 1) {
-      navigateTo(LINEAR_ORDER[currentIndex + 1]);
+    const currentIndex = activeOrder.indexOf(currentNode);
+    if (currentIndex >= 0 && currentIndex < activeOrder.length - 1) {
+      navigateTo(activeOrder[currentIndex + 1]);
     }
-  }, [currentNode, navigateTo]);
+  }, [currentNode, navigateTo, activeOrder]);
 
   const goToPrevious = useCallback(() => {
-    const currentIndex = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]);
+    const currentIndex = activeOrder.indexOf(currentNode);
     if (currentIndex > 0) {
-      navigateTo(LINEAR_ORDER[currentIndex - 1]);
+      navigateTo(activeOrder[currentIndex - 1]);
     }
-  }, [currentNode, navigateTo]);
+  }, [currentNode, navigateTo, activeOrder]);
 
   // Volver al inicio: le avisa a AudioEngine que vuelva a mostrar el
   // splash (que de otro modo no tiene forma de reactivarse una vez
@@ -50,9 +62,11 @@ export function useNodeNavigation() {
     navigateTo('inicio');
   }, [isTransitioning, navigateTo]);
 
-  const isFirstInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === 0;
-  const isLastInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === LINEAR_ORDER.length - 1;
-  const isInLinear = LINEAR_ORDER.includes(currentNode as typeof LINEAR_ORDER[number]);
+  const activeIndex = activeOrder.indexOf(currentNode);
+  const isFirstInLinear = activeIndex === 0;
+  const isLastInLinear = activeIndex === activeOrder.length - 1;
+  const isInLinear = activeIndex >= 0;
+  const nextNodeId = isInLinear && !isLastInLinear ? activeOrder[activeIndex + 1] : undefined;
 
   // Escuchar eventos de navegación del AudioEngine
   useEffect(() => {
@@ -80,5 +94,6 @@ export function useNodeNavigation() {
     isFirstInLinear,
     isLastInLinear,
     isInLinear,
+    nextNodeId,
   };
 }

@@ -30,6 +30,7 @@ export default function Home() {
     isFirstInLinear,
     isLastInLinear,
     isInLinear,
+    nextNodeId,
   } = useNodeNavigation();
 
   useKeyboardNavigation({
@@ -57,7 +58,7 @@ export default function Home() {
   return (
     <div className={`min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' : undefined }}>
-      <BackgroundLayer visible={['mapa', 'tecnico', 'juego', 'resume'].includes(currentNode)} />
+      <BackgroundLayer visible={['mapa', 'tecnico', 'juego'].includes(currentNode)} />
       <AudioEngine />
 
       {/* Navegación persistente flotante - oculta durante splash */}
@@ -69,6 +70,7 @@ export default function Home() {
         isFirstInLinear={isFirstInLinear}
         isLastInLinear={isLastInLinear}
         isInLinear={isInLinear}
+        nextNodeId={nextNodeId}
         onPrevious={goToPrevious}
         onNext={goToNext}
         onGoToMap={() => navigateTo('mapa')}
@@ -297,10 +299,9 @@ export default function Home() {
 
               <div className="space-y-5 mb-12">
                 {[
-                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
+                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV completo y enlaces.' },
                   { id: 'estructura', num: '02', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
                   { id: 'juego', num: '03', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
-                  { id: 'resume', num: '04', title: 'Currículum', desc: 'Experiencia, educación y formación completas — con PDF descargable.' },
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
@@ -336,59 +337,7 @@ export default function Home() {
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
                   </svg>
-                  <span>Ver toda la historia</span>
-                </motion.button>
-              </div>
-            </div>
-          )}
-
-          {/* ═══ NODO RESUME - CV real, tal cual, para reclutadores ═══ */}
-          {currentNode === 'resume' && (
-            <div className="w-full max-w-2xl">
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="font-script text-2xl sm:text-3xl text-center text-[#D4A574]/90 -rotate-2 mb-8"
-              >
-                mi trayectoria, sin rodeos
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="overflow-hidden border border-[#8B0000]/10 mb-10"
-              >
-                <img
-                  src="/media/cv/cv.png"
-                  alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
-                  className="w-full h-auto object-contain"
-                />
-              </motion.div>
-
-              <ResumeDownloadButton />
-
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-                className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-10"
-              />
-
-              <ResumeLinks />
-
-              <div className="flex justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigateTo('tecnico')}
-                  className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-[#E8C9A0] hover:bg-[#E8C9A0]/10"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                  <span>Volver a Lo técnico</span>
+                  <span>Explorar el resto del portafolio</span>
                 </motion.button>
               </div>
             </div>
@@ -604,8 +553,30 @@ export default function Home() {
                 </motion.div>
               )}
 
+              {/* Hoja de vida completa - solo en perfil, la imagen real tal cual */}
+              {node.id === 'perfil' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mb-10"
+                >
+                  <p className="font-script text-2xl text-center text-[#D4A574] -rotate-1 mb-4">
+                    mi hoja de vida completa
+                  </p>
+                  <div className="overflow-hidden border border-[#8B0000]/10 mb-6">
+                    <img
+                      src="/media/cv/cv.png"
+                      alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
+                  <ResumeDownloadButton />
+                </motion.div>
+              )}
+
               {/* Línea decorativa */}
-              <motion.div 
+              <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}

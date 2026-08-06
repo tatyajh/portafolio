@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { NODES, LINEAR_ORDER, CATEGORIES, STAMP_COLORS } from '@/data/nodes';
+import { NODES, CATEGORIES, STAMP_COLORS } from '@/data/nodes';
 import { RESUME_LINKS } from '@/data/resume';
 import { getJourneyProgress } from '@/lib/progress';
 
@@ -14,6 +14,7 @@ interface PersistentNavProps {
   isFirstInLinear: boolean;
   isLastInLinear: boolean;
   isInLinear: boolean;
+  nextNodeId?: string;
   onPrevious: () => void;
   onNext: () => void;
   onGoToMap: () => void;
@@ -22,8 +23,8 @@ interface PersistentNavProps {
 }
 
 const RECRUITER_TARGETS = [
-  { id: 'resume', label: 'CV completo', activeOn: ['resume'] },
-  { id: 'tecnico', label: 'Ruta Técnica', activeOn: ['tecnico', 'perfil', 'estructura'] },
+  { id: 'tecnico', label: 'Ruta Técnica', activeOn: ['tecnico', 'estructura'] },
+  { id: 'perfil', label: 'CV completo', activeOn: ['perfil'] },
   { id: 'juego', label: 'Game Dev', activeOn: ['juego'] },
 ];
 
@@ -112,6 +113,7 @@ export default function PersistentNav({
   isFirstInLinear,
   isLastInLinear,
   isInLinear,
+  nextNodeId,
   onPrevious,
   onNext,
   onGoToMap,
@@ -181,7 +183,7 @@ export default function PersistentNav({
         {isInLinear && !isLastInLinear && (
           <button
             onClick={onNext}
-            aria-label={`Siguiente: ${NODES[LINEAR_ORDER[LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) + 1]]?.title ?? ''}`}
+            aria-label={`Siguiente: ${nextNodeId ? NODES[nextNodeId]?.title ?? '' : ''}`}
             className={iconBtn}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
@@ -249,7 +251,7 @@ export default function PersistentNav({
         {isInLinear && !isLastInLinear && (
           <button
             onClick={onNext}
-            aria-label={`Siguiente: ${NODES[LINEAR_ORDER[LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) + 1]]?.title ?? ''}`}
+            aria-label={`Siguiente: ${nextNodeId ? NODES[nextNodeId]?.title ?? '' : ''}`}
             className={iconBtn}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>

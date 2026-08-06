@@ -40,3 +40,11 @@ export const SEASON_DEFS = [
 export const SEASONS: Record<string, { name: string; total: number }> = Object.fromEntries(
   SEASON_DEFS.flatMap(s => s.nodes.map(id => [id, { name: s.name, total: s.nodes.length }]))
 );
+
+// ═══════════════════════════════════════════════════════════════════
+// RUTA TÉCNICA - orden local para quien navega desde "Lo técnico"
+// (tarjetas rápidas del hub). Evita que las flechas siguiente/anterior
+// salten a capítulos narrativos no relacionados (ej. de Perfil a
+// Herencia) cuando el contexto de navegación es la ruta de reclutador.
+// ═══════════════════════════════════════════════════════════════════
+export const TECH_ROUTE_ORDER = ['perfil', 'estructura', 'juego'] as const;
