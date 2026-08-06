@@ -2,11 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import AudioEngine from '@/components/media/AudioEngine';
-import { MEDIA } from '@/lib/media';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 
-import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
-import type { Node } from '@/data/nodes';
+import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS } from '@/data/nodes';
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
