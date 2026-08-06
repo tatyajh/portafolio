@@ -14,6 +14,7 @@ import {
   ResumeSkills, ResumeExperience, ResumeFocusAreas, ResumeEducation, ResumeExtras,
 } from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
+import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -294,12 +295,15 @@ export default function Home() {
                 <p className="text-[#E8C9A0]/70">Perfil, código y juego. La historia completa te espera en el mapa.</p>
               </div>
 
+              <TechIdentity />
+              <TechMindset />
+
               <div className="space-y-5 mb-12">
                 {[
-                  { id: 'resume', num: 'CV', title: 'Currículum', desc: 'Experiencia, educación y formación completas — con PDF descargable.' },
-                  { id: 'perfil', num: '03', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
-                  { id: 'estructura', num: '07', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
-                  { id: 'juego', num: '12', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
+                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
+                  { id: 'estructura', num: '02', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
+                  { id: 'juego', num: '03', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
+                  { id: 'resume', num: '04', title: 'Currículum', desc: 'Experiencia, educación y formación completas — con PDF descargable.' },
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
@@ -322,23 +326,9 @@ export default function Home() {
                 ))}
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="flex flex-wrap justify-center gap-4"
-              >
-                <a
-                  href="https://github.com/tatyajh"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-[#E8C9A0] text-[#0a0808] font-serif tracking-wider hover:bg-[#F0D0A0] transition-all flex items-center gap-3"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                  </svg>
-                  GitHub
-                </a>
+              <ResumeLinks />
+
+              <div className="flex justify-center">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -351,7 +341,7 @@ export default function Home() {
                   </svg>
                   <span>Ver toda la historia</span>
                 </motion.button>
-              </motion.div>
+              </div>
             </div>
           )}
 
