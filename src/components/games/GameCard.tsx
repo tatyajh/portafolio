@@ -56,6 +56,21 @@ export default function GameCard({ game, index }: { game: Game; index: number })
         ))}
       </div>
 
+      {/* Por dentro - arquitectura técnica, sourced del README real del proyecto */}
+      {game.architecture && game.architecture.length > 0 && (
+        <div className="mb-10">
+          <p className="font-script text-2xl text-[#8B0000] mb-4 -rotate-1">Por dentro…</p>
+          <div className="stitch-border-gold p-5 bg-[#d9c49c]/30 divide-y divide-[#A0522D]/25">
+            {game.architecture.map(item => (
+              <div key={item.label} className="py-3 first:pt-0 last:pb-0 grid sm:grid-cols-[9rem_1fr] gap-1 sm:gap-4">
+                <p className="text-[11px] uppercase tracking-widest text-[#A0522D] font-serif">{item.label}</p>
+                <p className="text-[#2a2018]/85 text-sm sm:text-base leading-relaxed">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Banderín de enlaces */}
       <p className="font-script text-2xl text-[#8B0000] mb-4 -rotate-1">Enlaces para ver más…</p>
       <div className="flex flex-wrap gap-4">
