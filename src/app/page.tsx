@@ -10,6 +10,7 @@ import type { Node } from '@/data/nodes';
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
+import { ResumeTools, ResumeLinks } from '@/components/resume';
 
 // ═══════════════════════════════════════════════════════════════════
 // VIDEO RENDERER - Tamaños específicos por nodo
@@ -1061,35 +1062,7 @@ export default function Home() {
               )}
 
               {/* Chips de herramientas - solo en perfil */}
-              {node.tools && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="w-full mb-12 space-y-6"
-                >
-                  <div>
-                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Desarrollo</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {node.tools.digital.map(tool => (
-                        <span key={tool} className="px-3 py-1 border border-[#E8C9A0]/20 text-[#E8C9A0]/70 text-sm tracking-wide">
-                          {tool}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs tracking-widest uppercase text-[#8B0000] mb-3 text-center">Diseño de Modas</p>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {node.tools.diseno.map(tool => (
-                        <span key={tool} className="px-3 py-1 border border-[#8B0000]/40 text-[#E8C9A0]/70 text-sm tracking-wide">
-                          {tool}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+              {node.tools && <ResumeTools tools={node.tools} />}
 
               {/* Media - Videos con layouts específicos por nodo */}
               {(node.videos ?? (node.media ? [node.media.src as string] : [])).length > 0 && (
@@ -1143,48 +1116,7 @@ export default function Home() {
               />
 
               {/* Links externos - solo en perfil */}
-              {node.id === 'perfil' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex flex-wrap justify-center gap-4 mb-12"
-                >
-                  <a
-                    href="https://www.linkedin.com/in/tarjah/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                    LinkedIn
-                  </a>
-                  <a
-                    href="https://www.behance.net/tatianajaramil11"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.051-1.965-5.051-5.0 0-2.937 1.93-5 5.012-5 3.093 0 4.86 1.893 5.14 4.9H17.9c-.073-.854-.557-1.9-2.302-1.9-1.699 0-2.573 1.268-2.573 2.999 0 1.742.875 3 2.577 3 1.617 0 2.191-.938 2.387-2h2.737zM9.5 8.5H6v7h3.5c1.493 0 2.5-.828 2.5-2 0-.874-.455-1.547-1.168-1.836C11.355 11.42 11.75 10.73 11.75 10c0-1.133-.869-1.5-2.25-1.5zM8 10h1.25c.517 0 .75.207.75.58 0 .38-.28.58-.85.58H8v-1.16zm1.5 4H8v-1.5h1.5c.585 0 .875.271.875.75s-.29.75-.875.75zM16.5 5.5h-5v1.5h5V5.5z"/>
-                    </svg>
-                    Behance
-                  </a>
-                  <a
-                    href="https://github.com/tatyajh"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                    </svg>
-                    GitHub
-                  </a>
-                </motion.div>
-              )}
+              {node.id === 'perfil' && <ResumeLinks />}
 
               {/* Navegación inferior: Siguiente + Mapa */}
               <motion.div 
