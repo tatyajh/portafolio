@@ -386,24 +386,24 @@ export default function AudioEngine() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   setHasInteracted(true);
-                  // Emitir evento personalizado para explorar
-                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
-                }}
-                className="px-8 py-4 border border-[#E8C9A0]/50 text-[#E8C9A0] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#E8C9A0]/10 hover:border-[#E8C9A0] min-w-[200px]"
-              >
-                ✥ Explorar libremente
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  setHasInteracted(true);
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
                 className="px-8 py-4 border border-[#8B0000]/60 text-[#D4A574] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#8B0000]/15 hover:border-[#8B0000] min-w-[200px]"
               >
                 {'</>'} Directo a lo técnico
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setHasInteracted(true);
+                  // Emitir evento personalizado para explorar
+                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+                }}
+                className="px-8 py-4 border border-[#E8C9A0]/50 text-[#E8C9A0] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#E8C9A0]/10 hover:border-[#E8C9A0] min-w-[200px]"
+              >
+                ✥ Conoce más sobre mí
               </motion.button>
             </motion.div>
           </motion.div>

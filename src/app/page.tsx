@@ -9,10 +9,7 @@ import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS } from '@/data/n
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
-import {
-  ResumeTools, ResumeLinks, ResumeHeader, ResumeDownloadButton, ResumeSummary,
-  ResumeSkills, ResumeExperience, ResumeFocusAreas, ResumeEducation, ResumeExtras,
-} from '@/components/resume';
+import { ResumeTools, ResumeLinks, ResumeDownloadButton } from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
@@ -345,17 +342,32 @@ export default function Home() {
             </div>
           )}
 
-          {/* ═══ NODO RESUME - CV completo para reclutadores ═══ */}
+          {/* ═══ NODO RESUME - CV real, tal cual, para reclutadores ═══ */}
           {currentNode === 'resume' && (
-            <div className="w-full max-w-3xl">
-              <ResumeHeader />
+            <div className="w-full max-w-2xl">
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="font-script text-2xl sm:text-3xl text-center text-[#D4A574]/90 -rotate-2 mb-8"
+              >
+                mi trayectoria, sin rodeos
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="overflow-hidden border border-[#8B0000]/10 mb-10"
+              >
+                <img
+                  src="/media/cv/cv.png"
+                  alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
+                  className="w-full h-auto object-contain"
+                />
+              </motion.div>
+
               <ResumeDownloadButton />
-              <ResumeSummary />
-              <ResumeSkills />
-              <ResumeExperience />
-              <ResumeFocusAreas />
-              <ResumeEducation />
-              <ResumeExtras />
 
               <motion.div
                 initial={{ scaleX: 0 }}
