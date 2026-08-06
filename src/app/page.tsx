@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import AudioEngine from '@/components/media/AudioEngine';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS } from '@/data/nodes';
 import { PROJECTS } from '@/data/projects';
@@ -20,13 +21,24 @@ export default function Home() {
     currentNode,
     node,
     history,
+    isTransitioning,
     navigateTo,
+    goHome,
     goToNext,
     goToPrevious,
     isFirstInLinear,
     isLastInLinear,
     isInLinear,
   } = useNodeNavigation();
+
+  useKeyboardNavigation({
+    goToPrevious,
+    goToNext,
+    navigateTo,
+    goHome,
+    isTransitioning,
+    enabled: currentNode !== 'inicio',
+  });
 
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-[#1a1512]'; // Gris con tinte dorado
