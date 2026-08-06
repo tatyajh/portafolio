@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { NODES, LINEAR_ORDER, CATEGORIES, STAMP_COLORS } from '@/data/nodes';
 import { RESUME_LINKS } from '@/data/resume';
 import { getJourneyProgress } from '@/lib/progress';
@@ -32,6 +32,7 @@ function RecruiterPanel({
   textClass,
   panelBg,
   accentColor,
+  focusRing,
   githubUrl,
   linkedinUrl,
   onNavigate,
@@ -42,6 +43,7 @@ function RecruiterPanel({
   textClass: string;
   panelBg: string;
   accentColor: string;
+  focusRing: string;
   githubUrl?: string;
   linkedinUrl?: string;
   onNavigate: (nodeId: string) => void;
@@ -65,7 +67,7 @@ function RecruiterPanel({
                 key={t.id}
                 role="menuitem"
                 onClick={() => { onNavigate(t.id); onClose(); }}
-                className={`w-full text-left px-3 py-2 text-sm tracking-wide transition-colors ${textClass} hover:bg-current/10`}
+                className={`w-full text-left px-3 py-2 text-sm tracking-wide transition-colors ${textClass} hover:bg-current/10 ${focusRing}`}
                 style={active ? { color: accentColor, fontWeight: 600 } : undefined}
                 aria-current={active ? 'page' : undefined}
               >
@@ -79,7 +81,7 @@ function RecruiterPanel({
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block px-3 py-2 text-sm tracking-wide ${textClass} hover:bg-current/10`}
+              className={`block px-3 py-2 text-sm tracking-wide ${textClass} hover:bg-current/10 ${focusRing}`}
             >
               GitHub ↗
             </a>
@@ -90,7 +92,7 @@ function RecruiterPanel({
               href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block px-3 py-2 text-sm tracking-wide ${textClass} hover:bg-current/10`}
+              className={`block px-3 py-2 text-sm tracking-wide ${textClass} hover:bg-current/10 ${focusRing}`}
             >
               LinkedIn ↗
             </a>
@@ -116,6 +118,7 @@ export default function PersistentNav({
   onNavigate,
 }: PersistentNavProps) {
   const [shortcutOpen, setShortcutOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   if (currentNode === 'inicio') return null;
 
@@ -126,8 +129,16 @@ export default function PersistentNav({
   const textClass = theme === 'light' ? 'text-[#1a1512]' : 'text-[#E8C9A0]';
   const borderClass = theme === 'light' ? 'border-[#8B0000]/30 hover:bg-[#8B0000]/5' : 'border-[#E8C9A0]/30 hover:bg-[#E8C9A0]/10';
   const panelBg = theme === 'light' ? 'bg-[#faf5f0] border-[#8B0000]/20' : 'bg-[#0a0808] border-[#E8C9A0]/20';
+  const focusRing = theme === 'light'
+    ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B0000]'
+    : 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8C9A0]';
 
-  const iconBtn = `w-9 h-9 flex items-center justify-center border transition-all ${textClass} ${borderClass}`;
+  const iconBtn = `w-9 h-9 flex items-center justify-center border transition-all ${textClass} ${borderClass} ${focusRing}`;
+
+  // Entrada instantánea, sin desplazamiento, cuando el usuario prefiere menos movimiento
+  const navMotionProps = prefersReducedMotion
+    ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
+    : undefined;
 
   const githubUrl = RESUME_LINKS.find(l => l.label === 'GitHub')?.url;
   const linkedinUrl = RESUME_LINKS.find(l => l.label === 'LinkedIn')?.url;
@@ -138,6 +149,7 @@ export default function PersistentNav({
     textClass,
     panelBg,
     accentColor,
+    focusRing,
     githubUrl,
     linkedinUrl,
     onNavigate,
@@ -148,9 +160,7 @@ export default function PersistentNav({
     <>
       {/* Desktop / tablet: barra flotante superior derecha */}
       <motion.nav
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        {...(navMotionProps ?? { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 } })}
         aria-label="Navegación del portafolio"
         className="hidden md:flex fixed top-4 right-4 lg:top-6 lg:right-6 z-40 items-center gap-2"
       >
@@ -178,7 +188,7 @@ export default function PersistentNav({
         )}
 
         {currentNode !== 'mapa' && (
-          <button onClick={onGoToMap} aria-label="Volver al mapa" className={`h-9 px-3 flex items-center gap-2 border transition-all text-xs tracking-wider ${textClass} ${borderClass}`}>
+          <button onClick={onGoToMap} aria-label="Volver al mapa" className={`h-9 px-3 flex items-center gap-2 border transition-all text-xs tracking-wider ${textClass} ${borderClass} ${focusRing}`}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /></svg>
             <span className="hidden lg:inline">Mapa</span>
           </button>
@@ -206,9 +216,7 @@ export default function PersistentNav({
 
       {/* Mobile: barra inferior simplificada */}
       <motion.nav
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        {...(navMotionProps ?? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 } })}
         aria-label="Navegación del portafolio (móvil)"
         className={`flex md:hidden fixed bottom-0 inset-x-0 z-40 items-center justify-center gap-1 px-3 py-2 border-t backdrop-blur-sm ${
           theme === 'light' ? 'bg-[#faf5f0]/90 border-[#8B0000]/20' : 'bg-[#0a0808]/90 border-[#E8C9A0]/20'
