@@ -338,19 +338,10 @@ export default function AudioEngine() {
             />
 
             <motion.p
-              initial={{ opacity: 0, letterSpacing: '0.2em' }}
-              animate={{ opacity: 1, letterSpacing: '0.5em' }}
-              transition={{ delay: 0.4, duration: 1.2 }}
-              className="text-[#E8C9A0] text-sm sm:text-base uppercase mb-2 font-light tracking-widest"
-            >
-              Portafolio
-            </motion.p>
-
-            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 1 }}
-              className="text-[#8B0000] text-xs sm:text-sm uppercase tracking-[0.4em] mb-6 font-light"
+              transition={{ delay: 0.4, duration: 1 }}
+              className="text-[#8B0000] text-xs sm:text-sm uppercase tracking-[0.4em] mb-4 font-light"
             >
               Tatiana Alejandra Jaramillo
             </motion.p>
@@ -358,13 +349,20 @@ export default function AudioEngine() {
             <motion.h1
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
-              className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-6 text-[#f5f0e6] leading-none tracking-tight"
+              transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
+              className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-[#f5f0e6] leading-none tracking-tight uppercase"
             >
-              Hilos
-              <br />
-              <span className="text-[#8B0000]">Invisibles</span>
+              Portafolio
             </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-1 mb-6"
+            >
+              hilos invisibles
+            </motion.p>
 
             {/* Línea decorativa inferior - borgoña */}
             <motion.div
