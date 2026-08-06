@@ -9,7 +9,10 @@ import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS } from '@/data/n
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
-import { ResumeTools, ResumeLinks } from '@/components/resume';
+import {
+  ResumeTools, ResumeLinks, ResumeHeader, ResumeDownloadButton, ResumeSummary,
+  ResumeSkills, ResumeExperience, ResumeFocusAreas, ResumeEducation, ResumeExtras,
+} from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
 
@@ -56,7 +59,7 @@ export default function Home() {
   return (
     <div className={`min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' : undefined }}>
-      <BackgroundLayer visible={['mapa', 'tecnico', 'juego'].includes(currentNode)} />
+      <BackgroundLayer visible={['mapa', 'tecnico', 'juego', 'resume'].includes(currentNode)} />
       <AudioEngine />
 
       {/* Navegación persistente flotante - oculta durante splash */}
@@ -293,6 +296,7 @@ export default function Home() {
 
               <div className="space-y-5 mb-12">
                 {[
+                  { id: 'resume', num: 'CV', title: 'Currículum', desc: 'Experiencia, educación y formación completas — con PDF descargable.' },
                   { id: 'perfil', num: '03', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV, stack y enlaces.' },
                   { id: 'estructura', num: '07', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
                   { id: 'juego', num: '12', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
@@ -351,6 +355,43 @@ export default function Home() {
             </div>
           )}
 
+          {/* ═══ NODO RESUME - CV completo para reclutadores ═══ */}
+          {currentNode === 'resume' && (
+            <div className="w-full max-w-3xl">
+              <ResumeHeader />
+              <ResumeDownloadButton />
+              <ResumeSummary />
+              <ResumeSkills />
+              <ResumeExperience />
+              <ResumeFocusAreas />
+              <ResumeEducation />
+              <ResumeExtras />
+
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-10"
+              />
+
+              <ResumeLinks />
+
+              <div className="flex justify-center">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigateTo('tecnico')}
+                  className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-[#E8C9A0] hover:bg-[#E8C9A0]/10"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                  <span>Volver a Lo técnico</span>
+                </motion.button>
+              </div>
+            </div>
+          )}
+
           {/* ═══ NODO JUEGO - tarjeta game dev estilo collage ═══ */}
           {currentNode === 'juego' && (
             <div className="w-full max-w-3xl">
@@ -405,7 +446,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && currentNode !== 'tecnico' && (
+          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && currentNode !== 'tecnico' && currentNode !== 'resume' && (
             <div className="w-full max-w-3xl">
               {/* Línea decorativa */}
               <motion.div

@@ -22,6 +22,7 @@ interface PersistentNavProps {
 }
 
 const RECRUITER_TARGETS = [
+  { id: 'resume', label: 'CV completo', activeOn: ['resume'] },
   { id: 'tecnico', label: 'Ruta Técnica', activeOn: ['tecnico', 'perfil', 'estructura'] },
   { id: 'juego', label: 'Game Dev', activeOn: ['juego'] },
 ];

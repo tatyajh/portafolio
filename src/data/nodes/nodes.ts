@@ -26,7 +26,15 @@ export const NODES: Record<string, Node> = {
     title: 'Lo técnico',
     category: 'raiz',
     text: 'La ruta corta: perfil, código y juego.',
-    connections: ['perfil', 'estructura', 'juego', 'mapa'],
+    connections: ['perfil', 'estructura', 'juego', 'resume', 'mapa'],
+    theme: 'paper',
+  },
+  resume: {
+    id: 'resume',
+    title: 'Currículum',
+    category: 'raiz',
+    text: 'La trayectoria completa, para quien la necesita en detalle.',
+    connections: ['perfil', 'tecnico', 'mapa'],
     theme: 'paper',
   },
   esencia: {
@@ -143,7 +151,7 @@ export const NODES: Record<string, Node> = {
       diseno: ['Canva', 'Illustrator', 'Optitex'],
     },
     gallery: MEDIA.images.perfil,
-    connections: ['identidad', 'diseno', 'mapa'],
+    connections: ['identidad', 'diseno', 'resume', 'mapa'],
     theme: 'dark',
   },
   juego: {
