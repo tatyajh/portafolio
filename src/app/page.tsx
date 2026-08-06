@@ -519,7 +519,7 @@ export default function Home() {
 
               {/* Galería de imágenes - Layouts específicos por nodo */}
               {node.gallery && node.gallery.length > 0 && (
-                <GalleryRenderer nodeId={node.id} gallery={node.gallery} theme={node.theme} />
+                <GalleryRenderer nodeId={node.id} gallery={node.gallery} />
               )}
 
               {/* Videos moda 4-5 al final de diseño (después de imágenes) */}
