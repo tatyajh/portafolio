@@ -1,2 +1,10 @@
 export { default as ResumeTools } from './ResumeTools';
 export { default as ResumeLinks } from './ResumeLinks';
+export { default as ResumeHeader } from './ResumeHeader';
+export { default as ResumeDownloadButton } from './ResumeDownloadButton';
+export { default as ResumeSummary } from './ResumeSummary';
+export { default as ResumeSkills } from './ResumeSkills';
+export { default as ResumeExperience } from './ResumeExperience';
+export { default as ResumeFocusAreas } from './ResumeFocusAreas';
+export { default as ResumeEducation } from './ResumeEducation';
+export { default as ResumeExtras } from './ResumeExtras';
