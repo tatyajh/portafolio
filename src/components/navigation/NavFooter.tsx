@@ -44,6 +44,8 @@ export default function NavFooter({
             className={`px-8 py-4 border transition-all tracking-wider flex items-center gap-3 ${
               theme === 'light'
                 ? 'bg-[#8B0000] text-[#faf5f0] border-[#8B0000] hover:bg-[#6B0000]'
+                : theme === 'paper'
+                ? 'bg-[#8B0000] text-[#f7f1e4] border-[#8B0000] hover:bg-[#6B0000]'
                 : 'bg-[#E8C9A0] text-[#0a0808] border-[#E8C9A0] hover:bg-[#F0D0A0]'
             }`}
           >
@@ -59,10 +61,12 @@ export default function NavFooter({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onGoToMap}
-          className={`px-6 py-3 border transition-all tracking-wider flex items-center gap-2 ${
+          className={`px-6 py-3 transition-all tracking-wider flex items-center gap-2 ${
             theme === 'light'
-              ? 'border-[#8B0000]/30 text-[#8B0000] hover:border-[#8B0000]/60 hover:bg-[#8B0000]/5'
-              : 'border-[#E8C9A0]/30 text-[#E8C9A0] hover:border-[#E8C9A0]/60 hover:bg-[#E8C9A0]/5'
+              ? 'border border-[#8B0000]/30 text-[#8B0000] hover:border-[#8B0000]/60 hover:bg-[#8B0000]/5'
+              : theme === 'paper'
+              ? 'stitch-border-gold text-[#E8C9A0] hover:bg-[#E8C9A0]/10'
+              : 'border border-[#E8C9A0]/30 text-[#E8C9A0] hover:border-[#E8C9A0]/60 hover:bg-[#E8C9A0]/5'
           }`}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
