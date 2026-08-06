@@ -25,20 +25,18 @@ export const LINEAR_ORDER = [
 
 // ═══════════════════════════════════════════════════════════════════
 // TEMPORADAS PARA UI
+// `total` se deriva de la lista de nodos de cada temporada, no se
+// mantiene a mano — agregar/quitar un nodo de SEASON_DEFS actualiza
+// el total automáticamente, sin riesgo de desincronización.
 // ═══════════════════════════════════════════════════════════════════
-export const SEASONS: Record<string, { name: string; total: number }> = {
-  esencia: { name: 'Temporada 1: Esencia', total: 3 },
-  identidad: { name: 'Temporada 1: Esencia', total: 3 },
-  perfil: { name: 'Temporada 1: Esencia', total: 3 },
-  herencia: { name: 'Temporada 2: Raíces', total: 2 },
-  arte: { name: 'Temporada 2: Raíces', total: 2 },
-  sonido: { name: 'Temporada 3: Expresión', total: 3 },
-  estructura: { name: 'Temporada 3: Expresión', total: 3 },
-  cuerpo: { name: 'Temporada 3: Expresión', total: 3 },
-  quiebre: { name: 'Temporada 4: Transformación', total: 2 },
-  diseno: { name: 'Temporada 4: Transformación', total: 2 },
-  mixto: { name: 'Temporada 5: Conexiones', total: 4 },
-  juego: { name: 'Temporada 5: Conexiones', total: 4 },
-  proceso: { name: 'Temporada 5: Conexiones', total: 4 },
-  fin: { name: 'Temporada 5: Conexiones', total: 4 },
-};
+export const SEASON_DEFS = [
+  { name: 'Temporada 1: Esencia', nodes: ['esencia', 'identidad', 'perfil'] },
+  { name: 'Temporada 2: Raíces', nodes: ['herencia', 'arte'] },
+  { name: 'Temporada 3: Expresión', nodes: ['sonido', 'estructura', 'cuerpo'] },
+  { name: 'Temporada 4: Transformación', nodes: ['quiebre', 'diseno'] },
+  { name: 'Temporada 5: Conexiones', nodes: ['mixto', 'juego', 'proceso', 'fin'] },
+] as const;
+
+export const SEASONS: Record<string, { name: string; total: number }> = Object.fromEntries(
+  SEASON_DEFS.flatMap(s => s.nodes.map(id => [id, { name: s.name, total: s.nodes.length }]))
+);
