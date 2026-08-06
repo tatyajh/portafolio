@@ -430,7 +430,7 @@ export default function AudioEngine() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={toggleAudio}
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full border border-[#E8C9A0]/50 bg-[#0a0808]/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-[#E8C9A0]"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-12 h-12 rounded-full border border-[#E8C9A0]/50 bg-[#0a0808]/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-[#E8C9A0]"
           aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
         >
           {isPlaying ? (

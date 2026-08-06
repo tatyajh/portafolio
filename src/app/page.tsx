@@ -63,6 +63,7 @@ export default function Home() {
       <PersistentNav
         currentNode={currentNode}
         theme={node.theme}
+        category={node.category}
         history={history}
         isFirstInLinear={isFirstInLinear}
         isLastInLinear={isLastInLinear}
@@ -71,6 +72,7 @@ export default function Home() {
         onNext={goToNext}
         onGoToMap={() => navigateTo('mapa')}
         onGoHome={goHome}
+        onNavigate={navigateTo}
       />
 
       {/* Contenido principal */}
