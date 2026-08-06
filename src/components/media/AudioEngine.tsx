@@ -386,18 +386,6 @@ export default function AudioEngine() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   setHasInteracted(true);
-                  // Emitir evento personalizado para navegar
-                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'start' } }));
-                }}
-                className="px-8 py-4 bg-[#E8C9A0] text-[#0a0808] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#f5f0e6] min-w-[200px]"
-              >
-                ▶ Seguir la historia
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  setHasInteracted(true);
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}

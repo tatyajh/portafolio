@@ -60,8 +60,6 @@ export function useNodeNavigation() {
       const detail = (e as CustomEvent).detail;
       if (detail?.target === 'explore') {
         navigateTo('mapa');
-      } else if (detail?.target === 'start') {
-        navigateTo('esencia');
       } else if (detail?.target === 'tecnico') {
         navigateTo('tecnico');
       }

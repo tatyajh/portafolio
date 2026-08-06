@@ -10,7 +10,7 @@ import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks } from '@/components/resume';
-import { NavFooter, PersistentNav } from '@/components/navigation';
+import { PersistentNav } from '@/components/navigation';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -257,21 +257,11 @@ export default function Home() {
               )}
 
               {/* Línea decorativa */}
-              <motion.div 
+              <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
                 className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-10"
-              />
-
-              {/* Navegación inferior: Siguiente + Mapa */}
-              <NavFooter
-                currentNode={currentNode}
-                theme={node.theme}
-                isInLinear={isInLinear}
-                isLastInLinear={isLastInLinear}
-                onNext={goToNext}
-                onGoToMap={() => navigateTo('mapa')}
               />
             </div>
           )}
@@ -412,16 +402,6 @@ export default function Home() {
 
               {/* Galería: una tarjeta de papel por juego */}
               <GameList />
-
-              {/* Navegación inferior */}
-              <NavFooter
-                currentNode={currentNode}
-                theme={node.theme}
-                isInLinear={isInLinear}
-                isLastInLinear={isLastInLinear}
-                onNext={goToNext}
-                onGoToMap={() => navigateTo('mapa')}
-              />
             </div>
           )}
 
@@ -593,16 +573,6 @@ export default function Home() {
 
               {/* Links externos - solo en perfil */}
               {node.id === 'perfil' && <ResumeLinks />}
-
-              {/* Navegación inferior: Siguiente + Mapa */}
-              <NavFooter
-                currentNode={currentNode}
-                theme={node.theme}
-                isInLinear={isInLinear}
-                isLastInLinear={isLastInLinear}
-                onNext={goToNext}
-                onGoToMap={() => navigateTo('mapa')}
-              />
             </div>
           )}
         </motion.main>
