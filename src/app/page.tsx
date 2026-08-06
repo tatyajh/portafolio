@@ -10,7 +10,7 @@ import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks } from '@/components/resume';
-import { NavHeader, NavFooter } from '@/components/navigation';
+import { NavFooter, PersistentNav } from '@/components/navigation';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -59,13 +59,18 @@ export default function Home() {
       <BackgroundLayer visible={['mapa', 'tecnico', 'juego'].includes(currentNode)} />
       <AudioEngine />
 
-      {/* Header fijo - oculto durante splash */}
-      <NavHeader
+      {/* Navegación persistente flotante - oculta durante splash */}
+      <PersistentNav
         currentNode={currentNode}
         theme={node.theme}
-        isInLinear={isInLinear}
+        history={history}
         isFirstInLinear={isFirstInLinear}
+        isLastInLinear={isLastInLinear}
+        isInLinear={isInLinear}
         onPrevious={goToPrevious}
+        onNext={goToNext}
+        onGoToMap={() => navigateTo('mapa')}
+        onGoHome={goHome}
       />
 
       {/* Contenido principal */}
