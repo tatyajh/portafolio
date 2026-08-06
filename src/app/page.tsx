@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AudioEngine from '@/components/media/AudioEngine';
 import { MEDIA } from '@/lib/media';
+import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 
 import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
 import type { Node } from '@/data/nodes';
@@ -11,68 +11,24 @@ import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks } from '@/components/resume';
+import { NavHeader, NavFooter } from '@/components/navigation';
 import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
 
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════
 export default function Home() {
-  const [currentNode, setCurrentNode] = useState<string>('inicio');
-  const [history, setHistory] = useState<string[]>([]);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const node = NODES[currentNode] ?? NODES['esencia'];
-
-  const navigateTo = useCallback((nodeId: string) => {
-    if (isTransitioning || !NODES[nodeId]) return;
-    // Navegación instantánea desde splash screen
-    if (currentNode === 'inicio') {
-      setCurrentNode(nodeId);
-      setHistory(prev => [...prev, nodeId]);
-      return;
-    }
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentNode(nodeId);
-      setHistory(prev => [...prev, nodeId]);
-      setIsTransitioning(false);
-    }, 300);
-  }, [isTransitioning, currentNode]);
-
-  // Navegación lineal
-  const goToNext = useCallback(() => {
-    const currentIndex = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]);
-    if (currentIndex >= 0 && currentIndex < LINEAR_ORDER.length - 1) {
-      navigateTo(LINEAR_ORDER[currentIndex + 1]);
-    }
-  }, [currentNode, navigateTo]);
-
-  const goToPrevious = useCallback(() => {
-    const currentIndex = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]);
-    if (currentIndex > 0) {
-      navigateTo(LINEAR_ORDER[currentIndex - 1]);
-    }
-  }, [currentNode, navigateTo]);
-
-  const isFirstInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === 0;
-  const isLastInLinear = LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) === LINEAR_ORDER.length - 1;
-  const isInLinear = LINEAR_ORDER.includes(currentNode as typeof LINEAR_ORDER[number]);
-
-  // Escuchar eventos de navegación del AudioEngine
-  useEffect(() => {
-    const handleNavigate = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.target === 'explore') {
-        navigateTo('mapa');
-      } else if (detail?.target === 'start') {
-        navigateTo('esencia');
-      } else if (detail?.target === 'tecnico') {
-        navigateTo('tecnico');
-      }
-    };
-    window.addEventListener('navigateTo', handleNavigate);
-    return () => window.removeEventListener('navigateTo', handleNavigate);
-  }, [navigateTo]);
+  const {
+    currentNode,
+    node,
+    history,
+    navigateTo,
+    goToNext,
+    goToPrevious,
+    isFirstInLinear,
+    isLastInLinear,
+    isInLinear,
+  } = useNodeNavigation();
 
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-[#1a1512]'; // Gris con tinte dorado
@@ -94,30 +50,13 @@ export default function Home() {
       <AudioEngine />
 
       {/* Header fijo - oculto durante splash */}
-      <header className={`fixed top-0 left-0 right-0 z-50 p-4 sm:p-6 flex justify-between items-center ${currentNode === 'inicio' ? 'hidden' : ''}`}>
-        {/* Botón anterior (navegación lineal con nombre de nodo) */}
-        {isInLinear && !isFirstInLinear && (
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={goToPrevious}
-            className={`flex items-center gap-2 px-4 py-2 border transition-all ${
-              node.theme === 'light' 
-                ? 'border-[#D4A574]/30 text-[#D4A574] hover:bg-[#D4A574]/10' 
-                : 'border-[#E8C9A0]/40 text-[#E8C9A0] hover:bg-[#E8C9A0]/10'
-            }`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-            <span className="text-sm tracking-wider">
-              {NODES[LINEAR_ORDER[LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) - 1]]?.title}
-            </span>
-          </motion.button>
-        )}
-        {(!isInLinear || isFirstInLinear) && <div />}
-
-      </header>
+      <NavHeader
+        currentNode={currentNode}
+        theme={node.theme}
+        isInLinear={isInLinear}
+        isFirstInLinear={isFirstInLinear}
+        onPrevious={goToPrevious}
+      />
 
       {/* Contenido principal */}
       <AnimatePresence mode="wait">
@@ -696,60 +635,14 @@ export default function Home() {
               {node.id === 'perfil' && <ResumeLinks />}
 
               {/* Navegación inferior: Siguiente + Mapa */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="space-y-4"
-              >
-                {/* Indicador de capítulo */}
-                {isInLinear && (
-                  <p className={`text-center text-xs uppercase tracking-[0.3em] ${
-                    node.theme === 'light' ? 'text-[#8B0000]/40' : 'text-[#E8C9A0]/40'
-                  }`}>
-                    {LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) + 1} / {LINEAR_ORDER.length}
-                  </p>
-                )}
-                
-                <div className="flex flex-wrap justify-center gap-4">
-                  {/* Botón Siguiente */}
-                  {isInLinear && !isLastInLinear && (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={goToNext}
-                      className={`px-8 py-4 border transition-all tracking-wider flex items-center gap-3 ${
-                        node.theme === 'light'
-                          ? 'bg-[#8B0000] text-[#faf5f0] border-[#8B0000] hover:bg-[#6B0000]'
-                          : 'bg-[#E8C9A0] text-[#0a0808] border-[#E8C9A0] hover:bg-[#F0D0A0]'
-                      }`}
-                    >
-                      <span>{NODES[LINEAR_ORDER[LINEAR_ORDER.indexOf(currentNode as typeof LINEAR_ORDER[number]) + 1]]?.title}</span>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 18l6-6-6-6"/>
-                      </svg>
-                    </motion.button>
-                  )}
-
-                  {/* Botón Volver al mapa */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigateTo('mapa')}
-                    className={`px-6 py-3 border transition-all tracking-wider flex items-center gap-2 ${
-                      node.theme === 'light'
-                        ? 'border-[#8B0000]/30 text-[#8B0000] hover:border-[#8B0000]/60 hover:bg-[#8B0000]/5'
-                        : 'border-[#E8C9A0]/30 text-[#E8C9A0] hover:border-[#E8C9A0]/60 hover:bg-[#E8C9A0]/5'
-                    }`}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="3"/>
-                      <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                    </svg>
-                    <span>Volver al mapa</span>
-                  </motion.button>
-                </div>
-              </motion.div>
+              <NavFooter
+                currentNode={currentNode}
+                theme={node.theme}
+                isInLinear={isInLinear}
+                isLastInLinear={isLastInLinear}
+                onNext={goToNext}
+                onGoToMap={() => navigateTo('mapa')}
+              />
             </div>
           )}
         </motion.main>
