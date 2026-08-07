@@ -43,21 +43,21 @@ export default function Home() {
   });
 
   const getBgClass = () => {
-    if (node.theme === 'accent') return 'bg-[#1a1512]'; // Gris con tinte dorado
-    if (node.theme === 'light') return 'bg-[#faf5f0]'; // Crema muy claro
+    if (node.theme === 'accent') return 'bg-black-warm'; // Gris con tinte dorado
+    if (node.theme === 'light') return 'bg-ivory-pale'; // Crema muy claro
     if (node.theme === 'paper') return 'paper-bg'; // Papel collage
-    return 'bg-[#0a0808]'; // Negro profundo
+    return 'bg-black'; // Negro profundo
   };
 
   const getTextClass = () => {
-    if (node.theme === 'light') return 'text-[#1a1512]';
-    if (node.theme === 'paper') return 'text-[#f5f0e6]'; // Marfil sobre mesa oscura
-    return 'text-[#f5f0e6]'; // Marfil
+    if (node.theme === 'light') return 'text-black-warm';
+    if (node.theme === 'paper') return 'text-ivory'; // Marfil sobre mesa oscura
+    return 'text-ivory'; // Marfil
   };
 
   return (
     <div className={`relative z-0 min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
-      style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' : undefined }}>
+      style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' : undefined }}>
       <BackgroundLayer visible={currentNode !== 'inicio'} section={currentNode} />
       <AudioEngine />
 
@@ -93,13 +93,13 @@ export default function Home() {
           {currentNode === 'mapa' && (
             <div className="w-full max-w-5xl relative">
               <div className="text-center mb-12">
-                <p className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-2 mb-1">los hilos de mi historia…</p>
-                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-[#f5f0e6]">Índice</h2>
+                <p className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1">los hilos de mi historia…</p>
+                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-ivory">Índice</h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
-                <p className="text-[#E8C9A0]/70">Elige cualquier nodo. No hay orden correcto.</p>
+                <p className="text-gold/70">Elige cualquier nodo. No hay orden correcto.</p>
                 <button
                   onClick={() => navigateTo('tecnico')}
-                  className="mt-3 font-script text-xl text-[#D4A574] hover:text-[#E8C9A0] transition-colors underline decoration-dashed underline-offset-4"
+                  className="mt-3 font-script text-xl text-gold-mid hover:text-gold transition-colors underline decoration-dashed underline-offset-4"
                 >
                   ¿vienes por lo técnico? atajo por aquí →
                 </button>
@@ -114,7 +114,7 @@ export default function Home() {
                     {/* Sello de categoría tipo estampilla */}
                     <div className="flex justify-center">
                       <div
-                        className="stamp w-24 h-24 px-2 text-[11px] font-semibold tracking-[0.08em] uppercase font-serif bg-[#eadfc2]"
+                        className="stamp w-24 h-24 px-2 text-[11px] font-semibold tracking-[0.08em] uppercase font-serif bg-paper"
                         style={{ color: stampColor, transform: 'rotate(-3deg)' }}
                       >
                         {cat.label}
@@ -143,14 +143,14 @@ export default function Home() {
                               </span>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
-                                  <span className="font-serif text-lg text-[#2a2018]">{n.title}</span>
+                                  <span className="font-serif text-lg text-ink">{n.title}</span>
                                   {visited && (
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={stampColor} strokeWidth="3">
                                       <path d="M20 6L9 17l-5-5"/>
                                     </svg>
                                   )}
                                 </div>
-                                <p className="font-script text-base leading-tight text-[#6b5540] line-clamp-2">{n.text}</p>
+                                <p className="font-script text-base leading-tight text-ink-light line-clamp-2">{n.text}</p>
                               </div>
                             </div>
                           </motion.button>
@@ -164,7 +164,7 @@ export default function Home() {
 
               {/* Progreso */}
               <div className="mt-12 text-center">
-                <p className="font-script text-xl text-[#D4A574]/70">
+                <p className="font-script text-xl text-gold-mid/70">
                   hilvanado: {new Set(history).size - 1} / {Object.keys(NODES).length - 3} nodos
                 </p>
               </div>
@@ -177,8 +177,8 @@ export default function Home() {
                 className="mt-16 text-center max-w-md mx-auto"
               >
                 <div className="stitch-line w-12 mx-auto mb-5" />
-                <p className="font-serif text-sm italic text-[#E8C9A0]/50 leading-relaxed">
-                  Hecho con <span className="text-[#D4A574]">React</span>, <span className="text-[#D4A574]">Next.js</span> y <span className="text-[#D4A574]">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
+                <p className="font-serif text-sm italic text-gold/50 leading-relaxed">
+                  Hecho con <span className="text-gold-mid">React</span>, <span className="text-gold-mid">Next.js</span> y <span className="text-gold-mid">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
                 </p>
                 <div className="stitch-line w-12 mx-auto mt-5" />
               </motion.div>
@@ -193,7 +193,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.8 }}
-                className="w-24 h-px bg-gradient-to-r from-transparent via-[#8B0000] to-transparent mx-auto mb-10"
+                className="w-24 h-px bg-gradient-to-r from-transparent via-burgundy to-transparent mx-auto mb-10"
               />
 
               {/* Título */}
@@ -202,7 +202,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-[#8B0000] text-xs tracking-[0.4em] uppercase mb-4"
+                  className="text-burgundy text-xs tracking-[0.4em] uppercase mb-4"
                 >
                   {node.subtitle}
                 </motion.p>
@@ -210,7 +210,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className="font-serif text-5xl sm:text-6xl md:text-7xl text-[#f5f0e6] mb-6"
+                  className="font-serif text-5xl sm:text-6xl md:text-7xl text-ivory mb-6"
                 >
                   {node.title}
                 </motion.h2>
@@ -218,7 +218,7 @@ export default function Home() {
                   initial={{ opacity: 0, filter: 'blur(4px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 }}
-                  className="font-serif text-xl sm:text-2xl italic text-[#8B0000]"
+                  className="font-serif text-xl sm:text-2xl italic text-burgundy"
                 >
                   {node.text}
                 </motion.p>
@@ -231,7 +231,7 @@ export default function Home() {
                 transition={{ delay: 0.6 }}
                 className="text-center mb-12"
               >
-                <p className="text-[#f5f0e6]/80 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                <p className="text-ivory/80 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
                   {node.content}
                 </p>
               </motion.div>
@@ -246,7 +246,7 @@ export default function Home() {
                 >
                   <div className="grid grid-cols-1 gap-4">
                     {node.gallery.map((src, i) => (
-                      <div key={i} className="overflow-hidden border border-[#8B0000]/20">
+                      <div key={i} className="overflow-hidden border border-burgundy/20">
                         <img
                           src={src}
                           alt={`${node.title} ${i + 1}`}
@@ -264,7 +264,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-10"
+                className="w-16 h-px bg-burgundy/60 mx-auto mb-10"
               />
             </div>
           )}
@@ -278,7 +278,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-2 mb-1"
+                  className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1"
                 >
                   sin rodeos…
                 </motion.p>
@@ -286,12 +286,12 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.6 }}
-                  className="font-serif text-5xl sm:text-6xl mb-4 text-[#f5f0e6]"
+                  className="font-serif text-5xl sm:text-6xl mb-4 text-ivory"
                 >
                   Lo técnico
                 </motion.h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
-                <p className="text-[#E8C9A0]/70">Perfil, código y juego. La historia completa te espera en el mapa.</p>
+                <p className="text-gold/70">Perfil, código y juego. La historia completa te espera en el mapa.</p>
               </div>
 
               <TechIdentity />
@@ -313,10 +313,10 @@ export default function Home() {
                     className={`w-full text-left p-5 paper-card stitch-border ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
                   >
                     <div className="flex items-start gap-4">
-                      <span className="font-serif text-4xl leading-none text-[#8B0000]/80">{item.num}</span>
+                      <span className="font-serif text-4xl leading-none text-burgundy/80">{item.num}</span>
                       <div>
-                        <span className="font-serif text-xl text-[#2a2018]">{item.title}</span>
-                        <p className="font-script text-lg leading-tight text-[#6b5540]">{item.desc}</p>
+                        <span className="font-serif text-xl text-ink">{item.title}</span>
+                        <p className="font-script text-lg leading-tight text-ink-light">{item.desc}</p>
                       </div>
                     </div>
                   </motion.button>
@@ -330,7 +330,7 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigateTo('mapa')}
-                  className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-[#E8C9A0] hover:bg-[#E8C9A0]/10"
+                  className="px-6 py-3 stitch-border-gold transition-all tracking-wider flex items-center gap-2 text-gold hover:bg-gold/10"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3"/>
@@ -351,7 +351,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-[#E8C9A0]/50"
+                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-gold/50"
                 >
                   Temporada 5: Conexiones
                 </motion.p>
@@ -359,7 +359,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-xs tracking-[0.3em] uppercase mb-4 text-[#D4A574]"
+                  className="text-xs tracking-[0.3em] uppercase mb-4 text-gold-mid"
                 >
                   {node.subtitle}
                 </motion.p>
@@ -367,7 +367,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-[#f5f0e6]"
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-ivory"
                 >
                   {node.title}
                 </motion.h2>
@@ -375,7 +375,7 @@ export default function Home() {
                   initial={{ opacity: 0, filter: 'blur(4px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 }}
-                  className="font-script text-3xl text-[#D4A574] -rotate-1 inline-block"
+                  className="font-script text-3xl text-gold-mid -rotate-1 inline-block"
                 >
                   {node.text}
                 </motion.p>
@@ -386,7 +386,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="text-center text-[#f5f0e6]/80 leading-relaxed mb-12 text-base sm:text-lg max-w-xl mx-auto"
+                className="text-center text-ivory/80 leading-relaxed mb-12 text-base sm:text-lg max-w-xl mx-auto"
               >
                 {node.content}
               </motion.p>
@@ -403,7 +403,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.8 }}
-                className="w-24 h-px bg-gradient-to-r from-transparent via-[#E8C9A0] to-transparent mx-auto mb-10"
+                className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-10"
               />
               {/* Header del nodo */}
               <div className="text-center mb-10">
@@ -414,7 +414,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                     className={`text-[10px] tracking-[0.4em] uppercase mb-2 ${
-                      node.theme === 'light' ? 'text-[#8B0000]/50' : 'text-[#E8C9A0]/40'
+                      node.theme === 'light' ? 'text-burgundy/50' : 'text-gold/40'
                     }`}
                   >
                     {SEASONS[node.id].name}
@@ -426,7 +426,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                     className={`text-xs tracking-[0.3em] uppercase mb-4 ${
-                      node.theme === 'light' ? 'text-[#1a1512]/50' : 'text-[#D4A574]'
+                      node.theme === 'light' ? 'text-black-warm/50' : 'text-gold-mid'
                     }`}
                   >
                     {node.subtitle}
@@ -437,7 +437,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
                   className={`font-serif text-4xl sm:text-5xl md:text-6xl mb-6 ${
-                    node.theme === 'light' ? 'text-[#1a1512]' : 'text-[#f5f0e6]'
+                    node.theme === 'light' ? 'text-black-warm' : 'text-ivory'
                   }`}
                 >
                   {node.title}
@@ -447,7 +447,7 @@ export default function Home() {
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 }}
                   className={`font-serif text-xl sm:text-2xl italic ${
-                    node.theme === 'light' ? 'text-[#D4A574]/70' : 'text-[#E8C9A0]'
+                    node.theme === 'light' ? 'text-gold-mid/70' : 'text-gold'
                   }`}
                 >
                   {node.text}
@@ -461,7 +461,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                   className={`text-center leading-relaxed mb-12 text-lg whitespace-pre-line ${
-                    node.theme === 'light' ? 'text-[#1a1512]/70' : 'text-[#f5f0e6]/80'
+                    node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
                   }`}
                 >
                   {node.content}
@@ -476,7 +476,7 @@ export default function Home() {
                   transition={{ delay: 0.6 }}
                   className="mb-12 space-y-6"
                 >
-                  <p className="font-script text-2xl text-center text-[#D4A574] -rotate-1">
+                  <p className="font-script text-2xl text-center text-gold-mid -rotate-1">
                     algunas cosas que he construido…
                   </p>
                   {PROJECTS.map((p, i) => (
@@ -486,10 +486,10 @@ export default function Home() {
                     >
                       <div className="tape -top-3 left-8 -rotate-6" />
                       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                        <h3 className="font-serif text-2xl text-[#2a2018]">{p.title}</h3>
-                        <span className="text-[10px] uppercase tracking-widest text-[#A0522D]">{p.stack}</span>
+                        <h3 className="font-serif text-2xl text-ink">{p.title}</h3>
+                        <span className="text-[10px] uppercase tracking-widest text-brown">{p.stack}</span>
                       </div>
-                      <p className="font-script text-lg text-[#6b5540] leading-snug mb-4">{p.desc}</p>
+                      <p className="font-script text-lg text-ink-light leading-snug mb-4">{p.desc}</p>
                       <div className="flex flex-wrap gap-3">
                         {p.links.map(l => (
                           <a
@@ -497,7 +497,7 @@ export default function Home() {
                             href={l.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-[#8B0000] hover:bg-[#8B0000]/5 transition-all"
+                            className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-burgundy hover:bg-burgundy/5 transition-all"
                           >
                             {l.label} ↗
                           </a>
@@ -537,7 +537,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     {[node.videos[3], node.videos[4]].map((src, i) => (
                       <div key={i} className="flex flex-col gap-2">
-                        <div className="overflow-hidden bg-[#0a0808] border border-[#8B0000]/30">
+                        <div className="overflow-hidden bg-black border border-burgundy/30">
                           <video
                             src={src}
                             autoPlay
@@ -565,10 +565,10 @@ export default function Home() {
                   transition={{ delay: 0.5 }}
                   className="mb-10"
                 >
-                  <p className="font-script text-2xl text-center text-[#D4A574] -rotate-1 mb-4">
+                  <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-4">
                     mi hoja de vida completa
                   </p>
-                  <div className="overflow-hidden border border-[#8B0000]/10 mb-6">
+                  <div className="overflow-hidden border border-burgundy/10 mb-6">
                     <img
                       src="/media/cv/cv.png"
                       alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
@@ -585,7 +585,7 @@ export default function Home() {
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
                 className={`w-16 h-px mx-auto mb-10 ${
-                  node.theme === 'light' ? 'bg-[#8B0000]/20' : 'bg-gradient-to-r from-[#8B0000]/0 via-[#8B0000]/60 to-[#8B0000]/0'
+                  node.theme === 'light' ? 'bg-burgundy/20' : 'bg-gradient-to-r from-burgundy/0 via-burgundy/60 to-burgundy/0'
                 }`}
               />
 
