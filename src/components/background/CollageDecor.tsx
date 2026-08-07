@@ -2,9 +2,31 @@
 
 import { motion, useTransform } from 'framer-motion';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
-import { getBackgroundAssets } from '@/lib/backgroundAssets';
+import { getBackgroundAssets, type BackgroundAsset } from '@/lib/backgroundAssets';
 
-const MAX_ICONS = 8;
+const MAX_ICONS = 9;
+
+// Reparte la selección entre categorías (round-robin) en vez de cortar
+// la lista ya filtrada en orden — si no, una sección con varias
+// categorías (ej. "mapa", que las tiene las 9) solo mostraría las
+// primeras 1-2 categorías del array y nunca llegaría a las demás.
+function sampleAcrossCategories(assets: BackgroundAsset[], max: number): BackgroundAsset[] {
+  const byCategory = new Map<string, BackgroundAsset[]>();
+  for (const asset of assets) {
+    const list = byCategory.get(asset.category) ?? [];
+    list.push(asset);
+    byCategory.set(asset.category, list);
+  }
+  const buckets = [...byCategory.values()];
+  const sample: BackgroundAsset[] = [];
+  for (let round = 0; sample.length < max && buckets.some(b => b.length > round); round++) {
+    for (const bucket of buckets) {
+      if (sample.length >= max) break;
+      if (bucket[round]) sample.push(bucket[round]);
+    }
+  }
+  return sample;
+}
 
 // Decoración collage de fondo: blobs, puntadas, cinta métrica,
 // patrón de costura, botones de costura, retazos de tela, hilos
@@ -12,7 +34,7 @@ const MAX_ICONS = 8;
 // de profundidad que reaccionan sutilmente a la posición del cursor.
 export default function CollageDecor({ section }: { section: string }) {
   const { x, y } = useCursorParallax();
-  const icons = getBackgroundAssets(section).slice(0, MAX_ICONS);
+  const icons = sampleAcrossCategories(getBackgroundAssets(section), MAX_ICONS);
 
   const farX = useTransform(x, [-1, 1], [-8, 8]);
   const farY = useTransform(y, [-1, 1], [-8, 8]);
