@@ -7,4 +7,5 @@ export const RESUME_LINKS: ResumeLink[] = [
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/tarjah/' },
   { label: 'Behance', url: 'https://www.behance.net/tatianajaramil11' },
   { label: 'GitHub', url: 'https://github.com/tatyajh' },
+  { label: 'itch.io', url: 'https://tarjah.itch.io/' },
 ];
