@@ -2,24 +2,28 @@
 
 import { useEffect, useRef } from 'react';
 import { Application, Assets, Container, Sprite, Texture, type Ticker } from 'pixi.js';
-import { RGBSplitFilter, MotionBlurFilter } from 'pixi-filters';
+import { RGBSplitFilter, MotionBlurFilter, GlowFilter } from 'pixi-filters';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
 import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
 
-// Mismos valores que CollageDecor.tsx (idle flipbook + distribución en
-// grilla) — esta pantalla reexpresa esa misma sensación de reposo en
-// Pixi, no la rediseña. Ver src/components/background/CollageDecor.tsx.
-const INSTANCE_COUNT = 12;
+// El flipbook reusa la técnica de CollageDecor.tsx, pero el splash es
+// su propia "vitrina": una instancia por categoría (sin repetir, a
+// diferencia del mapa) en una grilla 3x3 más compacta, más grande y
+// más luminosa — no debe verse igual que el fondo decorativo del resto
+// del sitio (feedback directo: "esta bien para el índice, pero no es
+// lo que quiero en el splash").
 const FRAME_INTERVAL_MS = 220;
-const GRID_COLS = 4;
+const GRID_COLS = 3;
 const GRID_ROWS = 3;
 
-const ICON_SIZE_DESKTOP = 56;
-const ICON_SIZE_MOBILE = 40;
+const ICON_SIZE_DESKTOP = 68;
+const ICON_SIZE_MOBILE = 48;
 const DRAG_THRESHOLD_PX = 5;
 const MAX_SPEED_PX_MS = 1.4;
 const PARALLAX_DEPTH = 28;
 const RECOVERY_RATE = 0.18;
+const IDLE_ALPHA_BASE = 0.55;
+const IDLE_ALPHA_AMPLITUDE = 0.12;
 
 type Category = BackgroundAssetGroup['category'];
 
@@ -57,13 +61,6 @@ const PERSONALITY: Record<Category, Personality> = {
   gamepad: { trailLifetimeMs: 160, spawnIntervalMs: 45, splitStrength: 15, tint: PALETTE.burgundy, motionBlur: false },
 };
 
-// Reparto round-robin (con vuelta) — igual que CollageDecor, para que
-// una sección con pocas categorías no muestre solo la primera.
-function sampleInstances(groups: BackgroundAssetGroup[], count: number): BackgroundAssetGroup[] {
-  if (groups.length === 0) return [];
-  return Array.from({ length: count }, (_, i) => groups[i % groups.length]);
-}
-
 // Posición en grilla con jitter determinista — igual que CollageDecor.
 function gridPosition(i: number) {
   const col = i % GRID_COLS;
@@ -91,6 +88,7 @@ interface IconState {
   phase: number;
   baseSpriteScale: number;
   alphaValue: number;
+  glowFilter: GlowFilter;
   skewX: number;
   skewY: number;
   grabbed: boolean;
@@ -135,9 +133,13 @@ export default function SplashPlayground() {
     const iconSize = isMobile ? ICON_SIZE_MOBILE : ICON_SIZE_DESKTOP;
     const ghostPoolSize = isMobile ? 12 : 24;
 
+    // Todo el montaje/simulación va en try/catch: es una capa decorativa
+    // opcional — si algo de Pixi falla, no debe tumbar el resto de la
+    // página (causa real de una pantalla en negro reportada en vivo).
     (async () => {
-      const app = new Application();
-      await app.init({
+      try {
+        const app = new Application();
+        await app.init({
         backgroundAlpha: 0,
         resizeTo: containerEl,
         resolution: Math.min(window.devicePixelRatio || 1, 2),
@@ -155,7 +157,10 @@ export default function SplashPlayground() {
       app.canvas.style.pointerEvents = 'none';
       containerEl.appendChild(app.canvas);
 
-      const groups = sampleInstances(getBackgroundAssetGroups('inicio'), INSTANCE_COUNT);
+      // Una instancia por categoría, sin repetir — a diferencia del
+      // mapa (que repite hasta llenar 12), aquí queremos una "vitrina"
+      // curada de 9 piezas, no un fondo denso.
+      const groups = getBackgroundAssetGroups('inicio');
       if (groups.length === 0) return;
 
       const urls = Array.from(new Set(groups.flatMap((g) => g.frames)));
@@ -173,7 +178,17 @@ export default function SplashPlayground() {
         const maxDim = Math.max(sprite.texture.width, sprite.texture.height) || 1;
         const baseSpriteScale = iconSize / maxDim;
         sprite.scale.set(baseSpriteScale);
-        sprite.alpha = 0.26;
+        sprite.alpha = IDLE_ALPHA_BASE;
+        // Brillo tenue de reposo, color por categoría — la señal de
+        // "esto no es solo decoración, se puede tocar" que pidió Tatiana.
+        const glowFilter = new GlowFilter({
+          distance: 8,
+          outerStrength: 1,
+          innerStrength: 0,
+          color: PERSONALITY[group.category].tint,
+          quality: 0.25,
+        });
+        sprite.filters = [glowFilter];
         const { leftPct, topPct } = gridPosition(i);
         iconLayer.addChild(sprite);
         return {
@@ -186,7 +201,8 @@ export default function SplashPlayground() {
           topPct,
           phase: i * 0.8,
           baseSpriteScale,
-          alphaValue: 0.26,
+          alphaValue: IDLE_ALPHA_BASE,
+          glowFilter,
           skewX: 0,
           skewY: 0,
           grabbed: false,
@@ -372,9 +388,11 @@ export default function SplashPlayground() {
             icon.sprite.x = (icon.leftPct / 100) * screenW + px;
             icon.sprite.y = (icon.topPct / 100) * screenH + py;
 
-            const pulse = 0.26 + 0.06 * Math.sin((now / 1000) * ((Math.PI * 2) / 6) + icon.phase);
+            const breathe = Math.sin((now / 1000) * ((Math.PI * 2) / 6) + icon.phase);
+            const pulse = IDLE_ALPHA_BASE + IDLE_ALPHA_AMPLITUDE * breathe;
             icon.alphaValue = lerp(icon.alphaValue, pulse, RECOVERY_RATE);
             icon.sprite.alpha = icon.alphaValue;
+            icon.glowFilter.outerStrength = 0.8 + 0.6 * (0.5 + 0.5 * breathe);
 
             icon.skewX = lerp(icon.skewX, 0, RECOVERY_RATE);
             icon.skewY = lerp(icon.skewY, 0, RECOVERY_RATE);
@@ -411,20 +429,44 @@ export default function SplashPlayground() {
           ghost.sprite.alpha = (1 - t) * 0.55;
           ghost.sprite.scale.set(ghost.baseScale * (1 + t * 0.7));
         }
-      });
+        });
+      } catch (err) {
+        console.error('[SplashPlayground] fallo al inicializar Pixi, se omite la capa decorativa', err);
+        if (appInstance) {
+          try {
+            appInstance.destroy(true, { children: true });
+          } catch {
+            // ya en fallo — no dejar que la limpieza también reviente
+          }
+          appInstance = null;
+        }
+      }
     })();
 
     return () => {
       cancelled = true;
       for (const { type, handler, opts } of listeners) {
-        window.removeEventListener(type, handler, opts);
+        try {
+          window.removeEventListener(type, handler, opts);
+        } catch {
+          // defensivo — un listener mal removido no debe tumbar el resto de la página
+        }
       }
       if (appInstance) {
-        appInstance.destroy(true, { children: true });
+        try {
+          appInstance.destroy(true, { children: true });
+        } catch (err) {
+          console.error('[SplashPlayground] fallo al destruir la app de Pixi', err);
+        }
         appInstance = null;
       }
     };
   }, [parallax.x, parallax.y]);
 
-  return <div ref={containerRef} className="absolute inset-0 overflow-hidden" aria-hidden="true" />;
+  // pointer-events-none es obligatorio aquí: este wrapper cubre toda
+  // la pantalla del splash y, sin esto, tapaba (invisible) los botones
+  // reales por debajo — el arrastre no depende del DOM, usa listeners
+  // de window + hit-test manual (ver arriba), así que esto no rompe
+  // la interacción.
+  return <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true" />;
 }

@@ -150,7 +150,7 @@ export default function AudioEngine() {
       {/* Pantalla de inicio - Estética oro-rosa con borgoña y formas */}
       {!hasInteracted && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden"
+          className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden touch-none"
           style={{ background: 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' }}
           onClick={handleFirstInteraction}
         >
