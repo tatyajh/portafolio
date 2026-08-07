@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import { Application, Assets, Container, Graphics, Sprite, Texture } from 'pixi.js';
-import { RGBSplitFilter, MotionBlurFilter } from 'pixi-filters';
+import { Application, Assets, Container, Graphics, RenderTexture, Sprite, Texture } from 'pixi.js';
+import { RGBSplitFilter } from 'pixi-filters';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
 import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
 
@@ -18,8 +18,8 @@ const ICON_SIZE_MOBILE = 44;
 // Piezas alargadas (aguja, hilo) se escalan manteniendo su proporción
 // real — el eje corto puede terminar en unos pocos px de ancho,
 // imposible de acertar con el dedo. El hit-test usa como mínimo esta
-// mitad-de-lado en cada eje, sin importar qué tan delgado se vea el sprite.
-const MIN_HIT_HALF = 26;
+// mitad-de-lado en cada eje, sin importar qué tan delgado se vea.
+const MIN_HIT_HALF = 30;
 const DRAG_THRESHOLD_PX = 5;
 const MAX_SPEED_PX_MS = 1.4;
 const PARALLAX_DEPTH = 24;
@@ -29,15 +29,18 @@ const IDLE_ALPHA = 0.6;
 type Category = BackgroundAssetGroup['category'];
 
 interface Personality {
-  trailLifetimeMs: number;
-  spawnIntervalMs: number;
+  /** Cada cuánto se estampa un eco deformado del ícono en el lienzo. */
+  stampIntervalMs: number;
+  /** Fuerza de la aberración cromática del eco (px de separación RGB). */
   splitStrength: number;
+  /** Grosor base del trazo de luz. */
+  strokeWidth: number;
+  /** Color del trazo/eco. */
   tint: number;
-  motionBlur: boolean;
 }
 
 // Paleta ya existente del proyecto (@theme en globals.css), reutilizada
-// como tinte de los ecos — analógico/cálido, no neón.
+// como color del rastro — analógico/cálido, no neón.
 const PALETTE = {
   burgundy: 0x8b0000,
   gold: 0xe8c9a0,
@@ -47,22 +50,17 @@ const PALETTE = {
   ivory: 0xf5f0e6,
 };
 
-// "Personalidad" por categoría: cuánto dura cada eco, con qué
-// frecuencia se generan y qué tan fuerte es la aberración cromática —
-// datos, no ocho rutas de código distintas.
-// Vidas de eco mucho más largas que un "flash" — pidió que el rastro
-// se sienta como si estuviera deformando algo, no un parpadeo que
-// desaparece apenas se suelta.
+// "Personalidad" por categoría — datos, no nueve rutas de código.
 const PERSONALITY: Record<Category, Personality> = {
-  tijeras: { trailLifetimeMs: 550, spawnIntervalMs: 55, splitStrength: 9, tint: PALETTE.burgundy, motionBlur: false },
-  aguja: { trailLifetimeMs: 1500, spawnIntervalMs: 90, splitStrength: 5, tint: PALETTE.goldDeep, motionBlur: true },
-  hilo: { trailLifetimeMs: 1400, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.goldMid, motionBlur: true },
-  carrete: { trailLifetimeMs: 1350, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.brown, motionBlur: true },
-  patron: { trailLifetimeMs: 1600, spawnIntervalMs: 100, splitStrength: 4, tint: PALETTE.ivory, motionBlur: false },
-  codigo: { trailLifetimeMs: 600, spawnIntervalMs: 40, splitStrength: 14, tint: PALETTE.gold, motionBlur: false },
-  saxofon: { trailLifetimeMs: 1250, spawnIntervalMs: 70, splitStrength: 7, tint: PALETTE.goldDeep, motionBlur: true },
-  nota: { trailLifetimeMs: 1150, spawnIntervalMs: 60, splitStrength: 8, tint: PALETTE.goldMid, motionBlur: false },
-  gamepad: { trailLifetimeMs: 480, spawnIntervalMs: 45, splitStrength: 15, tint: PALETTE.burgundy, motionBlur: false },
+  tijeras: { stampIntervalMs: 70, splitStrength: 10, strokeWidth: 5, tint: PALETTE.burgundy },
+  aguja: { stampIntervalMs: 110, splitStrength: 5, strokeWidth: 3, tint: PALETTE.goldDeep },
+  hilo: { stampIntervalMs: 95, splitStrength: 6, strokeWidth: 6, tint: PALETTE.goldMid },
+  carrete: { stampIntervalMs: 95, splitStrength: 6, strokeWidth: 7, tint: PALETTE.brown },
+  patron: { stampIntervalMs: 120, splitStrength: 4, strokeWidth: 8, tint: PALETTE.ivory },
+  codigo: { stampIntervalMs: 55, splitStrength: 15, strokeWidth: 4, tint: PALETTE.gold },
+  saxofon: { stampIntervalMs: 85, splitStrength: 8, strokeWidth: 6, tint: PALETTE.goldDeep },
+  nota: { stampIntervalMs: 75, splitStrength: 9, strokeWidth: 5, tint: PALETTE.goldMid },
+  gamepad: { stampIntervalMs: 60, splitStrength: 16, strokeWidth: 5, tint: PALETTE.burgundy },
 };
 
 interface PlacedInstance {
@@ -85,14 +83,11 @@ function pickInstances(groups: BackgroundAssetGroup[], perCategory: number): Pla
   return out;
 }
 
-// Posición en grilla con jitter determinista, dimensionada al total
-// real de instancias (varía entre desktop/mobile). El rango vertical
-// se mantiene dentro de una banda segura (8%-80%) en vez de 0-100%:
-// en móvil, contenido "fixed" de pantalla completa puede calcularse
-// más alto que lo que el navegador realmente muestra (barra de
-// direcciones/tabs) y, al no haber scroll posible aquí, esa parte
-// queda inalcanzable — reportado en vivo como "no se ven todos los
-// assets".
+// Posición en grilla con jitter determinista. El rango vertical se
+// mantiene dentro de una banda segura (8%-80%): en móvil, contenido
+// "fixed" de pantalla completa puede calcularse más alto que lo que el
+// navegador realmente muestra (barra de direcciones/tabs) y, al no
+// haber scroll aquí, esa parte quedaría inalcanzable.
 function gridPosition(i: number, cols: number, rows: number) {
   const col = i % cols;
   const row = Math.floor(i / cols) % rows;
@@ -118,39 +113,28 @@ interface IconState {
   skewX: number;
   skewY: number;
   grabbed: boolean;
-  // Una vez soltado tras un arrastre real, deja de volver a su
-  // posición de grilla — se queda exactamente donde se soltó
-  // ("la idea es que se quede donde lo coloque").
+  // Una vez soltado tras un arrastre, deja de volver a su posición de
+  // grilla — se queda exactamente donde se soltó.
   pinned: boolean;
   dragOffsetX: number;
   dragOffsetY: number;
   lastMoveT: number;
   vx: number;
   vy: number;
-  lastGhostSpawnAt: number;
+  lastStampAt: number;
+  // Último punto pintado en el lienzo, para trazar el segmento nuevo.
+  strokeX: number;
+  strokeY: number;
+  hasStroke: boolean;
 }
 
-interface GhostState {
-  sprite: Sprite;
-  splitFilter: RGBSplitFilter;
-  motionBlurFilter: MotionBlurFilter;
-  active: boolean;
-  bornAt: number;
-  lifetimeMs: number;
-  baseScale: number;
-}
-
-// Playground decorativo exclusivo del splash ("inicio"): muchos
-// íconos reales de fondo (mismas categorías que CollageDecor, layer
-// aparte — no toca CollageDecor, que sigue siendo el sistema DOM para
-// el resto de las secciones), estáticos en reposo, arrastrables, con
-// rastro de ecos cromáticos por velocidad. La simulación por-frame
-// (pool de ghosts, filtros mutados cada tick) vive fuera de React a
-// propósito: mutar N sprites 60 veces por segundo vía setState
-// pelearía contra el reconciliador.
+// Playground decorativo exclusivo del splash ("inicio"): íconos reales
+// de fondo (mismas categorías que CollageDecor, layer aparte — no toca
+// CollageDecor, que sigue siendo el sistema DOM del resto del sitio),
+// estáticos en reposo, arrastrables, y que van PINTANDO un rastro que
+// se queda dibujado, tipo light-painting.
 export default function SplashPlayground() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const debugRef = useRef<HTMLDivElement>(null);
   const parallax = useCursorParallax();
 
   useEffect(() => {
@@ -163,21 +147,8 @@ export default function SplashPlayground() {
 
     const isMobile = window.innerWidth < 768;
     const iconSize = isMobile ? ICON_SIZE_MOBILE : ICON_SIZE_DESKTOP;
-    // Vidas de eco más largas (ver PERSONALITY) significan más ecos
-    // vivos a la vez durante un arrastre sostenido — el pool crece para
-    // no reciclar (y hacer "parpadear") un eco que todavía se ve.
-    const ghostPoolSize = isMobile ? 26 : 48;
     const instancesPerCategory = isMobile ? INSTANCES_PER_CATEGORY_MOBILE : INSTANCES_PER_CATEGORY_DESKTOP;
     const gridCols = isMobile ? 4 : 6;
-
-    // Panel de diagnóstico TEMPORAL — texto plano en pantalla para
-    // depurar en vivo sin devtools (se retira una vez encontrado el bug).
-    let downCount = 0;
-    let moveCount = 0;
-    const setDebug = (text: string) => {
-      if (debugRef.current) debugRef.current.textContent = text;
-    };
-    setDebug('Pixi: iniciando…');
 
     // Todo el montaje/simulación va en try/catch: es una capa decorativa
     // opcional — si algo de Pixi falla, no debe tumbar el resto de la
@@ -213,8 +184,29 @@ export default function SplashPlayground() {
         const textureMap = (await Assets.load(urls)) as Record<string, Texture>;
         if (cancelled) return;
 
+        // ── Lienzo acumulativo ──────────────────────────────────────
+        // Aquí está la diferencia con la versión anterior: en vez de
+        // sprites "fantasma" que se desvanecen, cada trazo se dibuja
+        // UNA vez sobre esta textura y nunca se borra (render con
+        // clear:false). El rastro queda pintado, como light-painting.
+        let trailTexture = RenderTexture.create({
+          width: app.screen.width,
+          height: app.screen.height,
+          resolution: app.renderer.resolution,
+        });
+        const trailSprite = new Sprite(trailTexture);
+        trailSprite.blendMode = 'add'; // luz que se suma al fondo, no lo tapa
+        app.stage.addChild(trailSprite);
+
         const iconLayer = new Container();
         app.stage.addChild(iconLayer);
+
+        // Objetos reutilizados para pintar (nunca se crean por frame).
+        const strokeGfx = new Graphics();
+        const stampSprite = new Sprite();
+        stampSprite.anchor.set(0.5);
+        const stampFilter = new RGBSplitFilter();
+        stampSprite.filters = [stampFilter];
 
         const icons: IconState[] = placed.map((instance, i) => {
           const texture = textureMap[instance.url];
@@ -241,143 +233,103 @@ export default function SplashPlayground() {
             lastMoveT: 0,
             vx: 0,
             vy: 0,
-            lastGhostSpawnAt: 0,
+            lastStampAt: 0,
+            strokeX: 0,
+            strokeY: 0,
+            hasStroke: false,
           };
         });
 
-        const canvasRect = app.canvas.getBoundingClientRect();
-        const containerRect = containerEl.getBoundingClientRect();
-        setDebug(
-          `Pixi OK. íconos=${icons.length} screen=${Math.round(app.screen.width)}x${Math.round(app.screen.height)} ` +
-            `canvasRect=${Math.round(canvasRect.width)}x${Math.round(canvasRect.height)}@${Math.round(canvasRect.left)},${Math.round(canvasRect.top)} ` +
-            `containerRect=${Math.round(containerRect.width)}x${Math.round(containerRect.height)}@${Math.round(containerRect.left)},${Math.round(containerRect.top)}`,
-        );
+        // Pinta en el lienzo permanente el segmento recorrido: tres
+        // trazos concéntricos (ancho y tenue → fino y brillante) para
+        // el halo de luz, sumados con blend aditivo.
+        function paintStroke(icon: IconState, x: number, y: number, speedNorm: number) {
+          const p = PERSONALITY[icon.category];
+          const w = p.strokeWidth * (0.6 + speedNorm * 1.1);
+          strokeGfx.clear();
+          strokeGfx
+            .moveTo(icon.strokeX, icon.strokeY)
+            .lineTo(x, y)
+            .stroke({ width: w * 3.2, color: p.tint, alpha: 0.05, cap: 'round', join: 'round' });
+          strokeGfx
+            .moveTo(icon.strokeX, icon.strokeY)
+            .lineTo(x, y)
+            .stroke({ width: w * 1.6, color: p.tint, alpha: 0.1, cap: 'round', join: 'round' });
+          strokeGfx
+            .moveTo(icon.strokeX, icon.strokeY)
+            .lineTo(x, y)
+            .stroke({ width: Math.max(w * 0.45, 1), color: PALETTE.ivory, alpha: 0.14, cap: 'round', join: 'round' });
+          strokeGfx.blendMode = 'add';
+          app.renderer.render({ container: strokeGfx, target: trailTexture, clear: false });
+        }
 
-        // Marcador visual de diagnóstico: un punto brillante exactamente
-        // donde el sistema calcula que se tocó, en el MISMO espacio de
-        // coordenadas donde viven los sprites — si aparece lejos del
-        // dedo real, confirma un desfase de coordenadas.
-        const debugMarker = new Graphics();
-        app.stage.addChild(debugMarker);
-
-        const ghostLayer = new Container();
-        app.stage.addChild(ghostLayer);
-        const ghostPool: GhostState[] = Array.from({ length: ghostPoolSize }, () => {
-          const sprite = new Sprite();
-          sprite.anchor.set(0.5);
-          sprite.visible = false;
-          const splitFilter = new RGBSplitFilter();
-          const motionBlurFilter = new MotionBlurFilter();
-          ghostLayer.addChild(sprite);
-          return { sprite, splitFilter, motionBlurFilter, active: false, bornAt: 0, lifetimeMs: 300, baseScale: 1 };
-        });
-        let nextGhostIndex = 0;
-
-        function spawnGhost(icon: IconState, now: number) {
-          const personality = PERSONALITY[icon.category];
-          const ghost = ghostPool[nextGhostIndex];
-          nextGhostIndex = (nextGhostIndex + 1) % ghostPool.length;
-          const speed = Math.hypot(icon.vx, icon.vy);
-          const speedNorm = Math.min(speed / MAX_SPEED_PX_MS, 1);
-
-          ghost.sprite.texture = icon.sprite.texture;
-          ghost.sprite.x = icon.sprite.x;
-          ghost.sprite.y = icon.sprite.y;
-          ghost.sprite.rotation = icon.sprite.rotation;
-          ghost.sprite.scale.copyFrom(icon.sprite.scale);
-          ghost.sprite.tint = personality.tint;
-          ghost.sprite.alpha = 0.55;
-          ghost.sprite.visible = true;
-          ghost.baseScale = icon.sprite.scale.x;
-          ghost.bornAt = now;
-          ghost.lifetimeMs = lerp(350, personality.trailLifetimeMs, speedNorm);
-
-          ghost.splitFilter.red = { x: -personality.splitStrength * speedNorm, y: 0 };
-          ghost.splitFilter.blue = { x: personality.splitStrength * speedNorm, y: 0 };
-          ghost.splitFilter.green = { x: 0, y: personality.splitStrength * 0.4 * speedNorm };
-
-          if (personality.motionBlur && !isMobile) {
-            ghost.motionBlurFilter.velocity = { x: icon.vx * 6, y: icon.vy * 6 };
-            ghost.sprite.filters = [ghost.splitFilter, ghost.motionBlurFilter];
-          } else {
-            ghost.sprite.filters = [ghost.splitFilter];
-          }
-          ghost.active = true;
+        // Estampa un eco deformado del ícono (aberración cromática +
+        // estiramiento según velocidad) que también se queda fijo.
+        function stampEcho(icon: IconState, speedNorm: number) {
+          const p = PERSONALITY[icon.category];
+          stampSprite.texture = icon.sprite.texture;
+          stampSprite.x = icon.sprite.x;
+          stampSprite.y = icon.sprite.y;
+          stampSprite.rotation = icon.sprite.rotation;
+          stampSprite.scale.set(icon.sprite.scale.x, icon.sprite.scale.y);
+          stampSprite.skew.set(icon.skewX, icon.skewY);
+          stampSprite.tint = p.tint;
+          stampSprite.alpha = 0.16 + speedNorm * 0.22;
+          stampSprite.blendMode = 'add';
+          stampFilter.red = { x: -p.splitStrength * speedNorm, y: 0 };
+          stampFilter.blue = { x: p.splitStrength * speedNorm, y: 0 };
+          stampFilter.green = { x: 0, y: p.splitStrength * 0.4 * speedNorm };
+          app.renderer.render({ container: stampSprite, target: trailTexture, clear: false });
         }
 
         // Estado del gesto activo — un único puntero a la vez, con
-        // supresión de "click" cuando hubo arrastre real (ver B3 del plan).
+        // supresión de "click" cuando hubo arrastre real.
         let activeGesture: { pointerId: number; icon: IconState | null; startX: number; startY: number; suppressClick: boolean } | null = null;
         let pendingSuppressClick = false;
 
         function toLocal(e: PointerEvent) {
-          // Usa la conversión oficial de Pixi (la misma que usa
-          // internamente su propio sistema de eventos) en vez de restar
-          // a mano contra getBoundingClientRect — esa cuenta manual
-          // asume que el tamaño del buffer interno del canvas y su
-          // tamaño en CSS están en proporción 1:1 con la resolución,
-          // lo cual no se está cumpliendo aquí (causa real confirmada
-          // del "objeto a 5 metros de distancia": mapPositionToPoint
-          // también corrige domElement.width/rect.width, no solo resta
-          // el offset).
+          // Conversión oficial de Pixi (la misma que usa su propio
+          // sistema de eventos): además del offset, corrige la relación
+          // entre el buffer interno del canvas y su tamaño en CSS y la
+          // resolución. Restar a mano contra getBoundingClientRect
+          // asumía esa relación 1:1 y era la causa real del "el objeto
+          // está a 5 metros de distancia".
           const point = { x: 0, y: 0 };
           app.renderer.events.mapPositionToPoint(point, e.clientX, e.clientY);
           return point;
         }
 
         function findHit(x: number, y: number): IconState | null {
-          for (let i = icons.length - 1; i >= 0; i--) {
-            const icon = icons[i];
-            if (icon.grabbed) continue;
-            const halfW = Math.max(icon.sprite.width / 2, MIN_HIT_HALF);
-            const halfH = Math.max(icon.sprite.height / 2, MIN_HIT_HALF);
-            if (Math.abs(x - icon.sprite.x) <= halfW && Math.abs(y - icon.sprite.y) <= halfH) return icon;
-          }
-          return null;
-        }
-
-        // Diagnóstico: el ícono más cercano y a qué distancia real está
-        // del punto tocado — si "hit" coincide pero dist es enorme, es
-        // un desfase de coordenadas, no falta de precisión del dedo.
-        function findNearest(x: number, y: number): { icon: IconState | null; dist: number } {
           let best: IconState | null = null;
           let bestDist = Infinity;
           for (const icon of icons) {
-            const d = Math.hypot(x - icon.sprite.x, y - icon.sprite.y);
-            if (d < bestDist) {
-              bestDist = d;
-              best = icon;
+            if (icon.grabbed) continue;
+            const halfW = Math.max(icon.sprite.width / 2, MIN_HIT_HALF);
+            const halfH = Math.max(icon.sprite.height / 2, MIN_HIT_HALF);
+            if (Math.abs(x - icon.sprite.x) <= halfW && Math.abs(y - icon.sprite.y) <= halfH) {
+              // Con áreas de toque ampliadas, dos íconos vecinos pueden
+              // cubrir el mismo punto — gana el más cercano al dedo, no
+              // el primero de la lista.
+              const d = Math.hypot(x - icon.sprite.x, y - icon.sprite.y);
+              if (d < bestDist) {
+                bestDist = d;
+                best = icon;
+              }
             }
           }
-          return { icon: best, dist: bestDist };
+          return best;
         }
 
         // Cada handler va envuelto en try/catch: corren fuera del
         // try/catch de montaje (se ejecutan después, en respuesta a
-        // eventos reales), así que un fallo aquí necesita su propia red
-        // — nunca debe interrumpir el resto de la interacción de la página.
+        // eventos reales), así que un fallo aquí necesita su propia red.
         const onPointerDown = (evt: Event) => {
           try {
             const e = evt as PointerEvent;
             const { x, y } = toLocal(e);
             const icon = findHit(x, y);
-            const nearest = findNearest(x, y);
-            downCount++;
-            debugMarker
-              .clear()
-              .circle(x, y, 14)
-              .fill({ color: 0x39ff14, alpha: 0.9 })
-              .stroke({ color: 0xffffff, width: 3 });
-            setDebug(
-              `down#${downCount} tipo=${e.pointerType} toque=${Math.round(x)},${Math.round(y)} hit=${icon ? icon.category : 'ninguno'} ` +
-                `cercano=${nearest.icon ? nearest.icon.category : '?'}@${nearest.icon ? Math.round(nearest.icon.sprite.x) : '?'},${nearest.icon ? Math.round(nearest.icon.sprite.y) : '?'} dist=${Math.round(nearest.dist)}`,
-            );
             activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
             if (icon) {
-              // preventDefault en touch evita que el navegador sintetice
-              // un "click" de compatibilidad después del gesto — refuerzo
-              // extra (además de onClickCapture) para que arrastrar un
-              // ícono nunca cierre el splash en móvil.
               e.preventDefault();
               icon.grabbed = true;
               icon.dragOffsetX = icon.sprite.x - x;
@@ -385,7 +337,10 @@ export default function SplashPlayground() {
               icon.lastMoveT = performance.now();
               icon.vx = 0;
               icon.vy = 0;
-              iconLayer.addChild(icon.sprite); // trae al frente mientras se arrastra
+              icon.strokeX = icon.sprite.x;
+              icon.strokeY = icon.sprite.y;
+              icon.hasStroke = true;
+              iconLayer.addChild(icon.sprite); // al frente mientras se arrastra
             }
           } catch (err) {
             console.error('[SplashPlayground] error en pointerdown', err);
@@ -402,23 +357,27 @@ export default function SplashPlayground() {
               if (dist > DRAG_THRESHOLD_PX) activeGesture.suppressClick = true;
             }
             const icon = activeGesture.icon;
-            if (icon) {
-              const now = performance.now();
-              const dt = Math.max(now - icon.lastMoveT, 1);
-              const nx = x + icon.dragOffsetX;
-              const ny = y + icon.dragOffsetY;
-              icon.vx = (nx - icon.sprite.x) / dt;
-              icon.vy = (ny - icon.sprite.y) / dt;
-              icon.sprite.x = nx;
-              icon.sprite.y = ny;
-              icon.lastMoveT = now;
-              moveCount++;
-              setDebug(`move#${moveCount} arrastrando=${icon.category} xy=${Math.round(nx)},${Math.round(ny)}`);
-              const personality = PERSONALITY[icon.category];
-              if (now - icon.lastGhostSpawnAt >= personality.spawnIntervalMs) {
-                icon.lastGhostSpawnAt = now;
-                spawnGhost(icon, now);
-              }
+            if (!icon) return;
+
+            const now = performance.now();
+            const dt = Math.max(now - icon.lastMoveT, 1);
+            const nx = x + icon.dragOffsetX;
+            const ny = y + icon.dragOffsetY;
+            icon.vx = (nx - icon.sprite.x) / dt;
+            icon.vy = (ny - icon.sprite.y) / dt;
+            icon.sprite.x = nx;
+            icon.sprite.y = ny;
+            icon.lastMoveT = now;
+
+            const speedNorm = Math.min(Math.hypot(icon.vx, icon.vy) / MAX_SPEED_PX_MS, 1);
+            if (icon.hasStroke) paintStroke(icon, nx, ny, speedNorm);
+            icon.strokeX = nx;
+            icon.strokeY = ny;
+
+            const p = PERSONALITY[icon.category];
+            if (now - icon.lastStampAt >= p.stampIntervalMs) {
+              icon.lastStampAt = now;
+              stampEcho(icon, speedNorm);
             }
           } catch (err) {
             console.error('[SplashPlayground] error en pointermove', err);
@@ -430,6 +389,7 @@ export default function SplashPlayground() {
           if (activeGesture.icon) {
             activeGesture.icon.grabbed = false;
             activeGesture.icon.pinned = true;
+            activeGesture.icon.hasStroke = false;
           }
           pendingSuppressClick = activeGesture.suppressClick;
           activeGesture = null;
@@ -439,7 +399,6 @@ export default function SplashPlayground() {
           try {
             const e = evt as PointerEvent;
             if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
-            setDebug(`up. suppressClick=${activeGesture.suppressClick} moves=${moveCount}`);
             endGesture();
           } catch (err) {
             console.error('[SplashPlayground] error en pointerup', err);
@@ -456,9 +415,9 @@ export default function SplashPlayground() {
           }
         };
 
-        // Fase de captura: corre ANTES que el onClick delegado de React,
-        // así puede frenar la propagación y evitar que arrastrar un ícono
-        // cierre el splash (ver B3 del plan — validado explícitamente).
+        // Fase de captura: corre ANTES que cualquier onClick delegado
+        // de React, así arrastrar un ícono nunca dispara acciones de la
+        // UI que hay debajo.
         const onClickCapture = (evt: Event) => {
           try {
             if (pendingSuppressClick) {
@@ -483,11 +442,31 @@ export default function SplashPlayground() {
           { type: 'click', handler: onClickCapture, opts: { capture: true } },
         );
 
+        // Si cambia el tamaño (rotar el teléfono, redimensionar), el
+        // lienzo debe seguir cubriendo la pantalla. Se recrea — el
+        // rastro acumulado se pierde, que es lo esperable al cambiar
+        // por completo el área de dibujo.
+        let lastW = app.screen.width;
+        let lastH = app.screen.height;
+
         app.ticker.add(() => {
           try {
-            const now = performance.now();
             const screenW = app.screen.width;
             const screenH = app.screen.height;
+
+            if (screenW !== lastW || screenH !== lastH) {
+              lastW = screenW;
+              lastH = screenH;
+              const old = trailTexture;
+              trailTexture = RenderTexture.create({
+                width: screenW,
+                height: screenH,
+                resolution: app.renderer.resolution,
+              });
+              trailSprite.texture = trailTexture;
+              old.destroy(true);
+            }
+
             const px = parallax.x.get() * PARALLAX_DEPTH;
             const py = parallax.y.get() * PARALLAX_DEPTH;
 
@@ -508,30 +487,26 @@ export default function SplashPlayground() {
               } else {
                 icon.sprite.alpha = 1;
 
+                // Deformación elástica: se estira en la dirección del
+                // movimiento y se aplasta en la perpendicular, con la
+                // intensidad atada a la velocidad.
                 const speed = Math.hypot(icon.vx, icon.vy);
-                const stretchT = Math.min(speed * 0.6, 1);
+                const stretchT = Math.min(speed * 0.8, 1);
                 const dirX = speed > 0.001 ? icon.vx / speed : 0;
                 const dirY = speed > 0.001 ? icon.vy / speed : 0;
-                icon.skewX = dirX * stretchT * 0.22;
-                icon.skewY = dirY * stretchT * 0.22;
+                icon.skewX = dirX * stretchT * 0.38;
+                icon.skewY = dirY * stretchT * 0.38;
                 icon.sprite.skew.set(icon.skewX, icon.skewY);
 
-                icon.sprite.scale.x = icon.baseSpriteScale * 1.15 * (1 + stretchT * 0.18);
-                icon.sprite.scale.y = icon.baseSpriteScale * 1.15 * (1 - stretchT * 0.08);
-              }
-            }
+                icon.sprite.scale.x = icon.baseSpriteScale * 1.15 * (1 + stretchT * 0.34);
+                icon.sprite.scale.y = icon.baseSpriteScale * 1.15 * (1 - stretchT * 0.16);
 
-            for (const ghost of ghostPool) {
-              if (!ghost.active) continue;
-              const age = now - ghost.bornAt;
-              if (age >= ghost.lifetimeMs) {
-                ghost.active = false;
-                ghost.sprite.visible = false;
-                continue;
+                // El roce sigue pintando aunque el dedo se detenga un
+                // instante: la velocidad decae sola si no llegan más
+                // eventos de movimiento.
+                icon.vx *= 0.9;
+                icon.vy *= 0.9;
               }
-              const t = age / ghost.lifetimeMs;
-              ghost.sprite.alpha = (1 - t) * 0.55;
-              ghost.sprite.scale.set(ghost.baseScale * (1 + t * 0.7));
             }
           } catch (err) {
             console.error('[SplashPlayground] error en el ticker', err);
@@ -539,7 +514,6 @@ export default function SplashPlayground() {
         });
       } catch (err) {
         console.error('[SplashPlayground] fallo al inicializar Pixi, se omite la capa decorativa', err);
-        setDebug(`ERROR init: ${err instanceof Error ? err.message : String(err)}`);
         if (appInstance) {
           try {
             appInstance.destroy(true, { children: true });
@@ -557,7 +531,7 @@ export default function SplashPlayground() {
         try {
           window.removeEventListener(type, handler, opts);
         } catch {
-          // defensivo — un listener mal removido no debe tumbar el resto de la página
+          // defensivo — un listener mal removido no debe tumbar la página
         }
       }
       if (appInstance) {
@@ -572,19 +546,9 @@ export default function SplashPlayground() {
   }, [parallax.x, parallax.y]);
 
   // pointer-events-none es obligatorio aquí: este wrapper cubre toda
-  // la pantalla del splash y, sin esto, tapaba (invisible) los botones
+  // la pantalla del splash y, sin esto, tapa (invisible) los botones
   // reales por debajo — el arrastre no depende del DOM, usa listeners
   // de window + hit-test manual (ver arriba), así que esto no rompe
   // la interacción.
-  return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {/* Panel de diagnóstico TEMPORAL — quitar una vez confirmado que el arrastre funciona */}
-      <div
-        ref={debugRef}
-        className="absolute top-1 left-1 right-1 z-[999] text-[10px] leading-tight font-mono text-lime-300 bg-black/80 px-2 py-1 rounded pointer-events-none break-words"
-      >
-        debug: esperando…
-      </div>
-    </div>
-  );
+  return <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true" />;
 }

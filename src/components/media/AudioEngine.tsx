@@ -78,9 +78,11 @@ export default function AudioEngine() {
     }
   }, [currentTrack]);
 
-  const handleFirstInteraction = () => {
-    setHasInteracted(true);
-    // Si autoplay fue bloqueado, iniciar música ahora
+  // Los navegadores solo dejan arrancar el audio tras una interacción
+  // real del usuario. Antes eso dependía del click que cerraba el
+  // splash; ahora que el fondo ya no lo cierra, cualquier toque en el
+  // fondo (ej. jugar con los íconos) igual sirve para desbloquearlo.
+  const unblockAudioIfNeeded = () => {
     if (autoplayBlocked && audioRef.current) {
       audioRef.current.volume = 0.3;
       audioRef.current.src = PLAYLIST[currentTrack];
@@ -89,6 +91,11 @@ export default function AudioEngine() {
         setAutoplayBlocked(false);
       }).catch(() => {});
     }
+  };
+
+  const handleFirstInteraction = () => {
+    setHasInteracted(true);
+    unblockAudioIfNeeded();
   };
 
   const toggleAudio = () => {
@@ -150,22 +157,14 @@ export default function AudioEngine() {
       {/* Pantalla de inicio - Estética oro-rosa con borgoña y formas */}
       {!hasInteracted && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden touch-none"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden touch-none"
           style={{ background: 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' }}
-          onClick={(e) => {
-            handleFirstInteraction();
-            // Un tap que no cae sobre ninguno de los 2 botones (fondo,
-            // texto, un ícono del playground que no se agarró) solo
-            // cerraba el splash sin navegar a ningún lado — como
-            // "inicio" no tiene contenido propio para mostrarse solo,
-            // eso dejaba la pantalla en negro. Cualquier cierre que no
-            // sea un botón explícito cae al mismo destino que "Conoce
-            // más sobre mí".
-            const target = e.target as HTMLElement;
-            if (!target.closest('button')) {
-              window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
-            }
-          }}
+          // El splash SOLO se cierra con los dos botones — tocar el
+          // fondo ya no navega ni cierra nada (antes cerraba el splash
+          // sin ir a ningún lado, lo que dejaba la pantalla en negro,
+          // y el parche de navegar al índice tampoco era lo deseado).
+          // Así el fondo queda libre para jugar con los íconos.
+          onClick={unblockAudioIfNeeded}
         >
           {/* Fondo tipo constelación/aurora boreal con hilos */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -409,11 +408,11 @@ export default function AudioEngine() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  setHasInteracted(true);
+                  handleFirstInteraction();
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
-                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px]"
+                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px] cursor-pointer"
               >
                 {'</>'} Directo a lo técnico
               </motion.button>
@@ -421,11 +420,11 @@ export default function AudioEngine() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  setHasInteracted(true);
+                  handleFirstInteraction();
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}
-                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px]"
+                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px] cursor-pointer"
               >
                 ✥ Conoce más sobre mí
               </motion.button>
