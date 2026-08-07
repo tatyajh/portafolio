@@ -23,7 +23,7 @@ export default function ResumeLinks() {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-6 py-3 border border-[#8B0000]/40 text-[#E8C9A0] hover:bg-[#8B0000]/10 transition-all tracking-wider text-sm uppercase"
+          className="flex items-center gap-2 px-6 py-3 border border-burgundy/40 text-gold hover:bg-burgundy/10 transition-all tracking-wider text-sm uppercase"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d={ICONS[link.label]}/>

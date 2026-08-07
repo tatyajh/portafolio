@@ -16,21 +16,21 @@ export default function TechIdentity() {
         {TECH_IDENTITY_ROLES.map(role => (
           <span
             key={role}
-            className="px-3 py-1.5 bg-[#8B0000]/20 border border-[#8B0000]/50 text-[#E8C9A0] text-sm tracking-wide"
+            className="px-3 py-1.5 bg-burgundy/20 border border-burgundy/50 text-gold text-sm tracking-wide"
           >
             {role}
           </span>
         ))}
       </div>
 
-      <p className="font-script text-2xl text-center text-[#D4A574] -rotate-1 mb-6">
+      <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-6">
         capacidades
       </p>
       <div className="flex flex-wrap justify-center gap-2">
         {CV_SKILLS.map(group => (
           <span
             key={group.category}
-            className="px-3 py-1 border border-[#E8C9A0]/20 text-[#E8C9A0]/70 text-sm tracking-wide"
+            className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide"
           >
             {group.category}
           </span>
