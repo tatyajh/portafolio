@@ -78,15 +78,22 @@ function pickInstances(groups: BackgroundAssetGroup[], perCategory: number): Pla
 }
 
 // Posición en grilla con jitter determinista, dimensionada al total
-// real de instancias (varía entre desktop/mobile).
+// real de instancias (varía entre desktop/mobile). El rango vertical
+// se mantiene dentro de una banda segura (8%-80%) en vez de 0-100%:
+// en móvil, contenido "fixed" de pantalla completa puede calcularse
+// más alto que lo que el navegador realmente muestra (barra de
+// direcciones/tabs) y, al no haber scroll posible aquí, esa parte
+// queda inalcanzable — reportado en vivo como "no se ven todos los
+// assets".
 function gridPosition(i: number, cols: number, rows: number) {
   const col = i % cols;
   const row = Math.floor(i / cols) % rows;
   const jitterX = ((i * 37) % 14) - 7;
-  const jitterY = ((i * 53) % 14) - 7;
+  const jitterY = ((i * 53) % 10) - 5;
+  const topBand = rows <= 1 ? 44 : 8 + (row / (rows - 1)) * 72;
   return {
     leftPct: (col + 0.5) * (100 / cols) + jitterX,
-    topPct: (row + 0.5) * (100 / rows) + jitterY,
+    topPct: topBand + jitterY,
   };
 }
 
@@ -131,6 +138,7 @@ interface GhostState {
 // pelearía contra el reconciliador.
 export default function SplashPlayground() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const debugRef = useRef<HTMLDivElement>(null);
   const parallax = useCursorParallax();
 
   useEffect(() => {
@@ -146,6 +154,15 @@ export default function SplashPlayground() {
     const ghostPoolSize = isMobile ? 12 : 24;
     const instancesPerCategory = isMobile ? INSTANCES_PER_CATEGORY_MOBILE : INSTANCES_PER_CATEGORY_DESKTOP;
     const gridCols = isMobile ? 4 : 6;
+
+    // Panel de diagnóstico TEMPORAL — texto plano en pantalla para
+    // depurar en vivo sin devtools (se retira una vez encontrado el bug).
+    let downCount = 0;
+    let moveCount = 0;
+    const setDebug = (text: string) => {
+      if (debugRef.current) debugRef.current.textContent = text;
+    };
+    setDebug('Pixi: iniciando…');
 
     // Todo el montaje/simulación va en try/catch: es una capa decorativa
     // opcional — si algo de Pixi falla, no debe tumbar el resto de la
@@ -211,6 +228,8 @@ export default function SplashPlayground() {
             lastGhostSpawnAt: 0,
           };
         });
+
+        setDebug(`Pixi OK. íconos=${icons.length} pantalla=${Math.round(app.screen.width)}x${Math.round(app.screen.height)} isMobile=${isMobile}`);
 
         const ghostLayer = new Container();
         app.stage.addChild(ghostLayer);
@@ -287,6 +306,10 @@ export default function SplashPlayground() {
             const e = evt as PointerEvent;
             const { x, y } = toLocal(e);
             const icon = findHit(x, y);
+            downCount++;
+            setDebug(
+              `down#${downCount} tipo=${e.pointerType} xy=${Math.round(x)},${Math.round(y)} hit=${icon ? icon.category : 'ninguno'}`,
+            );
             activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
             if (icon) {
               // preventDefault en touch evita que el navegador sintetice
@@ -327,6 +350,8 @@ export default function SplashPlayground() {
               icon.sprite.x = nx;
               icon.sprite.y = ny;
               icon.lastMoveT = now;
+              moveCount++;
+              setDebug(`move#${moveCount} arrastrando=${icon.category} xy=${Math.round(nx)},${Math.round(ny)}`);
               const personality = PERSONALITY[icon.category];
               if (now - icon.lastGhostSpawnAt >= personality.spawnIntervalMs) {
                 icon.lastGhostSpawnAt = now;
@@ -349,6 +374,7 @@ export default function SplashPlayground() {
           try {
             const e = evt as PointerEvent;
             if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
+            setDebug(`up. suppressClick=${activeGesture.suppressClick} moves=${moveCount}`);
             endGesture();
           } catch (err) {
             console.error('[SplashPlayground] error en pointerup', err);
@@ -446,6 +472,7 @@ export default function SplashPlayground() {
         });
       } catch (err) {
         console.error('[SplashPlayground] fallo al inicializar Pixi, se omite la capa decorativa', err);
+        setDebug(`ERROR init: ${err instanceof Error ? err.message : String(err)}`);
         if (appInstance) {
           try {
             appInstance.destroy(true, { children: true });
@@ -482,5 +509,15 @@ export default function SplashPlayground() {
   // reales por debajo — el arrastre no depende del DOM, usa listeners
   // de window + hit-test manual (ver arriba), así que esto no rompe
   // la interacción.
-  return <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true" />;
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      {/* Panel de diagnóstico TEMPORAL — quitar una vez confirmado que el arrastre funciona */}
+      <div
+        ref={debugRef}
+        className="absolute top-1 left-1 right-1 z-[999] text-[10px] leading-tight font-mono text-lime-300 bg-black/80 px-2 py-1 rounded pointer-events-none break-words"
+      >
+        debug: esperando…
+      </div>
+    </div>
+  );
 }
