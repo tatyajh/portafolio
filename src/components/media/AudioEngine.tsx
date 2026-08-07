@@ -1,7 +1,13 @@
 "use client";
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+
+// Solo se carga en el cliente y solo cuando realmente se va a mostrar
+// el splash sin reduced-motion — pixi.js/pixi-filters no deben pesar
+// en el bundle de quienes prefieren menos movimiento.
+const SplashPlayground = dynamic(() => import('./SplashPlayground'), { ssr: false });
 
 // Múltiples canciones para loop
 // Para agregar más canciones, colócalas en /public/audio/ y añádelas aquí
@@ -20,6 +26,7 @@ const INITIAL_TRACK = Math.floor(Math.random() * PLAYLIST.length);
  * Maneja la pantalla de inicio, audio de fondo y control de video
  */
 export default function AudioEngine() {
+  const prefersReducedMotion = useReducedMotion();
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
@@ -323,6 +330,12 @@ export default function AudioEngine() {
               }}
             />
           </div>
+
+          {/* Playground de distorsión (Pixi) — íconos arrastrables con
+              rastro cromático, exclusivo de esta pantalla. No toca
+              CollageDecor, que sigue siendo el sistema del resto del sitio. */}
+          {!prefersReducedMotion && <SplashPlayground />}
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

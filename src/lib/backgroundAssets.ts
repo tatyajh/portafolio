@@ -19,15 +19,15 @@ export interface BackgroundAssetGroup {
 // las 9 categorías (el índice y el nodo de "conexiones" son los únicos
 // pensados para mostrar todo mezclado).
 const CATEGORY_CONFIG: { category: BackgroundAssetGroup['category']; count: number; sections: string[] }[] = [
-  { category: 'aguja', count: 4, sections: ['mapa', 'mixto', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'hilo', count: 8, sections: ['mapa', 'mixto', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'carrete', count: 9, sections: ['mapa', 'mixto', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'tijeras', count: 8, sections: ['mapa', 'mixto', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'patron', count: 8, sections: ['mapa', 'mixto', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'codigo', count: 13, sections: ['mapa', 'mixto', 'estructura', 'tecnico', 'perfil'] },
-  { category: 'saxofon', count: 5, sections: ['mapa', 'mixto', 'sonido'] },
-  { category: 'nota', count: 24, sections: ['mapa', 'mixto', 'sonido'] },
-  { category: 'gamepad', count: 12, sections: ['mapa', 'mixto', 'juego'] },
+  { category: 'aguja', count: 4, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'hilo', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'carrete', count: 9, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'tijeras', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'patron', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'codigo', count: 13, sections: ['mapa', 'mixto', 'inicio', 'estructura', 'tecnico', 'perfil'] },
+  { category: 'saxofon', count: 5, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },
+  { category: 'nota', count: 24, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },
+  { category: 'gamepad', count: 12, sections: ['mapa', 'mixto', 'inicio', 'juego'] },
 ];
 
 // Los archivos numerados empiezan en 2.png (no hay 1.png en ninguna carpeta origen)
