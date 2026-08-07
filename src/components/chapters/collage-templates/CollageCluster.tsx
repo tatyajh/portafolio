@@ -9,15 +9,17 @@ interface CollageClusterProps {
   mode?: CollageMode;
 }
 
-// Foto ancla + 2-3 fotos menores superpuestas en distintas esquinas,
-// con rotación/escala/z-index mixtos — no una fila ni una grilla.
-// Las leyendas van junto a su propia foto (CollagePhoto ya las ubica
-// debajo de cada una), no centradas para todo el grupo.
+// Foto ancla + 2-3 fotos menores en distintas esquinas, con rotación,
+// escala y z-index mixtos — no una fila ni una grilla. Las posiciones
+// están escalonadas en vertical para que las piezas se rocen en los
+// bordes sin taparse: montarlas demasiado hacía ilegibles las fotos
+// de abajo (feedback directo). Las leyendas van junto a su propia
+// foto, no centradas para todo el grupo.
 const SLOTS: { className: string; tilt: 'l' | 'r'; tape?: { side: 'left' | 'right' } }[] = [
-  { className: 'absolute left-0 top-0 w-[56%] sm:w-[50%] z-10', tilt: 'l', tape: { side: 'left' } },
-  { className: 'absolute right-0 top-[6%] w-[40%] sm:w-[36%] z-20', tilt: 'r' },
-  { className: 'absolute left-[16%] bottom-0 w-[38%] sm:w-[34%] z-30', tilt: 'r', tape: { side: 'right' } },
-  { className: 'absolute right-[4%] bottom-[-2%] w-[32%] sm:w-[28%] z-20', tilt: 'l' },
+  { className: 'absolute left-0 top-0 w-[54%] sm:w-[48%] z-10', tilt: 'l', tape: { side: 'left' } },
+  { className: 'absolute right-0 top-[16%] w-[40%] sm:w-[36%] z-20', tilt: 'r' },
+  { className: 'absolute left-[6%] top-[54%] w-[42%] sm:w-[38%] z-30', tilt: 'r', tape: { side: 'right' } },
+  { className: 'absolute right-[3%] top-[72%] w-[34%] sm:w-[30%] z-20', tilt: 'l' },
 ];
 
 const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
@@ -44,7 +46,7 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="relative mb-24 sm:mb-28 min-h-[360px] sm:min-h-[440px] w-full"
+      className="relative mb-28 sm:mb-32 min-h-[620px] sm:min-h-[760px] w-full"
     >
       {visible.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];
@@ -59,6 +61,7 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
               rotateDeg={rotateDeg}
               captionVariant={captionVariant}
               delay={0.3 + i * 0.15}
+              draggable
             />
           </div>
         );

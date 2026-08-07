@@ -47,6 +47,7 @@ export default function CollageHero({ src, alt, caption, mode = 'journal', delay
           rotateDeg={4}
           captionVariant={cfg.captionVariant}
           delay={delay}
+          draggable
         />
       </div>
     </motion.div>

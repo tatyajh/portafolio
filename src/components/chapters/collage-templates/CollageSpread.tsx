@@ -78,6 +78,7 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
                 rotateDeg={rotateDeg}
                 captionVariant={captionVariant}
                 delay={delay}
+                draggable
               />
             </div>
           );
@@ -90,8 +91,11 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
             globalIndex++;
             return { item, i, d };
           });
+          // Alto generoso y posiciones escalonadas: con el alto anterior
+          // las tres fotos caían una encima de otra en vez de rozarse
+          // (feedback directo: "quedan demasiado montadas").
           return (
-            <div key={rowIdx} className="relative mb-8 sm:mb-10 min-h-[220px] sm:min-h-[260px]">
+            <div key={rowIdx} className="relative mb-10 sm:mb-12 min-h-[560px] sm:min-h-[660px]">
               <div className="absolute left-0 top-0 w-[44%] sm:w-[38%] z-10">
                 <CollagePhoto
                   src={els[0].item.src}
@@ -102,10 +106,11 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
                   rotateDeg={rotateDeg}
                   captionVariant={captionVariant}
                   delay={els[0].d}
+                  draggable
                 />
               </div>
               {els[1] && (
-                <div className="absolute right-[8%] top-[4%] w-[36%] sm:w-[32%] z-20">
+                <div className="absolute right-[6%] top-[18%] w-[36%] sm:w-[32%] z-20">
                   <CollagePhoto
                     src={els[1].item.src}
                     alt={els[1].item.alt}
@@ -114,11 +119,12 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
                     rotateDeg={rotateDeg}
                     captionVariant={captionVariant}
                     delay={els[1].d}
+                    draggable
                   />
                 </div>
               )}
               {els[2] && (
-                <div className="absolute left-[30%] bottom-0 w-[34%] sm:w-[30%] z-30">
+                <div className="absolute left-[26%] top-[62%] w-[34%] sm:w-[30%] z-30">
                   <CollagePhoto
                     src={els[2].item.src}
                     alt={els[2].item.alt}
@@ -128,6 +134,7 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
                     rotateDeg={rotateDeg}
                     captionVariant={captionVariant}
                     delay={els[2].d}
+                    draggable
                   />
                 </div>
               )}
@@ -155,6 +162,7 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
                 rotateDeg={rotateDeg}
                 captionVariant={captionVariant}
                 delay={d}
+                draggable
               />
             ))}
           </div>
