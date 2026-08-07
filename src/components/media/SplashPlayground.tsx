@@ -281,46 +281,63 @@ export default function SplashPlayground() {
         return null;
       }
 
+      // Cada handler va envuelto en try/catch: corren fuera del
+      // try/catch de montaje (se ejecutan después, en respuesta a
+      // eventos reales), así que un fallo aquí necesita su propia red
+      // — nunca debe interrumpir el resto de la interacción de la página.
       const onPointerDown = (evt: Event) => {
-        const e = evt as PointerEvent;
-        const { x, y } = toLocal(e);
-        const icon = findHit(x, y);
-        activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
-        if (icon) {
-          icon.grabbed = true;
-          icon.dragOffsetX = icon.sprite.x - x;
-          icon.dragOffsetY = icon.sprite.y - y;
-          icon.lastMoveT = performance.now();
-          icon.vx = 0;
-          icon.vy = 0;
-          iconLayer.addChild(icon.sprite); // trae al frente mientras se arrastra
+        try {
+          const e = evt as PointerEvent;
+          const { x, y } = toLocal(e);
+          const icon = findHit(x, y);
+          activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
+          if (icon) {
+            // preventDefault en touch evita que el navegador sintetice
+            // un "click" de compatibilidad después del gesto — refuerzo
+            // extra (además de onClickCapture) para que arrastrar un
+            // ícono nunca cierre el splash en móvil.
+            e.preventDefault();
+            icon.grabbed = true;
+            icon.dragOffsetX = icon.sprite.x - x;
+            icon.dragOffsetY = icon.sprite.y - y;
+            icon.lastMoveT = performance.now();
+            icon.vx = 0;
+            icon.vy = 0;
+            iconLayer.addChild(icon.sprite); // trae al frente mientras se arrastra
+          }
+        } catch (err) {
+          console.error('[SplashPlayground] error en pointerdown', err);
         }
       };
 
       const onPointerMove = (evt: Event) => {
-        const e = evt as PointerEvent;
-        if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
-        const { x, y } = toLocal(e);
-        if (!activeGesture.suppressClick) {
-          const dist = Math.hypot(x - activeGesture.startX, y - activeGesture.startY);
-          if (dist > DRAG_THRESHOLD_PX) activeGesture.suppressClick = true;
-        }
-        const icon = activeGesture.icon;
-        if (icon) {
-          const now = performance.now();
-          const dt = Math.max(now - icon.lastMoveT, 1);
-          const nx = x + icon.dragOffsetX;
-          const ny = y + icon.dragOffsetY;
-          icon.vx = (nx - icon.sprite.x) / dt;
-          icon.vy = (ny - icon.sprite.y) / dt;
-          icon.sprite.x = nx;
-          icon.sprite.y = ny;
-          icon.lastMoveT = now;
-          const personality = PERSONALITY[icon.category];
-          if (now - icon.lastGhostSpawnAt >= personality.spawnIntervalMs) {
-            icon.lastGhostSpawnAt = now;
-            spawnGhost(icon, now);
+        try {
+          const e = evt as PointerEvent;
+          if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
+          const { x, y } = toLocal(e);
+          if (!activeGesture.suppressClick) {
+            const dist = Math.hypot(x - activeGesture.startX, y - activeGesture.startY);
+            if (dist > DRAG_THRESHOLD_PX) activeGesture.suppressClick = true;
           }
+          const icon = activeGesture.icon;
+          if (icon) {
+            const now = performance.now();
+            const dt = Math.max(now - icon.lastMoveT, 1);
+            const nx = x + icon.dragOffsetX;
+            const ny = y + icon.dragOffsetY;
+            icon.vx = (nx - icon.sprite.x) / dt;
+            icon.vy = (ny - icon.sprite.y) / dt;
+            icon.sprite.x = nx;
+            icon.sprite.y = ny;
+            icon.lastMoveT = now;
+            const personality = PERSONALITY[icon.category];
+            if (now - icon.lastGhostSpawnAt >= personality.spawnIntervalMs) {
+              icon.lastGhostSpawnAt = now;
+              spawnGhost(icon, now);
+            }
+          }
+        } catch (err) {
+          console.error('[SplashPlayground] error en pointermove', err);
         }
       };
 
@@ -332,24 +349,36 @@ export default function SplashPlayground() {
       };
 
       const onPointerUp = (evt: Event) => {
-        const e = evt as PointerEvent;
-        if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
-        endGesture();
+        try {
+          const e = evt as PointerEvent;
+          if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
+          endGesture();
+        } catch (err) {
+          console.error('[SplashPlayground] error en pointerup', err);
+        }
       };
 
       const onPointerCancel = (evt: Event) => {
-        const e = evt as PointerEvent;
-        if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
-        endGesture();
+        try {
+          const e = evt as PointerEvent;
+          if (!activeGesture || e.pointerId !== activeGesture.pointerId) return;
+          endGesture();
+        } catch (err) {
+          console.error('[SplashPlayground] error en pointercancel', err);
+        }
       };
 
       // Fase de captura: corre ANTES que el onClick delegado de React,
       // así puede frenar la propagación y evitar que arrastrar un ícono
       // cierre el splash (ver B3 del plan — validado explícitamente).
       const onClickCapture = (evt: Event) => {
-        if (pendingSuppressClick) {
-          evt.stopPropagation();
-          pendingSuppressClick = false;
+        try {
+          if (pendingSuppressClick) {
+            evt.stopPropagation();
+            pendingSuppressClick = false;
+          }
+        } catch (err) {
+          console.error('[SplashPlayground] error en onClickCapture', err);
         }
       };
 
@@ -367,6 +396,7 @@ export default function SplashPlayground() {
       );
 
       app.ticker.add((ticker: Ticker) => {
+       try {
         const now = performance.now();
         const screenW = app.screen.width;
         const screenH = app.screen.height;
@@ -429,7 +459,10 @@ export default function SplashPlayground() {
           ghost.sprite.alpha = (1 - t) * 0.55;
           ghost.sprite.scale.set(ghost.baseScale * (1 + t * 0.7));
         }
-        });
+       } catch (err) {
+         console.error('[SplashPlayground] error en el ticker', err);
+       }
+      });
       } catch (err) {
         console.error('[SplashPlayground] fallo al inicializar Pixi, se omite la capa decorativa', err);
         if (appInstance) {
