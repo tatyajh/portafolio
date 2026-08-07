@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import AudioEngine from '@/components/media/AudioEngine';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
@@ -485,9 +486,11 @@ export default function Home() {
                     mi hoja de vida completa
                   </p>
                   <div className="overflow-hidden border border-burgundy/10 mb-6">
-                    <img
+                    <Image
                       src="/media/cv/cv.png"
                       alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
+                      width={1024}
+                      height={1536}
                       className="w-full h-auto object-contain"
                     />
                   </div>

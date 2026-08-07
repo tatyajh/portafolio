@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { motion, useTransform } from 'framer-motion';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
 import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
@@ -136,7 +137,16 @@ function FlipbookIconWithTracker({ frames, startOffset, onFrameChange }: {
     onFrameChange(frames[frameIndex]);
   }, [frameIndex, frames, onFrameChange]);
 
-  return <img src={frames[frameIndex]} alt="" className="w-full h-full object-contain" draggable={false} />;
+  return (
+    <Image
+      src={frames[frameIndex]}
+      alt=""
+      fill
+      sizes="56px"
+      className="object-contain"
+      draggable={false}
+    />
+  );
 }
 
 // Decoración de fondo: solo los íconos reales por categoría (sin
