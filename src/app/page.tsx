@@ -185,90 +185,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* ═══ NODO ESENCIA ═══ */}
-          {currentNode === 'esencia' && (
-            <div className="w-full max-w-3xl">
-              {/* Línea decorativa superior */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8 }}
-                className="w-24 h-px bg-gradient-to-r from-transparent via-burgundy to-transparent mx-auto mb-10"
-              />
-
-              {/* Título */}
-              <div className="text-center mb-10">
-                <motion.p 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-burgundy text-xs tracking-[0.4em] uppercase mb-4"
-                >
-                  {node.subtitle}
-                </motion.p>
-                <motion.h2 
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="font-serif text-5xl sm:text-6xl md:text-7xl text-ivory mb-6"
-                >
-                  {node.title}
-                </motion.h2>
-                <motion.p 
-                  initial={{ opacity: 0, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.5 }}
-                  className="font-serif text-xl sm:text-2xl italic text-burgundy"
-                >
-                  {node.text}
-                </motion.p>
-              </div>
-
-              {/* Historia */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="text-center mb-12"
-              >
-                <p className="text-ivory/80 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-                  {node.content}
-                </p>
-              </motion.div>
-
-              {/* Imágenes */}
-              {node.gallery && node.gallery.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 0.5 }}
-                  className="mb-10"
-                >
-                  <div className="grid grid-cols-1 gap-4">
-                    {node.gallery.map((src, i) => (
-                      <div key={i} className="overflow-hidden border border-burgundy/20">
-                        <img
-                          src={src}
-                          alt={`${node.title} ${i + 1}`}
-                          className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Línea decorativa */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-                className="w-16 h-px bg-burgundy/60 mx-auto mb-10"
-              />
-            </div>
-          )}
-
           {/* ═══ NODO DE CONTENIDO NORMAL ═══ */}
           {/* ═══ NODO TÉCNICO - atajo directo para perfiles técnicos ═══ */}
           {currentNode === 'tecnico' && (
@@ -396,7 +312,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'esencia' && currentNode !== 'juego' && currentNode !== 'tecnico' && currentNode !== 'resume' && (
+          {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'juego' && currentNode !== 'tecnico' && (
             <div className="w-full max-w-3xl">
               {/* Línea decorativa */}
               <motion.div
