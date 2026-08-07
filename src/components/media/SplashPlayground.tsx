@@ -311,10 +311,18 @@ export default function SplashPlayground() {
         let pendingSuppressClick = false;
 
         function toLocal(e: PointerEvent) {
-          // Medido contra el canvas real, no el wrapper — si algún día
-          // difieren (padding/borde/redondeo), esto es la fuente de verdad.
-          const rect = app.canvas.getBoundingClientRect();
-          return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+          // Usa la conversión oficial de Pixi (la misma que usa
+          // internamente su propio sistema de eventos) en vez de restar
+          // a mano contra getBoundingClientRect — esa cuenta manual
+          // asume que el tamaño del buffer interno del canvas y su
+          // tamaño en CSS están en proporción 1:1 con la resolución,
+          // lo cual no se está cumpliendo aquí (causa real confirmada
+          // del "objeto a 5 metros de distancia": mapPositionToPoint
+          // también corrige domElement.width/rect.width, no solo resta
+          // el offset).
+          const point = { x: 0, y: 0 };
+          app.renderer.events.mapPositionToPoint(point, e.clientX, e.clientY);
+          return point;
         }
 
         function findHit(x: number, y: number): IconState | null {
