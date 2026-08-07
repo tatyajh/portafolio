@@ -204,7 +204,8 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }
 
   // Por defecto: collage de 2 columnas (1 en mobile) sin captions
-  // (arte, sonido, mixto, proceso, quiebre, identidad, perfil, esencia)
+  // (arte, sonido, mixto, proceso, quiebre, esencia — identidad y
+  // perfil no llegan aquí: no tienen gallery)
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

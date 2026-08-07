@@ -166,7 +166,7 @@ export default function Home() {
               {/* Progreso */}
               <div className="mt-12 text-center">
                 <p className="font-script text-xl text-gold-mid/70">
-                  hilvanado: {new Set(history).size - 1} / {Object.keys(NODES).length - 3} nodos
+                  hilvanado: {new Set(history.filter(id => (LINEAR_ORDER as readonly string[]).includes(id))).size} / {LINEAR_ORDER.length} nodos
                 </p>
               </div>
 
