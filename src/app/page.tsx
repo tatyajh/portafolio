@@ -56,7 +56,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
+    <div className={`relative z-0 min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' : undefined }}>
       <BackgroundLayer visible={['mapa', 'tecnico', 'juego'].includes(currentNode)} />
       <AudioEngine />
@@ -114,8 +114,8 @@ export default function Home() {
                     {/* Sello de categoría tipo estampilla */}
                     <div className="flex justify-center">
                       <div
-                        className="stamp w-20 h-20 px-2 text-[10px] tracking-[0.15em] uppercase font-serif bg-[#eadfc2]/70"
-                        style={{ color: stampColor }}
+                        className="stamp w-24 h-24 px-2 text-[11px] font-semibold tracking-[0.08em] uppercase font-serif bg-[#eadfc2]"
+                        style={{ color: stampColor, transform: 'rotate(-3deg)' }}
                       >
                         {cat.label}
                       </div>
@@ -295,7 +295,6 @@ export default function Home() {
               </div>
 
               <TechIdentity />
-              <TechMindset />
 
               <div className="space-y-5 mb-12">
                 {[
@@ -511,6 +510,11 @@ export default function Home() {
 
               {/* Chips de herramientas - solo en perfil */}
               {node.tools && <ResumeTools tools={node.tools} />}
+
+              {/* Cómo pienso - solo en perfil (antes vivía en Lo técnico,
+                  se veía como si fuera clickeable junto a las tarjetas de
+                  navegación reales; aquí no compite con nada navegable) */}
+              {node.id === 'perfil' && <TechMindset />}
 
               {/* Media - Videos con layouts específicos por nodo */}
               {(node.videos ?? (node.media ? [node.media.src as string] : [])).length > 0 && (

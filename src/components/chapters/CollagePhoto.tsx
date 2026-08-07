@@ -14,13 +14,13 @@ interface CollagePhotoProps {
 export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.3 }: CollagePhotoProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.95, rotate: 0 }}
+      animate={{ opacity: 1, scale: 1, rotate: tilt === 'l' ? -3 : tilt === 'r' ? 3 : 0 }}
       transition={{ delay, duration: 0.4 }}
-      className={`paper-card stitch-border-gold relative p-2 sm:p-3 ${tilt === 'l' ? 'tilt-l' : tilt === 'r' ? 'tilt-r' : ''}`}
+      className="paper-card stitch-border-gold relative p-3 sm:p-4"
     >
       {tape && (
-        <div className={`tape -top-3 ${tape.side === 'left' ? 'left-6 -rotate-6' : 'right-6 rotate-3'}`} />
+        <div className={`tape -top-4 w-24 h-8 ${tape.side === 'left' ? 'left-4 -rotate-6' : 'right-4 rotate-6'}`} />
       )}
       <div className="overflow-hidden">
         <img
