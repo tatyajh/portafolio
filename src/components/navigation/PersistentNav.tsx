@@ -30,6 +30,7 @@ const RECRUITER_TARGETS = [
 
 function RecruiterPanel({
   open,
+  direction,
   currentNode,
   textClass,
   panelBg,
@@ -41,6 +42,7 @@ function RecruiterPanel({
   onClose,
 }: {
   open: boolean;
+  direction: 'down' | 'up';
   currentNode: string;
   textClass: string;
   panelBg: string;
@@ -51,15 +53,20 @@ function RecruiterPanel({
   onNavigate: (nodeId: string) => void;
   onClose: () => void;
 }) {
+  // "down" (escritorio, barra arriba de la pantalla): se abre hacia
+  // abajo. "up" (móvil, barra pegada abajo): se abre hacia arriba —
+  // si no, se corta contra el borde inferior de la pantalla.
+  const positionClass = direction === 'down' ? 'top-full mt-2' : 'bottom-full mb-2';
+  const offscreenY = direction === 'down' ? -8 : 8;
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: -8 }}
+          initial={{ opacity: 0, scale: 0.95, y: offscreenY }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: -8 }}
+          exit={{ opacity: 0, scale: 0.95, y: offscreenY }}
           transition={{ duration: 0.2 }}
-          className={`absolute right-0 top-full mt-2 w-52 border p-2 space-y-1 ${panelBg}`}
+          className={`absolute right-0 ${positionClass} w-52 border p-2 space-y-1 ${panelBg}`}
           role="menu"
         >
           {RECRUITER_TARGETS.map(t => {
@@ -240,7 +247,7 @@ export default function PersistentNav({
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
             </svg>
           </button>
-          <RecruiterPanel {...recruiterPanelProps} />
+          <RecruiterPanel direction="down" {...recruiterPanelProps} />
         </div>
       </motion.nav>
 
@@ -271,9 +278,7 @@ export default function PersistentNav({
               <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
             </svg>
           </button>
-          <div className="absolute right-0 bottom-full mb-2">
-            <RecruiterPanel {...recruiterPanelProps} />
-          </div>
+          <RecruiterPanel direction="up" {...recruiterPanelProps} />
         </div>
         {isInLinear && !isLastInLinear && (
           <button
