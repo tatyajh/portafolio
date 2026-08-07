@@ -15,6 +15,11 @@ const INSTANCES_PER_CATEGORY_MOBILE = 2;
 
 const ICON_SIZE_DESKTOP = 60;
 const ICON_SIZE_MOBILE = 44;
+// Piezas alargadas (aguja, hilo) se escalan manteniendo su proporción
+// real — el eje corto puede terminar en unos pocos px de ancho,
+// imposible de acertar con el dedo. El hit-test usa como mínimo esta
+// mitad-de-lado en cada eje, sin importar qué tan delgado se vea el sprite.
+const MIN_HIT_HALF = 26;
 const DRAG_THRESHOLD_PX = 5;
 const MAX_SPEED_PX_MS = 1.4;
 const PARALLAX_DEPTH = 24;
@@ -45,16 +50,19 @@ const PALETTE = {
 // "Personalidad" por categoría: cuánto dura cada eco, con qué
 // frecuencia se generan y qué tan fuerte es la aberración cromática —
 // datos, no ocho rutas de código distintas.
+// Vidas de eco mucho más largas que un "flash" — pidió que el rastro
+// se sienta como si estuviera deformando algo, no un parpadeo que
+// desaparece apenas se suelta.
 const PERSONALITY: Record<Category, Personality> = {
-  tijeras: { trailLifetimeMs: 180, spawnIntervalMs: 55, splitStrength: 9, tint: PALETTE.burgundy, motionBlur: false },
-  aguja: { trailLifetimeMs: 480, spawnIntervalMs: 90, splitStrength: 5, tint: PALETTE.goldDeep, motionBlur: true },
-  hilo: { trailLifetimeMs: 460, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.goldMid, motionBlur: true },
-  carrete: { trailLifetimeMs: 440, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.brown, motionBlur: true },
-  patron: { trailLifetimeMs: 500, spawnIntervalMs: 100, splitStrength: 4, tint: PALETTE.ivory, motionBlur: false },
-  codigo: { trailLifetimeMs: 200, spawnIntervalMs: 40, splitStrength: 14, tint: PALETTE.gold, motionBlur: false },
-  saxofon: { trailLifetimeMs: 420, spawnIntervalMs: 70, splitStrength: 7, tint: PALETTE.goldDeep, motionBlur: true },
-  nota: { trailLifetimeMs: 400, spawnIntervalMs: 60, splitStrength: 8, tint: PALETTE.goldMid, motionBlur: false },
-  gamepad: { trailLifetimeMs: 160, spawnIntervalMs: 45, splitStrength: 15, tint: PALETTE.burgundy, motionBlur: false },
+  tijeras: { trailLifetimeMs: 550, spawnIntervalMs: 55, splitStrength: 9, tint: PALETTE.burgundy, motionBlur: false },
+  aguja: { trailLifetimeMs: 1500, spawnIntervalMs: 90, splitStrength: 5, tint: PALETTE.goldDeep, motionBlur: true },
+  hilo: { trailLifetimeMs: 1400, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.goldMid, motionBlur: true },
+  carrete: { trailLifetimeMs: 1350, spawnIntervalMs: 85, splitStrength: 6, tint: PALETTE.brown, motionBlur: true },
+  patron: { trailLifetimeMs: 1600, spawnIntervalMs: 100, splitStrength: 4, tint: PALETTE.ivory, motionBlur: false },
+  codigo: { trailLifetimeMs: 600, spawnIntervalMs: 40, splitStrength: 14, tint: PALETTE.gold, motionBlur: false },
+  saxofon: { trailLifetimeMs: 1250, spawnIntervalMs: 70, splitStrength: 7, tint: PALETTE.goldDeep, motionBlur: true },
+  nota: { trailLifetimeMs: 1150, spawnIntervalMs: 60, splitStrength: 8, tint: PALETTE.goldMid, motionBlur: false },
+  gamepad: { trailLifetimeMs: 480, spawnIntervalMs: 45, splitStrength: 15, tint: PALETTE.burgundy, motionBlur: false },
 };
 
 interface PlacedInstance {
@@ -110,6 +118,10 @@ interface IconState {
   skewX: number;
   skewY: number;
   grabbed: boolean;
+  // Una vez soltado tras un arrastre real, deja de volver a su
+  // posición de grilla — se queda exactamente donde se soltó
+  // ("la idea es que se quede donde lo coloque").
+  pinned: boolean;
   dragOffsetX: number;
   dragOffsetY: number;
   lastMoveT: number;
@@ -151,7 +163,10 @@ export default function SplashPlayground() {
 
     const isMobile = window.innerWidth < 768;
     const iconSize = isMobile ? ICON_SIZE_MOBILE : ICON_SIZE_DESKTOP;
-    const ghostPoolSize = isMobile ? 12 : 24;
+    // Vidas de eco más largas (ver PERSONALITY) significan más ecos
+    // vivos a la vez durante un arrastre sostenido — el pool crece para
+    // no reciclar (y hacer "parpadear") un eco que todavía se ve.
+    const ghostPoolSize = isMobile ? 26 : 48;
     const instancesPerCategory = isMobile ? INSTANCES_PER_CATEGORY_MOBILE : INSTANCES_PER_CATEGORY_DESKTOP;
     const gridCols = isMobile ? 4 : 6;
 
@@ -220,6 +235,7 @@ export default function SplashPlayground() {
             skewX: 0,
             skewY: 0,
             grabbed: false,
+            pinned: false,
             dragOffsetX: 0,
             dragOffsetY: 0,
             lastMoveT: 0,
@@ -261,7 +277,7 @@ export default function SplashPlayground() {
           ghost.sprite.visible = true;
           ghost.baseScale = icon.sprite.scale.x;
           ghost.bornAt = now;
-          ghost.lifetimeMs = lerp(150, personality.trailLifetimeMs, speedNorm);
+          ghost.lifetimeMs = lerp(350, personality.trailLifetimeMs, speedNorm);
 
           ghost.splitFilter.red = { x: -personality.splitStrength * speedNorm, y: 0 };
           ghost.splitFilter.blue = { x: personality.splitStrength * speedNorm, y: 0 };
@@ -290,8 +306,8 @@ export default function SplashPlayground() {
           for (let i = icons.length - 1; i >= 0; i--) {
             const icon = icons[i];
             if (icon.grabbed) continue;
-            const halfW = icon.sprite.width / 2;
-            const halfH = icon.sprite.height / 2;
+            const halfW = Math.max(icon.sprite.width / 2, MIN_HIT_HALF);
+            const halfH = Math.max(icon.sprite.height / 2, MIN_HIT_HALF);
             if (Math.abs(x - icon.sprite.x) <= halfW && Math.abs(y - icon.sprite.y) <= halfH) return icon;
           }
           return null;
@@ -365,7 +381,10 @@ export default function SplashPlayground() {
 
         const endGesture = () => {
           if (!activeGesture) return;
-          if (activeGesture.icon) activeGesture.icon.grabbed = false;
+          if (activeGesture.icon) {
+            activeGesture.icon.grabbed = false;
+            activeGesture.icon.pinned = true;
+          }
           pendingSuppressClick = activeGesture.suppressClick;
           activeGesture = null;
         };
@@ -428,8 +447,10 @@ export default function SplashPlayground() {
 
             for (const icon of icons) {
               if (!icon.grabbed) {
-                icon.sprite.x = (icon.leftPct / 100) * screenW + px;
-                icon.sprite.y = (icon.topPct / 100) * screenH + py;
+                if (!icon.pinned) {
+                  icon.sprite.x = (icon.leftPct / 100) * screenW + px;
+                  icon.sprite.y = (icon.topPct / 100) * screenH + py;
+                }
                 icon.sprite.alpha = IDLE_ALPHA;
 
                 icon.skewX = lerp(icon.skewX, 0, RECOVERY_RATE);

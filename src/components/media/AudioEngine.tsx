@@ -152,7 +152,20 @@ export default function AudioEngine() {
         <div
           className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden touch-none"
           style={{ background: 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' }}
-          onClick={handleFirstInteraction}
+          onClick={(e) => {
+            handleFirstInteraction();
+            // Un tap que no cae sobre ninguno de los 2 botones (fondo,
+            // texto, un ícono del playground que no se agarró) solo
+            // cerraba el splash sin navegar a ningún lado — como
+            // "inicio" no tiene contenido propio para mostrarse solo,
+            // eso dejaba la pantalla en negro. Cualquier cierre que no
+            // sea un botón explícito cae al mismo destino que "Conoce
+            // más sobre mí".
+            const target = e.target as HTMLElement;
+            if (!target.closest('button')) {
+              window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+            }
+          }}
         >
           {/* Fondo tipo constelación/aurora boreal con hilos */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
