@@ -1,31 +1,37 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { motion, useTransform } from 'framer-motion';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
-import { getBackgroundAssets, type BackgroundAsset } from '@/lib/backgroundAssets';
+import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
 
-const MAX_ICONS = 9;
+const INSTANCE_COUNT = 12;
+const FRAME_INTERVAL_MS = 220;
 
-// Reparte la selección entre categorías (round-robin) en vez de cortar
-// la lista ya filtrada en orden — si no, una sección con varias
-// categorías (ej. "mapa", que las tiene las 9) solo mostraría las
-// primeras 1-2 categorías del array y nunca llegaría a las demás.
-function sampleAcrossCategories(assets: BackgroundAsset[], max: number): BackgroundAsset[] {
-  const byCategory = new Map<string, BackgroundAsset[]>();
-  for (const asset of assets) {
-    const list = byCategory.get(asset.category) ?? [];
-    list.push(asset);
-    byCategory.set(asset.category, list);
-  }
-  const buckets = [...byCategory.values()];
-  const sample: BackgroundAsset[] = [];
-  for (let round = 0; sample.length < max && buckets.some(b => b.length > round); round++) {
-    for (const bucket of buckets) {
-      if (sample.length >= max) break;
-      if (bucket[round]) sample.push(bucket[round]);
-    }
-  }
-  return sample;
+// Reparte instancias entre categorías (round-robin, con vuelta) en vez
+// de cortar la lista en orden — así "mapa" (9 categorías) las muestra
+// todas en vez de solo las primeras, y una sección con pocas
+// categorías (ej. "mixto", solo gamepad) repite esa categoría hasta
+// completar INSTANCE_COUNT en vez de mostrar una sola pieza.
+function sampleInstances(groups: BackgroundAssetGroup[], count: number): BackgroundAssetGroup[] {
+  if (groups.length === 0) return [];
+  return Array.from({ length: count }, (_, i) => groups[i % groups.length]);
+}
+
+// Un ícono que cicla por sus propios frames (el mismo objeto en
+// distintas posiciones dentro de la carpeta) para verse animado, tipo
+// flipbook/gif, en vez de una imagen estática.
+function FlipbookIcon({ frames, startOffset }: { frames: string[]; startOffset: number }) {
+  const [frameIndex, setFrameIndex] = useState(startOffset % frames.length);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setFrameIndex(prev => (prev + 1) % frames.length);
+    }, FRAME_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [frames.length]);
+
+  return <img src={frames[frameIndex]} alt="" className="w-full h-auto" draggable={false} />;
 }
 
 // Decoración collage de fondo: blobs, puntadas, cinta métrica,
@@ -34,7 +40,7 @@ function sampleAcrossCategories(assets: BackgroundAsset[], max: number): Backgro
 // de profundidad que reaccionan sutilmente a la posición del cursor.
 export default function CollageDecor({ section }: { section: string }) {
   const { x, y } = useCursorParallax();
-  const icons = sampleAcrossCategories(getBackgroundAssets(section), MAX_ICONS);
+  const icons = sampleInstances(getBackgroundAssetGroups(section), INSTANCE_COUNT);
 
   const farX = useTransform(x, [-1, 1], [-8, 8]);
   const farY = useTransform(y, [-1, 1], [-8, 8]);
@@ -160,22 +166,23 @@ export default function CollageDecor({ section }: { section: string }) {
       {/* Capa cercana: íconos reales de la categoría del nodo actual */}
       <motion.div className="absolute inset-0" style={{ x: nearX, y: nearY }}>
         {/* Recortes: íconos reales de la categoría del nodo actual */}
-        {icons.map((icon, i) => (
+        {icons.map((group, i) => (
           <motion.div
-            key={icon.id}
+            key={`${group.id}-${i}`}
             drag
             dragMomentum={false}
             dragElastic={0.15}
             whileDrag={{ scale: 1.2, zIndex: 20 }}
-            animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.2, 0.32, 0.2] }}
-            transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0.2, 0.32, 0.2] }}
+            transition={{ duration: 6 + (i % 5), repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
             className="absolute w-10 sm:w-14 pointer-events-auto cursor-grab active:cursor-grabbing"
             style={{
               top: `${6 + (i * 19) % 88}%`,
               left: `${4 + (i * 23) % 92}%`,
             }}
           >
-            <img src={icon.src} alt="" className="w-full h-auto" draggable={false} />
+            <FlipbookIcon frames={group.frames} startOffset={i * 3} />
           </motion.div>
         ))}
       </motion.div>
