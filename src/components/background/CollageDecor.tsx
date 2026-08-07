@@ -163,15 +163,19 @@ export default function CollageDecor({ section }: { section: string }) {
         {icons.map((icon, i) => (
           <motion.div
             key={icon.id}
+            drag
+            dragMomentum={false}
+            dragElastic={0.15}
+            whileDrag={{ scale: 1.2, zIndex: 20 }}
             animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.2, 0.32, 0.2] }}
             transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
-            className="absolute w-10 sm:w-14"
+            className="absolute w-10 sm:w-14 pointer-events-auto cursor-grab active:cursor-grabbing"
             style={{
               top: `${6 + (i * 19) % 88}%`,
               left: `${4 + (i * 23) % 92}%`,
             }}
           >
-            <img src={icon.src} alt="" className="w-full h-auto" />
+            <img src={icon.src} alt="" className="w-full h-auto" draggable={false} />
           </motion.div>
         ))}
       </motion.div>
