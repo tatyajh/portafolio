@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import { Application, Assets, Container, Sprite, Texture } from 'pixi.js';
+import { Application, Assets, Container, Graphics, Sprite, Texture } from 'pixi.js';
 import { RGBSplitFilter, MotionBlurFilter } from 'pixi-filters';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
 import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
@@ -245,7 +245,20 @@ export default function SplashPlayground() {
           };
         });
 
-        setDebug(`Pixi OK. íconos=${icons.length} pantalla=${Math.round(app.screen.width)}x${Math.round(app.screen.height)} isMobile=${isMobile}`);
+        const canvasRect = app.canvas.getBoundingClientRect();
+        const containerRect = containerEl.getBoundingClientRect();
+        setDebug(
+          `Pixi OK. íconos=${icons.length} screen=${Math.round(app.screen.width)}x${Math.round(app.screen.height)} ` +
+            `canvasRect=${Math.round(canvasRect.width)}x${Math.round(canvasRect.height)}@${Math.round(canvasRect.left)},${Math.round(canvasRect.top)} ` +
+            `containerRect=${Math.round(containerRect.width)}x${Math.round(containerRect.height)}@${Math.round(containerRect.left)},${Math.round(containerRect.top)}`,
+        );
+
+        // Marcador visual de diagnóstico: un punto brillante exactamente
+        // donde el sistema calcula que se tocó, en el MISMO espacio de
+        // coordenadas donde viven los sprites — si aparece lejos del
+        // dedo real, confirma un desfase de coordenadas.
+        const debugMarker = new Graphics();
+        app.stage.addChild(debugMarker);
 
         const ghostLayer = new Container();
         app.stage.addChild(ghostLayer);
@@ -298,7 +311,9 @@ export default function SplashPlayground() {
         let pendingSuppressClick = false;
 
         function toLocal(e: PointerEvent) {
-          const rect = containerEl.getBoundingClientRect();
+          // Medido contra el canvas real, no el wrapper — si algún día
+          // difieren (padding/borde/redondeo), esto es la fuente de verdad.
+          const rect = app.canvas.getBoundingClientRect();
           return { x: e.clientX - rect.left, y: e.clientY - rect.top };
         }
 
@@ -313,6 +328,22 @@ export default function SplashPlayground() {
           return null;
         }
 
+        // Diagnóstico: el ícono más cercano y a qué distancia real está
+        // del punto tocado — si "hit" coincide pero dist es enorme, es
+        // un desfase de coordenadas, no falta de precisión del dedo.
+        function findNearest(x: number, y: number): { icon: IconState | null; dist: number } {
+          let best: IconState | null = null;
+          let bestDist = Infinity;
+          for (const icon of icons) {
+            const d = Math.hypot(x - icon.sprite.x, y - icon.sprite.y);
+            if (d < bestDist) {
+              bestDist = d;
+              best = icon;
+            }
+          }
+          return { icon: best, dist: bestDist };
+        }
+
         // Cada handler va envuelto en try/catch: corren fuera del
         // try/catch de montaje (se ejecutan después, en respuesta a
         // eventos reales), así que un fallo aquí necesita su propia red
@@ -322,9 +353,16 @@ export default function SplashPlayground() {
             const e = evt as PointerEvent;
             const { x, y } = toLocal(e);
             const icon = findHit(x, y);
+            const nearest = findNearest(x, y);
             downCount++;
+            debugMarker
+              .clear()
+              .circle(x, y, 14)
+              .fill({ color: 0x39ff14, alpha: 0.9 })
+              .stroke({ color: 0xffffff, width: 3 });
             setDebug(
-              `down#${downCount} tipo=${e.pointerType} xy=${Math.round(x)},${Math.round(y)} hit=${icon ? icon.category : 'ninguno'}`,
+              `down#${downCount} tipo=${e.pointerType} toque=${Math.round(x)},${Math.round(y)} hit=${icon ? icon.category : 'ninguno'} ` +
+                `cercano=${nearest.icon ? nearest.icon.category : '?'}@${nearest.icon ? Math.round(nearest.icon.sprite.x) : '?'},${nearest.icon ? Math.round(nearest.icon.sprite.y) : '?'} dist=${Math.round(nearest.dist)}`,
             );
             activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
             if (icon) {
