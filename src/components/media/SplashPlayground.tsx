@@ -144,6 +144,7 @@ export default function SplashPlayground() {
     let cancelled = false;
     let appInstance: Application | null = null;
     const listeners: Array<{ type: string; handler: EventListener; opts?: boolean | AddEventListenerOptions }> = [];
+    const observers: ResizeObserver[] = [];
 
     const isMobile = window.innerWidth < 768;
     const iconSize = isMobile ? ICON_SIZE_MOBILE : ICON_SIZE_DESKTOP;
@@ -171,8 +172,27 @@ export default function SplashPlayground() {
 
         app.canvas.style.position = 'absolute';
         app.canvas.style.inset = '0';
+        // 100% explícito: `resizeTo` mide el contenedor en el momento
+        // del init y en resize de window, pero en móvil el alto real
+        // cambia sin disparar resize (barra de direcciones que se
+        // oculta, teclado, etc.) — eso dejaba una franja negra abajo
+        // sin cubrir. Con 100% el canvas siempre llena el contenedor,
+        // y el ResizeObserver de abajo mantiene el buffer interno al
+        // día para que no se vea estirado.
+        app.canvas.style.width = '100%';
+        app.canvas.style.height = '100%';
         app.canvas.style.pointerEvents = 'none';
         containerEl.appendChild(app.canvas);
+
+        const resizeObserver = new ResizeObserver(() => {
+          try {
+            app.resize();
+          } catch (err) {
+            console.error('[SplashPlayground] error al redimensionar', err);
+          }
+        });
+        resizeObserver.observe(containerEl);
+        observers.push(resizeObserver);
 
         const groups = getBackgroundAssetGroups('inicio');
         if (groups.length === 0) return;
@@ -527,6 +547,13 @@ export default function SplashPlayground() {
 
     return () => {
       cancelled = true;
+      for (const observer of observers) {
+        try {
+          observer.disconnect();
+        } catch {
+          // defensivo — igual que con los listeners
+        }
+      }
       for (const { type, handler, opts } of listeners) {
         try {
           window.removeEventListener(type, handler, opts);

@@ -9,17 +9,24 @@ interface CollageClusterProps {
   mode?: CollageMode;
 }
 
-// Foto ancla + 2-3 fotos menores en distintas esquinas, con rotación,
-// escala y z-index mixtos — no una fila ni una grilla. Las posiciones
-// están escalonadas en vertical para que las piezas se rocen en los
-// bordes sin taparse: montarlas demasiado hacía ilegibles las fotos
-// de abajo (feedback directo). Las leyendas van junto a su propia
-// foto, no centradas para todo el grupo.
-const SLOTS: { className: string; tilt: 'l' | 'r'; tape?: { side: 'left' | 'right' } }[] = [
-  { className: 'absolute left-0 top-0 w-[54%] sm:w-[48%] z-10', tilt: 'l', tape: { side: 'left' } },
-  { className: 'absolute right-0 top-[16%] w-[40%] sm:w-[36%] z-20', tilt: 'r' },
-  { className: 'absolute left-[6%] top-[54%] w-[42%] sm:w-[38%] z-30', tilt: 'r', tape: { side: 'right' } },
-  { className: 'absolute right-[3%] top-[72%] w-[34%] sm:w-[30%] z-20', tilt: 'l' },
+// Grupo pequeño (3-4 fotos) tipo diario visual: una foto ancla más
+// grande y 2-3 acompañantes, repartidas a lo ancho y con desfases
+// verticales — no una columna. Mismo enfoque de flujo que
+// CollageSpread: nada de posiciones absolutas con alturas adivinadas,
+// que era lo que dejaba las fotos apiladas y algunas muy pequeñas.
+// Las leyendas van con su propia foto, no centradas para todo el grupo.
+const SLOTS: {
+  width: string;
+  offset: string;
+  overlap: string;
+  z: string;
+  tilt: 'l' | 'r';
+  tape?: { side: 'left' | 'right' };
+}[] = [
+  { width: 'w-[56%] sm:w-[44%]', offset: 'mt-0', overlap: '', z: 'z-20', tilt: 'l', tape: { side: 'left' } },
+  { width: 'w-[40%] sm:w-[32%]', offset: 'mt-14 sm:mt-20', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
+  { width: 'w-[46%] sm:w-[36%]', offset: 'mt-4 sm:mt-8', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
+  { width: 'w-[42%] sm:w-[30%]', offset: 'mt-10 sm:mt-24', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
 ];
 
 const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
@@ -46,12 +53,12 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="relative mb-28 sm:mb-32 min-h-[620px] sm:min-h-[760px] w-full"
+      className="mb-16 flex w-full flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8"
     >
       {visible.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];
         return (
-          <div key={i} className={slot.className}>
+          <div key={i} className={`${slot.width} ${slot.offset} ${slot.overlap} ${slot.z} relative`}>
             <CollagePhoto
               src={item.src}
               alt={item.alt}
@@ -60,7 +67,7 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
               tape={slot.tape}
               rotateDeg={rotateDeg}
               captionVariant={captionVariant}
-              delay={0.3 + i * 0.15}
+              delay={0.3 + i * 0.12}
               draggable
             />
           </div>
