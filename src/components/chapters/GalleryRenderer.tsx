@@ -1,8 +1,13 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { IMAGE_CAPTIONS } from '@/data/nodes';
 import CollagePhoto from './CollagePhoto';
+
+// Columnas por breakpoint compartidas por las galerías de flujo libre
+// (todas menos "diseno", que tiene su propia composición fija)
+const MASONRY_BREAKPOINTS = { 350: 1, 750: 2, 1100: 3 };
 
 // GALLERY RENDERER - Layouts específicos por nodo
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
@@ -17,18 +22,20 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
         transition={{ delay: 0.5, duration: 0.5 }}
         className="mb-12"
       >
-        <div className="grid grid-cols-2 gap-3">
-          {gallery.map((src, index) => (
-            <CollagePhoto
-              key={index}
-              src={src}
-              alt={`${nodeId} ${index + 1}`}
-              tilt={index % 2 === 0 ? 'l' : 'r'}
-              tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
-              delay={0.3 + index * 0.1}
-            />
-          ))}
-        </div>
+        <ResponsiveMasonry columnsCountBreakPoints={MASONRY_BREAKPOINTS}>
+          <Masonry gutter="0.75rem">
+            {gallery.map((src, index) => (
+              <CollagePhoto
+                key={index}
+                src={src}
+                alt={`${nodeId} ${index + 1}`}
+                tilt={index % 2 === 0 ? 'l' : 'r'}
+                tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
+                delay={0.3 + index * 0.1}
+              />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
       </motion.div>
     );
   }
@@ -42,19 +49,21 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
         transition={{ delay: 0.5, duration: 0.5 }}
         className="mb-12"
       >
-        <div className="grid grid-cols-1 gap-6">
-          {gallery.map((src, index) => (
-            <CollagePhoto
-              key={index}
-              src={src}
-              alt={captions[index] || `${nodeId} ${index + 1}`}
-              caption={captions[index]}
-              tilt={index % 2 === 0 ? 'l' : 'r'}
-              tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
-              delay={0.3 + index * 0.1}
-            />
-          ))}
-        </div>
+        <ResponsiveMasonry columnsCountBreakPoints={MASONRY_BREAKPOINTS}>
+          <Masonry gutter="1rem">
+            {gallery.map((src, index) => (
+              <CollagePhoto
+                key={index}
+                src={src}
+                alt={captions[index] || `${nodeId} ${index + 1}`}
+                caption={captions[index]}
+                tilt={index % 2 === 0 ? 'l' : 'r'}
+                tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
+                delay={0.3 + index * 0.1}
+              />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
       </motion.div>
     );
   }
@@ -68,29 +77,31 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
         transition={{ delay: 0.5, duration: 0.5 }}
         className="mb-12"
       >
-        <div className="flex flex-col gap-4">
-          {/* Estructura-1 con caption */}
-          <CollagePhoto
-            src={gallery[0]}
-            alt="estructura 1"
-            caption={captions[0]}
-            tilt="l"
-            tape={{ side: 'left' }}
-            delay={0.3}
-          />
-
-          {/* Resto de imágenes sin caption */}
-          {gallery.slice(1).map((src, index) => (
+        <ResponsiveMasonry columnsCountBreakPoints={MASONRY_BREAKPOINTS}>
+          <Masonry gutter="1rem">
+            {/* Estructura-1 con caption */}
             <CollagePhoto
-              key={index + 1}
-              src={src}
-              alt={`estructura ${index + 2}`}
-              tilt={(index + 1) % 2 === 0 ? 'l' : 'r'}
-              tape={(index + 1) % 3 === 0 ? { side: (index + 1) % 2 === 0 ? 'left' : 'right' } : undefined}
-              delay={0.4 + index * 0.1}
+              src={gallery[0]}
+              alt="estructura 1"
+              caption={captions[0]}
+              tilt="l"
+              tape={{ side: 'left' }}
+              delay={0.3}
             />
-          ))}
-        </div>
+
+            {/* Resto de imágenes sin caption */}
+            {gallery.slice(1).map((src, index) => (
+              <CollagePhoto
+                key={index + 1}
+                src={src}
+                alt={`estructura ${index + 2}`}
+                tilt={(index + 1) % 2 === 0 ? 'l' : 'r'}
+                tape={(index + 1) % 3 === 0 ? { side: (index + 1) % 2 === 0 ? 'left' : 'right' } : undefined}
+                delay={0.4 + index * 0.1}
+              />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
       </motion.div>
     );
   }
@@ -201,18 +212,20 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
       transition={{ delay: 0.5, duration: 0.5 }}
       className="mb-12"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {gallery.map((src, index) => (
-          <CollagePhoto
-            key={index}
-            src={src}
-            alt={`${nodeId} ${index + 1}`}
-            tilt={index % 2 === 0 ? 'l' : 'r'}
-            tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
-            delay={0.3 + index * 0.1}
-          />
-        ))}
-      </div>
+      <ResponsiveMasonry columnsCountBreakPoints={MASONRY_BREAKPOINTS}>
+        <Masonry gutter="1rem">
+          {gallery.map((src, index) => (
+            <CollagePhoto
+              key={index}
+              src={src}
+              alt={`${nodeId} ${index + 1}`}
+              tilt={index % 2 === 0 ? 'l' : 'r'}
+              tape={index % 3 === 0 ? { side: index % 2 === 0 ? 'left' : 'right' } : undefined}
+              delay={0.3 + index * 0.1}
+            />
+          ))}
+        </Masonry>
+      </ResponsiveMasonry>
     </motion.div>
   );
 }
