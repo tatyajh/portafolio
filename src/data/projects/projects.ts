@@ -30,4 +30,21 @@ export const PROJECTS: Project[] = [
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
   },
+  {
+    id: 'hotel',
+    title: 'Reserva de hoteles',
+    desc: 'Una vista de búsqueda y reserva de hoteles: filtrar, ver las tarjetas de cada hotel y entrar al detalle. Lo armé con diseño atómico, que es organizar la interfaz de lo más chiquito a lo más grande — botones, luego tarjetas, luego secciones, luego la página. Suena a formalidad, pero es lo que hace que cambiar un botón no te obligue a revisar media aplicación.',
+    stack: 'Next.js · React · CSS Modules',
+    links: [
+      { label: 'Ver en línea', url: 'https://hotel-react-reto4.vercel.app' },
+      { label: 'Código', url: 'https://github.com/tatyajh/hotel-react-reto4' },
+    ],
+  },
+  {
+    id: 'posticks',
+    title: 'Posticks',
+    desc: 'Una app de notas tipo post-it: crear, editar, buscar y borrar. Lo que más me gustó resolver fue la papelera — las notas borradas no se pierden de una, quedan ahí y uno decide si las restaura una por una o vacía todo. Las notas quedan guardadas en el navegador, así que siguen ahí al volver.',
+    stack: 'React · Tailwind CSS',
+    links: [{ label: 'Código', url: 'https://github.com/tatyajh/posticks' }],
+  },
 ];
