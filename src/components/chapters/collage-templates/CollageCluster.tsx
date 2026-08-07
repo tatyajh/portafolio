@@ -23,11 +23,15 @@ const SLOTS: {
   tilt: 'l' | 'r';
   tape?: { side: 'left' | 'right' };
 }[] = [
-  { width: 'w-[56%] sm:w-[44%]', offset: 'mt-0', overlap: '', z: 'z-20', tilt: 'l', tape: { side: 'left' } },
-  { width: 'w-[40%] sm:w-[32%]', offset: 'mt-14 sm:mt-20', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
-  { width: 'w-[46%] sm:w-[36%]', offset: 'mt-4 sm:mt-8', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
-  { width: 'w-[42%] sm:w-[30%]', offset: 'mt-10 sm:mt-24', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
+  { width: 'w-[58%] sm:w-[45%]', offset: 'mt-0', overlap: '', z: 'z-20', tilt: 'l', tape: { side: 'left' } },
+  { width: 'w-[44%] sm:w-[34%]', offset: 'mt-14 sm:mt-20', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
+  { width: 'w-[50%] sm:w-[38%]', offset: 'mt-4 sm:mt-8', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
+  { width: 'w-[46%] sm:w-[33%]', offset: 'mt-10 sm:mt-24', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
 ];
+
+// Mismo motivo que en CollageSpread: sacar el collage de la columna
+// de texto (max-w-3xl) para que no quede media pantalla vacía.
+const BREAKOUT = 'lg:-mx-20 xl:-mx-40 2xl:-mx-64';
 
 const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
   editorial: 'default',
@@ -53,7 +57,7 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="mb-16 flex w-full flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8"
+      className={`mb-16 flex w-auto flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 ${BREAKOUT}`}
     >
       {visible.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];

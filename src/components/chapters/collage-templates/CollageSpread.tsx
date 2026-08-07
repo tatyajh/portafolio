@@ -30,12 +30,19 @@ const SLOTS: {
   tape?: { side: 'left' | 'right' };
 }[] = [
   { width: 'w-[56%] sm:w-[38%]', offset: 'mt-0', overlap: '', z: 'z-20', tilt: 'l', tape: { side: 'left' } },
-  { width: 'w-[40%] sm:w-[27%]', offset: 'mt-12 sm:mt-24', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
-  { width: 'w-[45%] sm:w-[30%]', offset: 'mt-6 sm:mt-4', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
-  { width: 'w-[48%] sm:w-[33%]', offset: 'mt-4 sm:mt-16', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
-  { width: 'w-[38%] sm:w-[25%]', offset: 'mt-14 sm:mt-2', overlap: '', z: 'z-30', tilt: 'l' },
-  { width: 'w-[50%] sm:w-[34%]', offset: 'mt-2 sm:mt-20', overlap: '-ml-3', z: 'z-10', tilt: 'r', tape: { side: 'left' } },
+  { width: 'w-[42%] sm:w-[29%]', offset: 'mt-12 sm:mt-24', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
+  { width: 'w-[48%] sm:w-[31%]', offset: 'mt-6 sm:mt-4', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
+  { width: 'w-[50%] sm:w-[34%]', offset: 'mt-4 sm:mt-16', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
+  { width: 'w-[44%] sm:w-[29%]', offset: 'mt-14 sm:mt-2', overlap: '', z: 'z-30', tilt: 'l' },
+  { width: 'w-[52%] sm:w-[34%]', offset: 'mt-2 sm:mt-20', overlap: '-ml-3', z: 'z-10', tilt: 'r', tape: { side: 'left' } },
 ];
+
+// Los capítulos renderizan su contenido dentro de una columna de
+// max-w-3xl (768px), pensada para texto. Para el collage eso dejaba
+// media pantalla vacía en escritorio. Estos márgenes negativos lo
+// sacan de esa columna por etapas — sin unidades de viewport, que
+// provocarían scroll horizontal al no contar la barra de scroll.
+const BREAKOUT = 'lg:-mx-24 xl:-mx-52 2xl:-mx-80';
 
 const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
   editorial: 'default',
@@ -60,7 +67,7 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="mb-16 flex w-full flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8"
+      className={`mb-16 flex w-auto flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 ${BREAKOUT}`}
     >
       {items.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];

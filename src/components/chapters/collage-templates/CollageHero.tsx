@@ -35,9 +35,11 @@ export default function CollageHero({ src, alt, caption, mode = 'journal', delay
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="relative mb-16 w-full"
+      // Márgenes negativos: saca la foto de la columna de texto
+      // (max-w-3xl) para que ocupe más pantalla en escritorio.
+      className="relative mb-16 w-auto lg:-mx-20 xl:-mx-40 2xl:-mx-64"
     >
-      <div className={`relative w-[76%] sm:w-[56%] max-w-md ${positionClass}`}>
+      <div className={`relative w-[80%] sm:w-[58%] max-w-2xl ${positionClass}`}>
         <CollagePhoto
           src={src}
           alt={alt}

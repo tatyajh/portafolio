@@ -165,38 +165,21 @@ body {
   border: 2px dashed rgba(160, 110, 60, 0.45);
 }
 
-/* Marco gótico: línea fina doble + esquinas en escuadra, en vez del
-   borde punteado grueso. Pensado para las fotos de los collages, donde
-   el mat ancho competía con la imagen. */
+/* Marco gótico tipo espejo: filete doble muy fino (1px) — el
+   ornamento de las esquinas lo dibuja CollagePhoto con SVG, para que
+   sea filigrana real y no una escuadra recta. */
 .gothic-frame {
   position: relative;
-  border: 1px solid rgba(212, 165, 116, 0.6);
+  border: 1px solid rgba(212, 165, 116, 0.75);
 }
 
-/* Segunda línea, por fuera — el "doble filete" de grabado antiguo. */
+/* Segundo filete, por fuera — el "doble hilo" del grabado antiguo. */
 .gothic-frame::before {
   content: '';
   position: absolute;
-  inset: -4px;
-  border: 1px solid rgba(212, 165, 116, 0.3);
+  inset: -5px;
+  border: 1px solid rgba(212, 165, 116, 0.4);
   pointer-events: none;
-}
-
-/* Escuadras en las 4 esquinas. */
-.gothic-frame::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 0 0 / 13px 1px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 0 0 / 1px 13px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 100% 0 / 13px 1px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 100% 0 / 1px 13px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 0 100% / 13px 1px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 0 100% / 1px 13px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 100% 100% / 13px 1px no-repeat,
-    linear-gradient(var(--color-gold-mid), var(--color-gold-mid)) 100% 100% / 1px 13px no-repeat;
 }
 
 /* Línea de puntada horizontal (hilo dorado sobre mesa oscura) */
