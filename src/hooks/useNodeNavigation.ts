@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { NODES, LINEAR_ORDER, TECH_ROUTE_ORDER } from '@/data/nodes';
 
 export function useNodeNavigation() {
@@ -25,7 +25,10 @@ export function useNodeNavigation() {
     (TECH_ROUTE_ORDER as readonly string[]).includes(currentNode) &&
     (previousNode === 'tecnico' || (TECH_ROUTE_ORDER as readonly string[]).includes(previousNode ?? ''))
   );
-  const activeOrder: readonly string[] = isTechRouteContext ? ['tecnico', ...TECH_ROUTE_ORDER] : LINEAR_ORDER;
+  const activeOrder: readonly string[] = useMemo(
+    () => (isTechRouteContext ? ['tecnico', ...TECH_ROUTE_ORDER] : LINEAR_ORDER),
+    [isTechRouteContext]
+  );
 
   const navigateTo = useCallback((nodeId: string) => {
     if (isTransitioning || !NODES[nodeId]) return;

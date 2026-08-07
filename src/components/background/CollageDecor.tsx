@@ -2,13 +2,17 @@
 
 import { motion, useTransform } from 'framer-motion';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
+import { getBackgroundAssets } from '@/lib/backgroundAssets';
+
+const MAX_ICONS = 8;
 
 // Decoración collage de fondo: blobs, puntadas, cinta métrica,
 // patrón de costura, botones de costura, retazos de tela, hilos
-// procedurales y recortes — organizados en 3 capas de profundidad
-// que reaccionan sutilmente a la posición del cursor.
-export default function CollageDecor() {
+// procedurales e íconos reales por categoría — organizados en 3 capas
+// de profundidad que reaccionan sutilmente a la posición del cursor.
+export default function CollageDecor({ section }: { section: string }) {
   const { x, y } = useCursorParallax();
+  const icons = getBackgroundAssets(section).slice(0, MAX_ICONS);
 
   const farX = useTransform(x, [-1, 1], [-8, 8]);
   const farY = useTransform(y, [-1, 1], [-8, 8]);
@@ -131,30 +135,21 @@ export default function CollageDecor() {
         </svg>
       </motion.div>
 
-      {/* Capa cercana: código, notas musicales, recortes */}
+      {/* Capa cercana: íconos reales de la categoría del nodo actual */}
       <motion.div className="absolute inset-0" style={{ x: nearX, y: nearY }}>
-        {/* Recortes de código */}
-        <div className="absolute top-[26%] right-[6%] font-mono text-xl opacity-25 rotate-6" style={{ color: '#D4A574' }}>{'</>'}</div>
-        <div className="absolute bottom-[18%] right-[28%] font-mono text-2xl opacity-20 -rotate-12" style={{ color: '#8B0000' }}>{'{ }'}</div>
-        <div className="absolute top-[55%] left-[4%] font-mono text-sm opacity-25 rotate-3" style={{ color: '#E8C9A0' }}>while(viva) crear();</div>
-
-        {/* Notas musicales */}
-        <div className="absolute top-[12%] left-[30%] text-2xl opacity-25 -rotate-12" style={{ color: '#D4A574' }}>♪</div>
-        <div className="absolute bottom-[32%] right-[10%] text-3xl opacity-20 rotate-6" style={{ color: '#E8C9A0' }}>♫</div>
-
-        {/* Recortes: costura, música, código, el paisa y sus frijoles */}
-        {['✂️', '🪡', '🧶', '🎷', '🎮', '🫘', '🥟', '👗', '🧵', '📷'].map((emoji, i) => (
+        {/* Recortes: íconos reales de la categoría del nodo actual */}
+        {icons.map((icon, i) => (
           <motion.div
-            key={`recorte-${i}`}
-            animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.15, 0.25, 0.15] }}
+            key={icon.id}
+            animate={{ rotate: [0, 6, 0, -6, 0], opacity: [0.2, 0.32, 0.2] }}
             transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
-            className="absolute text-2xl"
+            className="absolute w-10 sm:w-14"
             style={{
               top: `${6 + (i * 19) % 88}%`,
               left: `${4 + (i * 23) % 92}%`,
             }}
           >
-            {emoji}
+            <img src={icon.src} alt="" className="w-full h-auto" />
           </motion.div>
         ))}
       </motion.div>

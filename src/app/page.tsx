@@ -58,7 +58,10 @@ export default function Home() {
   return (
     <div className={`relative z-0 min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' : undefined }}>
-      <BackgroundLayer visible={['mapa', 'tecnico', 'juego'].includes(currentNode)} />
+      <BackgroundLayer
+        visible={['mapa', 'tecnico', 'juego'].includes(currentNode)}
+        section={currentNode === 'mapa' ? 'mapa' : currentNode === 'tecnico' ? 'expresion' : node.category ?? 'mapa'}
+      />
       <AudioEngine />
 
       {/* Navegación persistente flotante - oculta durante splash */}
