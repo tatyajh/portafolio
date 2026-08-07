@@ -127,14 +127,14 @@ export default function PersistentNav({
 
   const progress = getJourneyProgress(currentNode, history);
   const categoryColor = category ? CATEGORIES[category as keyof typeof CATEGORIES]?.color : undefined;
-  const accentColor = categoryColor ? (STAMP_COLORS[categoryColor] ?? categoryColor) : '#E8C9A0';
+  const accentColor = categoryColor ? (STAMP_COLORS[categoryColor] ?? categoryColor) : 'var(--color-gold)';
 
-  const textClass = theme === 'light' ? 'text-[#1a1512]' : 'text-[#E8C9A0]';
-  const borderClass = theme === 'light' ? 'border-[#8B0000]/30 hover:bg-[#8B0000]/5' : 'border-[#E8C9A0]/30 hover:bg-[#E8C9A0]/10';
-  const panelBg = theme === 'light' ? 'bg-[#faf5f0] border-[#8B0000]/20' : 'bg-[#0a0808] border-[#E8C9A0]/20';
+  const textClass = theme === 'light' ? 'text-black-warm' : 'text-gold';
+  const borderClass = theme === 'light' ? 'border-burgundy/30 hover:bg-burgundy/5' : 'border-gold/30 hover:bg-gold/10';
+  const panelBg = theme === 'light' ? 'bg-ivory-pale border-burgundy/20' : 'bg-black border-gold/20';
   const focusRing = theme === 'light'
-    ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B0000]'
-    : 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8C9A0]';
+    ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-burgundy'
+    : 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold';
 
   const iconBtn = `w-9 h-9 flex items-center justify-center border transition-all ${textClass} ${borderClass} ${focusRing}`;
 
@@ -222,7 +222,7 @@ export default function PersistentNav({
         {...(navMotionProps ?? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 } })}
         aria-label="Navegación del portafolio (móvil)"
         className={`flex md:hidden fixed bottom-0 inset-x-0 z-40 items-center justify-center gap-1 px-3 py-2 border-t backdrop-blur-sm ${
-          theme === 'light' ? 'bg-[#faf5f0]/90 border-[#8B0000]/20' : 'bg-[#0a0808]/90 border-[#E8C9A0]/20'
+          theme === 'light' ? 'bg-ivory-pale/90 border-burgundy/20' : 'bg-black/90 border-gold/20'
         }`}
       >
         {isInLinear && !isFirstInLinear && (

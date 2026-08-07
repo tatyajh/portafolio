@@ -144,7 +144,7 @@ export default function AudioEngine() {
       {!hasInteracted && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer overflow-hidden"
-          style={{ background: 'radial-gradient(ellipse at center, #1a1512 0%, #0a0808 100%)' }}
+          style={{ background: 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' }}
           onClick={handleFirstInteraction}
         >
           {/* Fondo tipo constelación/aurora boreal con hilos */}
@@ -283,7 +283,7 @@ export default function AudioEngine() {
                   y1={`${10 + (i * 13) % 80}%`}
                   x2={`${25 + (i * 17) % 60}%`}
                   y2={`${20 + (i * 19) % 60}%`}
-                  stroke="#E8C9A0"
+                  stroke="var(--color-gold)"
                   strokeWidth="1"
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: [0, 1, 0], opacity: [0, 0.3, 0] }}
@@ -306,7 +306,7 @@ export default function AudioEngine() {
               transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
               className="absolute top-[10%] left-[10%] w-[50vh] h-[50vh] rounded-full"
               style={{ 
-                background: 'radial-gradient(circle, #8B0000 0%, transparent 70%)',
+                background: 'radial-gradient(circle, var(--color-burgundy) 0%, transparent 70%)',
                 filter: 'blur(80px)'
               }}
             />
@@ -318,7 +318,7 @@ export default function AudioEngine() {
               transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 5 }}
               className="absolute bottom-[15%] right-[15%] w-[40vh] h-[40vh] rounded-full"
               style={{ 
-                background: 'radial-gradient(circle, #E8C9A0 0%, transparent 70%)',
+                background: 'radial-gradient(circle, var(--color-gold) 0%, transparent 70%)',
                 filter: 'blur(70px)'
               }}
             />
@@ -334,14 +334,14 @@ export default function AudioEngine() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ delay: 0.2, duration: 1.2, ease: "easeOut" }}
-              className="w-32 h-px bg-gradient-to-r from-transparent via-[#E8C9A0] to-transparent mx-auto mb-10"
+              className="w-32 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-10"
             />
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 1 }}
-              className="text-[#8B0000] text-xs sm:text-sm uppercase tracking-[0.4em] mb-4 font-light"
+              className="text-burgundy text-xs sm:text-sm uppercase tracking-[0.4em] mb-4 font-light"
             >
               Tatiana Alejandra Jaramillo
             </motion.p>
@@ -350,7 +350,7 @@ export default function AudioEngine() {
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
-              className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-[#f5f0e6] leading-none tracking-tight uppercase"
+              className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
             >
               Portafolio
             </motion.h1>
@@ -359,7 +359,7 @@ export default function AudioEngine() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 1 }}
-              className="font-script text-2xl sm:text-3xl text-[#D4A574]/90 -rotate-1 mb-6"
+              className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-1 mb-6"
             >
               hilos invisibles
             </motion.p>
@@ -369,7 +369,7 @@ export default function AudioEngine() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
-              className="w-16 h-px bg-[#8B0000]/60 mx-auto mb-8"
+              className="w-16 h-px bg-burgundy/60 mx-auto mb-8"
             />
 
             {/* Botones de navegación */}
@@ -387,7 +387,7 @@ export default function AudioEngine() {
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
-                className="px-8 py-4 border border-[#8B0000]/60 text-[#D4A574] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#8B0000]/15 hover:border-[#8B0000] min-w-[200px]"
+                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px]"
               >
                 {'</>'} Directo a lo técnico
               </motion.button>
@@ -399,7 +399,7 @@ export default function AudioEngine() {
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}
-                className="px-8 py-4 border border-[#E8C9A0]/50 text-[#E8C9A0] text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-[#E8C9A0]/10 hover:border-[#E8C9A0] min-w-[200px]"
+                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px]"
               >
                 ✥ Conoce más sobre mí
               </motion.button>
@@ -416,16 +416,16 @@ export default function AudioEngine() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={toggleAudio}
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-12 h-12 rounded-full border border-[#E8C9A0]/50 bg-[#0a0808]/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-[#E8C9A0]"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-12 h-12 rounded-full border border-gold/50 bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-gold"
           aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
         >
           {isPlaying ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8C9A0" strokeWidth="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="2">
               <rect x="6" y="4" width="4" height="16" />
               <rect x="14" y="4" width="4" height="16" />
             </svg>
           ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8C9A0" strokeWidth="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="2">
               <path d="M8 5v14l11-7z" />
             </svg>
           )}

@@ -161,7 +161,7 @@ export default function CollageDecor({ section }: { section: string }) {
               key={`hilo-proc-${i}`}
               x1={`${10 + (i * 13) % 75}%`} y1={`${8 + (i * 17) % 85}%`}
               x2={`${20 + (i * 19) % 65}%`} y2={`${18 + (i * 23) % 65}%`}
-              stroke={i % 2 === 0 ? '#E8C9A0' : '#8B0000'}
+              stroke={i % 2 === 0 ? 'var(--color-gold)' : 'var(--color-burgundy)'}
               strokeWidth="1"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: [0, 1, 0], opacity: [0, 0.35, 0] }}
