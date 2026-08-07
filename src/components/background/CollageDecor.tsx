@@ -86,7 +86,7 @@ function DraggableIcon({ frames, startOffset, style, entranceDelay }: {
           animate={{ opacity: 0, scale: 1.8 }}
           transition={{ duration: TRAIL_LIFETIME_S, ease: 'easeOut' }}
           onAnimationComplete={() => removeGhost(ghost.id)}
-          className="fixed w-10 sm:w-14 pointer-events-none -translate-x-1/2 -translate-y-1/2"
+          className="fixed w-10 h-10 sm:w-14 sm:h-14 object-contain pointer-events-none -translate-x-1/2 -translate-y-1/2"
           style={{
             top: ghost.y,
             left: ghost.x,
@@ -105,7 +105,7 @@ function DraggableIcon({ frames, startOffset, style, entranceDelay }: {
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.2, 0.32, 0.2] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: entranceDelay }}
-        className="absolute w-10 sm:w-14 pointer-events-auto cursor-grab active:cursor-grabbing"
+        className="absolute w-10 h-10 sm:w-14 sm:h-14 pointer-events-auto cursor-grab active:cursor-grabbing"
         style={style}
       >
         <FlipbookIconWithTracker frames={frames} startOffset={startOffset} onFrameChange={setCurrentFrame} />
@@ -136,7 +136,7 @@ function FlipbookIconWithTracker({ frames, startOffset, onFrameChange }: {
     onFrameChange(frames[frameIndex]);
   }, [frameIndex, frames, onFrameChange]);
 
-  return <img src={frames[frameIndex]} alt="" className="w-full h-auto" draggable={false} />;
+  return <img src={frames[frameIndex]} alt="" className="w-full h-full object-contain" draggable={false} />;
 }
 
 // Decoración de fondo: solo los íconos reales por categoría (sin
