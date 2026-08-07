@@ -16,11 +16,16 @@ export function useNodeNavigation() {
   // corta en vez de saltar al orden narrativo completo — evita que
   // desde Perfil "siguiente" aterrice en un capítulo emocional sin
   // relación (ej. Herencia) cuando el visitante venía por lo técnico.
+  // El propio hub "tecnico" también cuenta como parte de la ruta (es su
+  // punto de entrada): así "siguiente" desde ahí lleva directo a Perfil,
+  // en vez de no mostrar ninguna flecha.
   const previousNode = history.length >= 2 ? history[history.length - 2] : undefined;
-  const isTechRouteContext =
+  const isOnTechHub = currentNode === 'tecnico';
+  const isTechRouteContext = isOnTechHub || (
     (TECH_ROUTE_ORDER as readonly string[]).includes(currentNode) &&
-    (previousNode === 'tecnico' || (TECH_ROUTE_ORDER as readonly string[]).includes(previousNode ?? ''));
-  const activeOrder: readonly string[] = isTechRouteContext ? TECH_ROUTE_ORDER : LINEAR_ORDER;
+    (previousNode === 'tecnico' || (TECH_ROUTE_ORDER as readonly string[]).includes(previousNode ?? ''))
+  );
+  const activeOrder: readonly string[] = isTechRouteContext ? ['tecnico', ...TECH_ROUTE_ORDER] : LINEAR_ORDER;
 
   const navigateTo = useCallback((nodeId: string) => {
     if (isTransitioning || !NODES[nodeId]) return;
