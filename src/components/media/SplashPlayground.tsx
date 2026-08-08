@@ -42,8 +42,10 @@ interface Personality {
   tint: number;
 }
 
-// Paleta ya existente del proyecto (@theme en globals.css), reutilizada
-// como color del rastro — analógico/cálido, no neón.
+// Paleta del rastro. Las seis primeras salen del @theme del proyecto
+// (globals.css); las tres últimas son los tonos analógicos que pedía
+// el brief original — teal apagado, violeta empolvado y azul
+// desaturado. Nada de neón: son versiones sucias, no saturadas.
 const PALETTE = {
   burgundy: 0x8b0000,
   gold: 0xe8c9a0,
@@ -51,20 +53,38 @@ const PALETTE = {
   goldDeep: 0xc4874a,
   brown: 0xa0522d,
   ivory: 0xf5f0e6,
+  teal: 0x4a8f8b,
+  violeta: 0x8a6a9e,
+  azul: 0x5c7fa3,
 };
 
 // "Personalidad" por categoría — datos, no nueve rutas de código.
+// Cada categoría tiene un color DISTINTO: antes borgoña, oro-profundo
+// y oro-medio se repetían en dos categorías cada uno, así que arrastrar
+// dos objetos diferentes podía dejar el mismo rastro.
 const PERSONALITY: Record<Category, Personality> = {
   tijeras: { stampIntervalMs: 70, splitStrength: 10, strokeWidth: 5, tint: PALETTE.burgundy },
-  aguja: { stampIntervalMs: 110, splitStrength: 5, strokeWidth: 3, tint: PALETTE.goldDeep },
+  aguja: { stampIntervalMs: 110, splitStrength: 5, strokeWidth: 3, tint: PALETTE.ivory },
   hilo: { stampIntervalMs: 95, splitStrength: 6, strokeWidth: 6, tint: PALETTE.goldMid },
   carrete: { stampIntervalMs: 95, splitStrength: 6, strokeWidth: 7, tint: PALETTE.brown },
-  patron: { stampIntervalMs: 120, splitStrength: 4, strokeWidth: 8, tint: PALETTE.ivory },
-  codigo: { stampIntervalMs: 55, splitStrength: 15, strokeWidth: 4, tint: PALETTE.gold },
-  saxofon: { stampIntervalMs: 85, splitStrength: 8, strokeWidth: 6, tint: PALETTE.goldDeep },
-  nota: { stampIntervalMs: 75, splitStrength: 9, strokeWidth: 5, tint: PALETTE.goldMid },
-  gamepad: { stampIntervalMs: 60, splitStrength: 16, strokeWidth: 5, tint: PALETTE.burgundy },
+  patron: { stampIntervalMs: 120, splitStrength: 4, strokeWidth: 8, tint: PALETTE.violeta },
+  codigo: { stampIntervalMs: 55, splitStrength: 15, strokeWidth: 4, tint: PALETTE.teal },
+  saxofon: { stampIntervalMs: 85, splitStrength: 8, strokeWidth: 6, tint: PALETTE.gold },
+  nota: { stampIntervalMs: 75, splitStrength: 9, strokeWidth: 5, tint: PALETTE.goldDeep },
+  gamepad: { stampIntervalMs: 60, splitStrength: 16, strokeWidth: 5, tint: PALETTE.azul },
 };
+
+// Corre el color un poco según el índice de la instancia: con tres
+// tijeras en pantalla, cada una deja un rojo ligeramente distinto en
+// vez de exactamente el mismo trazo.
+function varyTint(tint: number, i: number): number {
+  const shift = [0, 22, -20, 34, -30][i % 5];
+  const clamp = (v: number) => Math.min(255, Math.max(0, v));
+  const r = clamp(((tint >> 16) & 0xff) + shift);
+  const g = clamp(((tint >> 8) & 0xff) + Math.round(shift * 0.55));
+  const b = clamp((tint & 0xff) + Math.round(shift * 0.3));
+  return (r << 16) | (g << 8) | b;
+}
 
 interface PlacedInstance {
   category: Category;
@@ -113,6 +133,8 @@ function lerp(a: number, b: number, t: number) {
 interface IconState {
   sprite: Sprite;
   category: Category;
+  /** Color propio de ESTA instancia: el de su categoría, corrido un poco. */
+  tint: number;
   leftPct: number;
   topPct: number;
   baseSpriteScale: number;
@@ -252,6 +274,7 @@ export default function SplashPlayground() {
           return {
             sprite,
             category: instance.category,
+            tint: varyTint(PERSONALITY[instance.category].tint, i),
             leftPct,
             topPct,
             baseSpriteScale,
@@ -281,11 +304,11 @@ export default function SplashPlayground() {
           strokeGfx
             .moveTo(icon.strokeX, icon.strokeY)
             .lineTo(x, y)
-            .stroke({ width: w * 3.2, color: p.tint, alpha: 0.05, cap: 'round', join: 'round' });
+            .stroke({ width: w * 3.2, color: icon.tint, alpha: 0.05, cap: 'round', join: 'round' });
           strokeGfx
             .moveTo(icon.strokeX, icon.strokeY)
             .lineTo(x, y)
-            .stroke({ width: w * 1.6, color: p.tint, alpha: 0.1, cap: 'round', join: 'round' });
+            .stroke({ width: w * 1.6, color: icon.tint, alpha: 0.1, cap: 'round', join: 'round' });
           strokeGfx
             .moveTo(icon.strokeX, icon.strokeY)
             .lineTo(x, y)
@@ -304,7 +327,7 @@ export default function SplashPlayground() {
           stampSprite.rotation = icon.sprite.rotation;
           stampSprite.scale.set(icon.sprite.scale.x, icon.sprite.scale.y);
           stampSprite.skew.set(icon.skewX, icon.skewY);
-          stampSprite.tint = p.tint;
+          stampSprite.tint = icon.tint;
           stampSprite.alpha = 0.16 + speedNorm * 0.22;
           stampSprite.blendMode = 'add';
           stampFilter.red = { x: -p.splitStrength * speedNorm, y: 0 };
