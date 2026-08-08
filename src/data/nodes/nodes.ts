@@ -77,8 +77,11 @@ export const NODES: Record<string, Node> = {
     id: 'estructura',
     title: 'Estructura',
     category: 'expresion',
-    subtitle: 'Capítulo 7',
-    text: 'Después me metí a construir cosas que funcionaran.',
+    // El nombre del capítulo se mantiene poético, pero el subtítulo
+    // aclara de qué trata: es el capítulo que más le interesa a un
+    // reclutador y el que menos debería hacerlo adivinar.
+    subtitle: 'Capítulo 7 · Ingeniería de sistemas',
+    text: 'Después decidí construir cosas que funcionaran.',
     content: 'La ingeniería me dio una forma de pensar que uso todo el tiempo: partir algo grande en pedazos manejables y entender cómo encajan entre sí.\n\nEstos son proyectos que hice de principio a fin, cada uno con su código abierto por si le quieren echar un ojo.',
     gallery: MEDIA.images.estructura,
     connections: ['cuerpo', 'diseno', 'mapa'],
@@ -136,7 +139,7 @@ export const NODES: Record<string, Node> = {
     category: 'esencia',
     subtitle: 'Capítulo 3',
     text: 'Ingeniera de sistemas, y también diseñadora.',
-    content: 'Soy ingeniera de sistemas y desarrolladora frontend, y estoy estudiando diseño de modas.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador, y me metí a estudiar moda.\n\nNo lo veo como dos carreras separadas. Termino usando lo mismo en las dos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
+    content: 'Soy ingeniera de sistemas y desarrolladora frontend, y estoy estudiando diseño de modas.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador, y decidí estudiar moda.\n\nNo lo veo como dos carreras separadas. Termino usando lo mismo en las dos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
     tools: {
       digital: ['React', 'TypeScript', 'Node.js', 'Git', 'Supabase', 'Jest', 'Playwright', 'ChatGPT', 'Copilot'],
       diseno: ['Canva', 'Illustrator', 'Optitex'],

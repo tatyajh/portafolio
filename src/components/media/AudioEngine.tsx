@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 // el splash sin reduced-motion — pixi.js/pixi-filters no deben pesar
 // en el bundle de quienes prefieren menos movimiento.
 const SplashPlayground = dynamic(() => import('./SplashPlayground'), { ssr: false });
+const SplashTitle = dynamic(() => import('./SplashTitle'), { ssr: false });
 
 // Múltiples canciones para loop
 // Para agregar más canciones, colócalas en /public/audio/ y añádelas aquí
@@ -28,6 +29,9 @@ const INITIAL_TRACK = Math.floor(Math.random() * PLAYLIST.length);
 export default function AudioEngine() {
   const prefersReducedMotion = useReducedMotion();
   const [hasInteracted, setHasInteracted] = useState(false);
+  // La pista de "arrastra los objetos" se retira sola en cuanto la
+  // persona agarra algo: ya cumplió su función.
+  const [showHint, setShowHint] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
@@ -143,6 +147,13 @@ export default function AudioEngine() {
     const handleReturnToSplash = () => setHasInteracted(false);
     window.addEventListener('returnToSplash', handleReturnToSplash);
     return () => window.removeEventListener('returnToSplash', handleReturnToSplash);
+  }, []);
+
+  // SplashPlayground avisa la primera vez que alguien agarra un ícono.
+  useEffect(() => {
+    const handleFirstDrag = () => setShowHint(false);
+    window.addEventListener('splash-first-drag', handleFirstDrag);
+    return () => window.removeEventListener('splash-first-drag', handleFirstDrag);
   }, []);
 
   return (
@@ -371,14 +382,22 @@ export default function AudioEngine() {
               Tatiana Alejandra Jaramillo
             </motion.p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
-              className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
-            >
-              Portafolio
-            </motion.h1>
+            {/* Título letra por letra: las tijeras lo cortan, la aguja
+                lo cose. Si hay reduced-motion, SplashPlayground no se
+                monta, así que nunca llegan eventos y el título se
+                comporta como texto normal. */}
+            {prefersReducedMotion ? (
+              <motion.h1
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
+                className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
+              >
+                Portafolio
+              </motion.h1>
+            ) : (
+              <SplashTitle />
+            )}
 
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -388,6 +407,21 @@ export default function AudioEngine() {
             >
               hilos invisibles
             </motion.p>
+
+            {/* Pista de interacción: un reclutador tiene medio minuto y
+                no va a experimentar solo. Aparece tarde para no competir
+                con el título, y desaparece apenas arrastra algo. */}
+            {!prefersReducedMotion && showHint && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1, 0.75, 1] }}
+                exit={{ opacity: 0 }}
+                transition={{ delay: 2.6, duration: 2.4, times: [0, 0.25, 0.6, 0.8, 1] }}
+                className="text-gold/55 text-xs sm:text-sm tracking-[0.18em] mb-6 font-light"
+              >
+                ✎ Arrastra los objetos — las tijeras cortan el título, la aguja lo cose
+              </motion.p>
+            )}
 
             {/* Línea decorativa inferior - borgoña */}
             <motion.div

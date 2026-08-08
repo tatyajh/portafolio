@@ -25,6 +25,9 @@ const MAX_SPEED_PX_MS = 1.4;
 const PARALLAX_DEPTH = 24;
 const RECOVERY_RATE = 0.18;
 const IDLE_ALPHA = 0.6;
+// Cada cuánto se le avisa al título (DOM) por dónde va la herramienta.
+// No hace falta cada frame: cortar una letra es un evento raro.
+const TOOL_NOTIFY_MS = 35;
 
 type Category = BackgroundAssetGroup['category'];
 
@@ -74,6 +77,9 @@ interface PlacedInstance {
 function pickInstances(groups: BackgroundAssetGroup[], perCategory: number): PlacedInstance[] {
   const out: PlacedInstance[] = [];
   for (const group of groups) {
+    // Las notas musicales NO se colocan en reposo: aparecen solo
+    // cuando se arrastra el saxofón, que las va soltando por el camino.
+    if (group.category === 'nota') continue;
     const frames = group.frames;
     for (let n = 0; n < perCategory; n++) {
       const idx = Math.floor((n * frames.length) / perCategory) % frames.length;
@@ -200,9 +206,14 @@ export default function SplashPlayground() {
         const placed = pickInstances(groups, instancesPerCategory);
         const gridRows = Math.max(1, Math.ceil(placed.length / gridCols));
 
-        const urls = Array.from(new Set(placed.map((p) => p.url)));
+        // Las notas no se colocan en reposo, pero sus texturas sí se
+        // cargan: son lo que el saxofón va soltando al arrastrarlo.
+        const noteUrls = groups.find(g => g.category === 'nota')?.frames ?? [];
+        const urls = Array.from(new Set([...placed.map((p) => p.url), ...noteUrls]));
         const textureMap = (await Assets.load(urls)) as Record<string, Texture>;
         if (cancelled) return;
+
+        const noteTextures = noteUrls.map(u => textureMap[u]).filter(Boolean);
 
         // ── Lienzo acumulativo ──────────────────────────────────────
         // Aquí está la diferencia con la versión anterior: en vez de
@@ -302,10 +313,39 @@ export default function SplashPlayground() {
           app.renderer.render({ container: stampSprite, target: trailTexture, clear: false });
         }
 
+        // El saxofón no deja un eco de sí mismo: va soltando notas
+        // musicales por donde pasa. Cada nota sale con tamaño, giro y
+        // desvío distintos para que la línea no se vea mecánica.
+        function stampNote(icon: IconState, speedNorm: number) {
+          if (noteTextures.length === 0) return;
+          const texture = noteTextures[Math.floor(Math.random() * noteTextures.length)];
+          const maxDim = Math.max(texture.width, texture.height) || 1;
+          const size = iconSize * (0.34 + Math.random() * 0.3);
+
+          stampSprite.texture = texture;
+          // Se desvía un poco del trazo, como notas que se escapan.
+          stampSprite.x = icon.sprite.x + (Math.random() - 0.5) * 46;
+          stampSprite.y = icon.sprite.y + (Math.random() - 0.5) * 46 - 10;
+          stampSprite.rotation = (Math.random() - 0.5) * 0.9;
+          stampSprite.scale.set(size / maxDim);
+          stampSprite.skew.set(0, 0);
+          stampSprite.tint = Math.random() < 0.5 ? PALETTE.gold : PALETTE.goldMid;
+          stampSprite.alpha = 0.4 + speedNorm * 0.35;
+          stampSprite.blendMode = 'add';
+          // Sin aberración cromática: las notas se leen como notas,
+          // no como el rastro distorsionado de los demás objetos.
+          stampFilter.red = { x: 0, y: 0 };
+          stampFilter.blue = { x: 0, y: 0 };
+          stampFilter.green = { x: 0, y: 0 };
+          app.renderer.render({ container: stampSprite, target: trailTexture, clear: false });
+        }
+
         // Estado del gesto activo — un único puntero a la vez, con
         // supresión de "click" cuando hubo arrastre real.
         let activeGesture: { pointerId: number; icon: IconState | null; startX: number; startY: number; suppressClick: boolean } | null = null;
         let pendingSuppressClick = false;
+        let lastToolNotifyAt = 0;
+        let hasDraggedOnce = false;
 
         function toLocal(e: PointerEvent) {
           // Conversión oficial de Pixi (la misma que usa su propio
@@ -317,6 +357,18 @@ export default function SplashPlayground() {
           const point = { x: 0, y: 0 };
           app.renderer.events.mapPositionToPoint(point, e.clientX, e.clientY);
           return point;
+        }
+
+        // Inversa exacta de mapPositionToPoint: pasa una posición del
+        // stage a coordenadas de pantalla, para avisarle al título DOM
+        // por dónde va el filo de las tijeras o la punta de la aguja.
+        function toClient(px: number, py: number) {
+          const rect = app.canvas.getBoundingClientRect();
+          const res = app.renderer.resolution;
+          return {
+            x: px * res * (rect.width / app.canvas.width) + rect.left,
+            y: py * res * (rect.height / app.canvas.height) + rect.top,
+          };
         }
 
         function findHit(x: number, y: number): IconState | null {
@@ -351,6 +403,12 @@ export default function SplashPlayground() {
             activeGesture = { pointerId: e.pointerId, icon, startX: x, startY: y, suppressClick: !!icon };
             if (icon) {
               e.preventDefault();
+              // La primera vez que alguien agarra algo, la pista de
+              // "arrastra los objetos" ya cumplió y se retira sola.
+              if (!hasDraggedOnce) {
+                hasDraggedOnce = true;
+                window.dispatchEvent(new CustomEvent('splash-first-drag'));
+              }
               icon.grabbed = true;
               icon.dragOffsetX = icon.sprite.x - x;
               icon.dragOffsetY = icon.sprite.y - y;
@@ -390,14 +448,31 @@ export default function SplashPlayground() {
             icon.lastMoveT = now;
 
             const speedNorm = Math.min(Math.hypot(icon.vx, icon.vy) / MAX_SPEED_PX_MS, 1);
-            if (icon.hasStroke) paintStroke(icon, nx, ny, speedNorm);
+            // El saxofón no pinta trazo de luz: solo suelta notas.
+            if (icon.hasStroke && icon.category !== 'saxofon') {
+              paintStroke(icon, nx, ny, speedNorm);
+            }
             icon.strokeX = nx;
             icon.strokeY = ny;
 
             const p = PERSONALITY[icon.category];
             if (now - icon.lastStampAt >= p.stampIntervalMs) {
               icon.lastStampAt = now;
-              stampEcho(icon, speedNorm);
+              if (icon.category === 'saxofon') stampNote(icon, speedNorm);
+              else stampEcho(icon, speedNorm);
+            }
+
+            // Las tijeras y la aguja además avisan al título: cortan y
+            // cosen las letras. Va con throttle propio porque el título
+            // vive en el DOM (React) y no debe enterarse cada frame.
+            if ((icon.category === 'tijeras' || icon.category === 'aguja') && now - lastToolNotifyAt >= TOOL_NOTIFY_MS) {
+              lastToolNotifyAt = now;
+              const screenPos = toClient(icon.sprite.x, icon.sprite.y);
+              window.dispatchEvent(
+                new CustomEvent('splash-tool-move', {
+                  detail: { x: screenPos.x, y: screenPos.y, category: icon.category },
+                }),
+              );
             }
           } catch (err) {
             console.error('[SplashPlayground] error en pointermove', err);
@@ -449,14 +524,33 @@ export default function SplashPlayground() {
           }
         };
 
+        // Cursor de "agarrable" al pasar por encima de un ícono. El
+        // canvas es pointer-events:none, así que el cursor tiene que
+        // ponerse en el contenedor del splash, que es quien realmente
+        // está bajo el puntero.
+        const splashRoot = containerEl.parentElement;
+        const onHoverCursor = (evt: Event) => {
+          try {
+            if (!splashRoot || activeGesture) return;
+            const e = evt as PointerEvent;
+            if (e.pointerType !== 'mouse') return;
+            const { x, y } = toLocal(e);
+            splashRoot.style.cursor = findHit(x, y) ? 'grab' : '';
+          } catch {
+            // el cursor es cosmético — nunca vale la pena romper por esto
+          }
+        };
+
         window.addEventListener('pointerdown', onPointerDown);
         window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointermove', onHoverCursor);
         window.addEventListener('pointerup', onPointerUp);
         window.addEventListener('pointercancel', onPointerCancel);
         window.addEventListener('click', onClickCapture, { capture: true });
         listeners.push(
           { type: 'pointerdown', handler: onPointerDown },
           { type: 'pointermove', handler: onPointerMove },
+          { type: 'pointermove', handler: onHoverCursor },
           { type: 'pointerup', handler: onPointerUp },
           { type: 'pointercancel', handler: onPointerCancel },
           { type: 'click', handler: onClickCapture, opts: { capture: true } },

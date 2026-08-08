@@ -13,14 +13,14 @@ export const PROJECTS: Project[] = [
     stack: 'Next.js · TypeScript · Framer Motion',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/portafolio' }],
   },
-  // Venux se presenta como dos proyectos (móvil y web) por decisión de
-  // Tatiana. La versión web está desplegada y viva en
-  // venux-web.vercel.app (verificado: el bundle referencia Expo y
-  // Supabase, o sea es este mismo código corriendo en navegador).
-  // PENDIENTE: el CÓDIGO de la web todavía no está en su propio repo
-  // — github.com/tatyajh/venux-web sigue vacío —, así que el enlace
-  // "Código" de la entrada 'venux-web' apunta al repo compartido.
-  // Cuando se migre, cambiar solo esa URL.
+  // Venux son dos proyectos distintos: la app móvil (React Native +
+  // Expo) y la web, que NO usa Expo — es su propia interfaz, aunque
+  // comparte la base de datos y las cuentas en Supabase.
+  //
+  // PENDIENTE: el código de la web todavía no está publicado
+  // (github.com/tatyajh/venux-web sigue vacío), así que su enlace
+  // "Código" apunta al repo compartido. Cuando se suba, cambiar solo
+  // esa URL. La demo sí está viva en venux-web.vercel.app.
   {
     id: 'venux',
     title: 'Venux — App móvil',
@@ -31,8 +31,8 @@ export const PROJECTS: Project[] = [
   {
     id: 'venux-web',
     title: 'Venux — Versión web',
-    desc: 'La misma app de citas, corriendo en el navegador y desplegada para que se pueda entrar sin instalar nada. En vez de rehacer la interfaz desde cero, aproveché que los componentes de React Native pueden renderizarse como HTML, así que las dos versiones comparten pantallas, estado y la misma base de datos en Supabase. Lo interesante fue lo que sí toca resolver aparte: la pantalla contenedora, los colores del arranque y que lo pensado para tocar con el dedo funcione con mouse y teclado.',
-    stack: 'React Native Web · Expo · Supabase',
+    desc: 'La misma app de citas, hecha para el navegador y desplegada para que se pueda entrar y usarla sin instalar nada. Comparte la base de datos y las cuentas con la versión móvil, así que un usuario es el mismo en los dos lados, pero la interfaz está pensada para pantalla grande, mouse y teclado en vez de para el pulgar.',
+    stack: 'React · Supabase',
     links: [
       { label: 'Ver en línea', url: 'https://venux-web.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/Venux' },

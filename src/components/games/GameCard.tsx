@@ -77,7 +77,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
       {/* Por dentro - arquitectura técnica, sourced del README real del proyecto */}
       {game.architecture && game.architecture.length > 0 && (
         <div className="mb-10">
-          <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">Por dentro…</p>
+          <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">¿Y yo qué aporté?</p>
           <div className="stitch-border-gold p-5 bg-paper-deep/30 divide-y divide-brown/25">
             {game.architecture.map(item => (
               <div key={item.label} className="py-3 first:pt-0 last:pb-0 grid sm:grid-cols-[9rem_1fr] gap-1 sm:gap-4">
