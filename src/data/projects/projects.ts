@@ -16,8 +16,8 @@ export const PROJECTS: Project[] = [
   {
     id: 'venux',
     title: 'Venux',
-    desc: 'Una app de citas para celular, con el flujo completo: ver perfiles, deslizar, hacer match y ponerse a chatear. Son siete pantallas conectadas entre sí, hechas con React Native y Expo. Me sirvió para meterme en lo que cambia cuando dejas la web y diseñas para el pulgar: navegación entre pantallas, gestos y que se sienta fluido en un teléfono de verdad.',
-    stack: 'React Native · Expo',
+    desc: 'Una app de citas con el flujo completo: registro, perfil, deslizar, hacer match y ponerse a chatear. Corre en celular y en navegador desde el mismo código, con Expo, y por detrás usa Supabase para las cuentas y los datos. Lo que más me sirvió fue diseñar para el pulgar: los gestos, la navegación entre pantallas y que se sienta fluido en un teléfono de verdad.',
+    stack: 'React Native · Expo · Supabase',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
   },
   {
