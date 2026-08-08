@@ -9,7 +9,9 @@ export const GAMES: Game[] = [
     id: 'whackamole',
     title: 'Whack a Mole',
     year: '2026',
-    desc: 'Un topo que baja excavando, escalón por escalón, y entre más profundo llega más difícil se pone. Hecho en equipo durante la Generation GameJam, cuyo tema era justamente "Deeper and Deeper".',
+    image: '/media/games/whackamole-cover.jpg',
+    jam: { nombre: 'Deeper & Deeper Game Jam', url: 'https://itch.io/jam/deeper-deeper-game-jam' },
+    desc: 'Un topo que baja excavando, escalón por escalón, y entre más profundo llega más difícil se pone. Hecho en equipo durante la Generation GameJam, cuyo tema era justamente "Deeper and Deeper" — de ahí que todo el juego sea bajar.',
     // Rol y detalle técnico salen de su propio commit en el repo del
     // equipo (SEVFCA/DepperAndDepper) — no hay nada aquí que no esté
     // en ese trabajo verificable.
@@ -32,8 +34,10 @@ export const GAMES: Game[] = [
     id: 'drunkdriver',
     title: 'Drunk Driver',
     year: '2026',
+    image: '/media/games/drunkdriver-cover.png',
+    jam: { nombre: 'You Really Shouldn\'t Mix Those Game Jam', url: 'https://itch.io/jam/shouldnt-mix-those-game-jam' },
     // Descripción tomada de la propia página del juego en itch.io.
-    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo durante una game jam. Me encargué de todo lo que se oye, de buena parte de lo que se siente al chocar, y de la capa que envuelve la partida: menú, pausa y game over.',
+    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo para una jam cuyo tema era justamente mezclar cosas que no se deben mezclar. Me encargué de todo lo que se oye, de buena parte de lo que se siente al chocar, y de la capa que envuelve la partida: menú, pausa y game over.',
     // Detalle tomado de sus commits reales en la rama `tati` del repo
     // del equipo, fusionada a `Develop` por el PR #2 (la rama `main`
     // del repo quedó desactualizada). Nada de esto es interpretación.

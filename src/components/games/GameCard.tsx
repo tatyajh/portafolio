@@ -23,8 +23,8 @@ export default function GameCard({ game, index }: { game: Game; index: number })
 
       <h3 className="font-serif text-3xl sm:text-4xl text-ink mb-5">{game.title}</h3>
 
-      {/* Gameplay en loop */}
-      {game.video && (
+      {/* Gameplay en loop; si todavía no hay video, la portada del juego */}
+      {game.video ? (
         <div className="mb-8 stitch-border-gold overflow-hidden">
           <video
             src={game.video}
@@ -35,6 +35,24 @@ export default function GameCard({ game, index }: { game: Game; index: number })
             className="w-full h-auto"
           />
         </div>
+      ) : game.image ? (
+        <div className="mb-8 stitch-border-gold overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- portadas de terceros sin dimensiones catalogadas */}
+          <img src={game.image} alt={`Portada de ${game.title}`} className="w-full h-auto" loading="lazy" />
+        </div>
+      ) : null}
+
+      {/* Game jam en la que se hizo */}
+      {game.jam && (
+        <a
+          href={game.jam.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mb-6 stitch-border-gold px-4 py-2 bg-paper-deep/50 hover:bg-burgundy/5 transition-all"
+        >
+          <span className="text-[10px] uppercase tracking-widest text-brown">Game jam</span>
+          <span className="font-serif text-ink text-sm sm:text-base">{game.jam.nombre}</span>
+        </a>
       )}
 
       <p className="text-ink/80 leading-relaxed mb-10 text-base sm:text-lg">

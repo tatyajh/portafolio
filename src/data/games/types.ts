@@ -10,5 +10,9 @@ export interface Game {
   playUrl: string;
   codeUrl: string;
   video?: string;
+  /** Portada del juego. Se muestra cuando todavía no hay video de gameplay. */
+  image?: string;
+  /** Game jam en la que se hizo, con enlace a la jam en itch.io. */
+  jam?: { nombre: string; url: string };
   architecture?: { label: string; detail: string }[];
 }
