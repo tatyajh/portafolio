@@ -13,11 +13,24 @@ export const PROJECTS: Project[] = [
     stack: 'Next.js · TypeScript · Framer Motion',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/portafolio' }],
   },
+  // Venux se presenta como dos proyectos (móvil y web) por decisión de
+  // Tatiana. Hoy ambos viven en el mismo repo: es un solo código
+  // React Native que también corre en navegador vía react-native-web.
+  // PENDIENTE: cuando se migre la versión web a su propio repo
+  // (github.com/tatyajh/venux-web, hoy vacío), cambiar la URL de la
+  // entrada 'venux-web' de abajo. Es lo único que hay que tocar.
   {
     id: 'venux',
-    title: 'Venux',
-    desc: 'Una app de citas con el flujo completo: registro, perfil, deslizar, hacer match y ponerse a chatear. Corre en celular y en navegador desde el mismo código, con Expo, y por detrás usa Supabase para las cuentas y los datos. Lo que más me sirvió fue diseñar para el pulgar: los gestos, la navegación entre pantallas y que se sienta fluido en un teléfono de verdad.',
+    title: 'Venux — App móvil',
+    desc: 'Una app de citas para celular con el flujo completo: registro, perfil, deslizar, hacer match y ponerse a chatear. Trece pantallas conectadas entre sí, con Supabase por detrás manejando las cuentas y los datos. Lo que más me sirvió fue diseñar para el pulgar: los gestos, la navegación entre pantallas y que se sienta fluido en un teléfono de verdad.',
     stack: 'React Native · Expo · Supabase',
+    links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
+  },
+  {
+    id: 'venux-web',
+    title: 'Venux — Versión web',
+    desc: 'La misma app de citas, corriendo en el navegador. En vez de rehacer la interfaz desde cero, aproveché que los componentes de React Native pueden renderizarse como HTML, así que las dos versiones comparten pantallas, estado y la misma base de datos en Supabase. Lo interesante fue lo que sí toca resolver aparte: la pantalla contenedora, los colores del arranque y que lo pensado para tocar con el dedo funcione con mouse y teclado.',
+    stack: 'React Native Web · Expo · Supabase',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
   },
   {
