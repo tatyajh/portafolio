@@ -464,7 +464,7 @@ export default function AudioEngine() {
                 transition={{ delay: 2.2, duration: 0.6, ease: 'easeOut' }}
                 className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 z-10 w-[88%] max-w-sm pointer-events-auto"
               >
-                <div className="relative border border-gold/45 bg-black-warm/85 backdrop-blur-sm px-5 py-4 pr-10 text-left shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+                <div className="relative border border-gold/55 bg-black-warm/40 backdrop-blur-md px-5 py-4 pr-10 text-left shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
                   <button
                     onClick={() => setShowHint(false)}
                     aria-label="Cerrar aviso"
@@ -473,9 +473,13 @@ export default function AudioEngine() {
                     ✕
                   </button>
                   <p className="font-script text-xl text-gold-mid mb-1 -rotate-1">Antes de entrar…</p>
-                  <p className="text-ivory/85 text-sm leading-relaxed">
-                    Prueba a arrastrar los iconos del fondo. Las tijeras cortan el título,
-                    la aguja lo cose y el saxofón va soltando notas.
+                  {/* Invitación, no manual de instrucciones: decir qué
+                      hace cada objeto arruina el hallazgo. Un reto da
+                      la misma información útil (se puede cortar, se
+                      puede coser) sin resolverlo por la persona. */}
+                  <p className="text-ivory/90 text-sm leading-relaxed">
+                    Te reto a cortar algo y después volver a coserlo.
+                    Todo lo que flota en el fondo se puede arrastrar.
                   </p>
                 </div>
               </motion.div>
