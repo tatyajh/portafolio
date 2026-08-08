@@ -458,11 +458,14 @@ export default function AudioEngine() {
           <AnimatePresence>
             {!prefersReducedMotion && showHint && (
               <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                initial={{ opacity: 0, y: -14, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.97, transition: { duration: 0.35 } }}
+                exit={{ opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.35 } }}
                 transition={{ delay: 2.2, duration: 0.6, ease: 'easeOut' }}
-                className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 z-10 w-[88%] max-w-sm pointer-events-auto"
+                // Encima del título, no abajo: es donde cae la vista al
+                // entrar, así que ahí es imposible no leerlo. Abajo
+                // competía con los botones y se podía ignorar.
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[125%] sm:-translate-y-[135%] z-20 w-[88%] max-w-sm pointer-events-auto"
               >
                 {/* Panel de papel claro: sobre el fondo oscuro del
                     splash resalta mucho más que uno oscuro, y usa el
