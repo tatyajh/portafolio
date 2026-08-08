@@ -153,7 +153,7 @@ export const NODES: Record<string, Node> = {
         'Node.js', 'Express', 'REST APIs', 'Supabase', 'PostgreSQL',
         'Microfrontend (Single-SPA)', 'Tailwind CSS', 'Unity', 'C#',
         'Jest', 'Cypress', 'Playwright', 'New Relic', 'Git',
-        'Spec-Driven Development', 'Desarrollo Asistido por IA', 'Agile', 'Scrum',
+        'Spec-Driven Development', 'Agile', 'Scrum',
       ],
       diseno: ['Canva', 'Illustrator', 'Optitex'],
     },

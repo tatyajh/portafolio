@@ -215,7 +215,7 @@ export default function Home() {
 
               <div className="space-y-5 mb-12">
                 {[
-                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV completo y enlaces.' },
+                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Más información sobre mí, mi CV y mis enlaces.' },
                   { id: 'estructura', num: '02', title: 'Desarrollo', desc: 'Aplicaciones web y móviles que hice de punta a punta, con su código.' },
                   // 'destacado': la ruta técnica existe sobre todo para
                   // mostrar los videojuegos, así que esta tarjeta se

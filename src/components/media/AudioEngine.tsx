@@ -377,7 +377,13 @@ export default function AudioEngine() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 1 }}
-              className="text-burgundy text-xs sm:text-sm uppercase tracking-[0.4em] mb-4 font-light"
+              // Antes iba en borgoña sobre casi negro, en text-xs y
+              // font-light: contraste bajísimo, prácticamente invisible.
+              // Su nombre es lo único que un reclutador debería
+              // recordar, así que va en dorado (que sí resalta sobre el
+              // fondo oscuro), más grande y con menos tracking para que
+              // se lea de corrido en vez de letra por letra.
+              className="text-gold-mid text-sm sm:text-base md:text-lg uppercase tracking-[0.25em] mb-5"
             >
               Tatiana Alejandra Jaramillo
             </motion.p>
