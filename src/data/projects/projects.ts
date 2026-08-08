@@ -14,11 +14,13 @@ export const PROJECTS: Project[] = [
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/portafolio' }],
   },
   // Venux se presenta como dos proyectos (móvil y web) por decisión de
-  // Tatiana. Hoy ambos viven en el mismo repo: es un solo código
-  // React Native que también corre en navegador vía react-native-web.
-  // PENDIENTE: cuando se migre la versión web a su propio repo
-  // (github.com/tatyajh/venux-web, hoy vacío), cambiar la URL de la
-  // entrada 'venux-web' de abajo. Es lo único que hay que tocar.
+  // Tatiana. La versión web está desplegada y viva en
+  // venux-web.vercel.app (verificado: el bundle referencia Expo y
+  // Supabase, o sea es este mismo código corriendo en navegador).
+  // PENDIENTE: el CÓDIGO de la web todavía no está en su propio repo
+  // — github.com/tatyajh/venux-web sigue vacío —, así que el enlace
+  // "Código" de la entrada 'venux-web' apunta al repo compartido.
+  // Cuando se migre, cambiar solo esa URL.
   {
     id: 'venux',
     title: 'Venux — App móvil',
@@ -29,9 +31,12 @@ export const PROJECTS: Project[] = [
   {
     id: 'venux-web',
     title: 'Venux — Versión web',
-    desc: 'La misma app de citas, corriendo en el navegador. En vez de rehacer la interfaz desde cero, aproveché que los componentes de React Native pueden renderizarse como HTML, así que las dos versiones comparten pantallas, estado y la misma base de datos en Supabase. Lo interesante fue lo que sí toca resolver aparte: la pantalla contenedora, los colores del arranque y que lo pensado para tocar con el dedo funcione con mouse y teclado.',
+    desc: 'La misma app de citas, corriendo en el navegador y desplegada para que se pueda entrar sin instalar nada. En vez de rehacer la interfaz desde cero, aproveché que los componentes de React Native pueden renderizarse como HTML, así que las dos versiones comparten pantallas, estado y la misma base de datos en Supabase. Lo interesante fue lo que sí toca resolver aparte: la pantalla contenedora, los colores del arranque y que lo pensado para tocar con el dedo funcione con mouse y teclado.',
     stack: 'React Native Web · Expo · Supabase',
-    links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
+    links: [
+      { label: 'Ver en línea', url: 'https://venux-web.vercel.app' },
+      { label: 'Código', url: 'https://github.com/tatyajh/Venux' },
+    ],
   },
   {
     id: 'mivaquita',
