@@ -24,15 +24,15 @@ export const PROJECTS: Project[] = [
   {
     id: 'venux',
     title: 'Venux — App móvil',
-    desc: 'Una app de citas para celular con el flujo completo: registro, perfil, deslizar, hacer match y ponerse a chatear. Trece pantallas conectadas entre sí, con Supabase por detrás manejando las cuentas y los datos. Lo que más me sirvió fue diseñar para el pulgar: los gestos, la navegación entre pantallas y que se sienta fluido en un teléfono de verdad.',
-    stack: 'React Native · Expo · Supabase',
+    desc: 'Una app de citas para celular con el flujo completo: registro, perfil, deslizar, hacer match y ponerse a chatear. Trece pantallas conectadas entre sí, todo en JavaScript, con una base de datos PostgreSQL en Supabase guardando usuarios, matches y mensajes, y manejando el inicio de sesión. Lo que más me sirvió fue diseñar para el pulgar: los gestos, la navegación entre pantallas y que se sienta fluido en un teléfono de verdad.',
+    stack: 'React Native · Expo · JavaScript · Supabase (PostgreSQL)',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/Venux' }],
   },
   {
     id: 'venux-web',
     title: 'Venux — Versión web',
     desc: 'La misma app de citas, hecha para el navegador y desplegada para que se pueda entrar y usarla sin instalar nada. Comparte la base de datos y las cuentas con la versión móvil, así que un usuario es el mismo en los dos lados, pero la interfaz está pensada para pantalla grande, mouse y teclado en vez de para el pulgar.',
-    stack: 'React · Supabase',
+    stack: 'React · Vite · JavaScript · Supabase (PostgreSQL)',
     links: [
       { label: 'Ver en línea', url: 'https://venux-web.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/Venux' },
