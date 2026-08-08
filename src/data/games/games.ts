@@ -33,13 +33,21 @@ export const GAMES: Game[] = [
     title: 'Drunk Driver',
     year: '2026',
     // Descripción tomada de la propia página del juego en itch.io.
-    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo durante una game jam.',
-    rol: 'Post-producción, efectos, música y menú',
+    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo durante una game jam. Yo me encargué de todo lo que se oye y de buena parte de lo que se siente: la música, los efectos de sonido, el impacto visual de los choques y el menú.',
+    // Detalle tomado de su propio commit en la rama `tati` del repo del
+    // equipo: "Sistema de audio completo (musica, SFX) y efectos
+    // visuales (shake, sangre, humo, chispas)".
+    rol: 'Audio, efectos visuales y menú',
     motor: 'Unity',
     lenguaje: 'C#',
     genero: 'Carreras',
     playUrl: 'https://nairbio.itch.io/drunk-driver',
     codeUrl: 'https://github.com/MarianoMushy/Drunk-Driver',
+    architecture: [
+      { label: 'Sistema de audio', detail: 'Música y efectos de sonido del juego completo.' },
+      { label: 'Efectos de impacto', detail: 'Sacudida de cámara, sangre, humo y chispas en los choques — lo que hace que atropellar algo se sienta.' },
+      { label: 'Menú', detail: 'La pantalla de entrada al juego.' },
+    ],
   },
   {
     id: 'quemasparcero',
