@@ -216,8 +216,11 @@ export default function Home() {
               <div className="space-y-5 mb-12">
                 {[
                   { id: 'perfil', num: '01', title: 'Perfil', desc: 'Ingeniera de sistemas y frontend: React, TypeScript, Node.js. CV completo y enlaces.' },
-                  { id: 'estructura', num: '02', title: 'Estructura', desc: 'Código, lógica y sistemas — cómo pienso lo que construyo.' },
-                  { id: 'juego', num: '03', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.' },
+                  { id: 'estructura', num: '02', title: 'Desarrollo', desc: 'Aplicaciones web y móviles que hice de punta a punta, con su código.' },
+                  // 'destacado': la ruta técnica existe sobre todo para
+                  // mostrar los videojuegos, así que esta tarjeta se
+                  // diferencia de las otras dos en vez de perderse en la fila.
+                  { id: 'juego', num: '03', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.', destacado: true },
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
@@ -227,12 +230,23 @@ export default function Home() {
                     whileHover={{ scale: 1.03, rotate: 0 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => navigateTo(item.id)}
-                    className={`w-full text-left p-5 paper-card stitch-border ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
+                    className={`relative w-full text-left paper-card ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'} ${
+                      item.destacado
+                        ? 'p-6 border-2 border-burgundy shadow-[0_0_0_4px_rgba(139,0,0,0.12)]'
+                        : 'p-5 stitch-border'
+                    }`}
                   >
+                    {item.destacado && (
+                      <span className="absolute -top-3 right-5 bg-burgundy text-[#f7f1e4] text-[10px] uppercase tracking-[0.18em] px-3 py-1 font-serif">
+                        Lo que más disfruto
+                      </span>
+                    )}
                     <div className="flex items-start gap-4">
-                      <span className="font-serif text-4xl leading-none text-burgundy/80">{item.num}</span>
+                      <span className={`font-serif leading-none ${item.destacado ? 'text-5xl text-burgundy' : 'text-4xl text-burgundy/80'}`}>
+                        {item.num}
+                      </span>
                       <div>
-                        <span className="font-serif text-xl text-ink">{item.title}</span>
+                        <span className={`font-serif text-ink ${item.destacado ? 'text-2xl' : 'text-xl'}`}>{item.title}</span>
                         <p className="font-script text-lg leading-tight text-ink-light">{item.desc}</p>
                       </div>
                     </div>
