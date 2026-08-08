@@ -31,9 +31,14 @@ export const TECH_IDENTITY_ROLES: string[] = [
 
 // Traducción fiel de fragmentos de CV_SUMMARY (el CV original está en
 // inglés). Se respeta el sentido; no se agrega nada que el CV no diga.
+//
+// Las etiquetas describen CÓMO trabaja, no cargos. Antes decían
+// "Ingeniería y calidad" y "Seguridad por diseño": la primera se leía
+// como si fuera ingeniera de calidad (no lo es) y la segunda sonaba a
+// folleto corporativo.
 export const TECH_MINDSET_POINTS: TechMindsetPoint[] = [
-  { label: 'Ingeniería y calidad', quote: 'rigor de ingeniería, pruebas automatizadas y arquitecturas escalables' },
-  { label: 'Creatividad aplicada', quote: 'una mirada creativa que traigo del diseño de modas, aplicada al diseño de personajes y a las decisiones de UI/UX' },
-  { label: 'IA como multiplicador', quote: 'trabajo con Spec-Driven Development y uso la IA de forma estratégica para prototipar y validar ideas más rápido' },
-  { label: 'Seguridad por diseño', quote: 'mis conocimientos de ciberseguridad refuerzan la calidad y la seguridad desde la etapa de diseño' },
+  { label: 'Que no se rompa', quote: 'rigor de ingeniería, pruebas automatizadas y arquitecturas escalables' },
+  { label: 'Lo que traje del diseño', quote: 'una mirada creativa que traigo del diseño de modas, aplicada al diseño de personajes y a las decisiones de UI/UX' },
+  { label: 'La IA como herramienta', quote: 'trabajo con Spec-Driven Development y uso la IA de forma estratégica para prototipar y validar ideas más rápido' },
+  { label: 'Pensar la seguridad desde el principio', quote: 'mis conocimientos de ciberseguridad refuerzan la calidad y la seguridad desde la etapa de diseño' },
 ];
