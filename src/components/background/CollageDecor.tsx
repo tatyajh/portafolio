@@ -27,13 +27,25 @@ function sampleInstances(groups: BackgroundAssetGroup[], count: number): Backgro
 // por índice — reparte los íconos de forma pareja por la pantalla en
 // vez del hash modular anterior, que dejaba zonas muy juntas y otras
 // vacías.
+// Aparta un ícono de la columna central de lectura. El contenido de
+// los capítulos vive centrado (max-w-3xl), así que los íconos que
+// caían entre ~30% y ~70% del ancho quedaban justo detrás del texto y
+// la sección se veía revuelta. Se empujan al lado más cercano en vez
+// de eliminarlos: el fondo sigue igual de poblado, solo respira por el
+// centro.
+function pushOutOfReadingColumn(left: number) {
+  if (left > 30 && left < 50) return Math.max(left - 22, 3);
+  if (left >= 50 && left < 70) return Math.min(left + 22, 94);
+  return left;
+}
+
 function gridPosition(i: number) {
   const col = i % GRID_COLS;
   const row = Math.floor(i / GRID_COLS) % GRID_ROWS;
   const jitterX = ((i * 37) % 14) - 7;
   const jitterY = ((i * 53) % 14) - 7;
   return {
-    left: (col + 0.5) * (100 / GRID_COLS) + jitterX,
+    left: pushOutOfReadingColumn((col + 0.5) * (100 / GRID_COLS) + jitterX),
     top: (row + 0.5) * (100 / GRID_ROWS) + jitterY,
   };
 }

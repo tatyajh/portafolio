@@ -12,12 +12,16 @@ export interface TechMindsetPoint {
   quote: string;
 }
 
+// SOLO cargos reales. Antes esta lista incluía "Resolución de
+// Problemas", que es una habilidad blanda, no un rol — quedaba
+// desubicada entre los otros tres y además se repetía con la sección
+// de habilidades. Ahora vive donde le corresponde.
+//
 // Origen de cada rol (traducido del CV en inglés):
 // - Ingeniera de Software              <- CV_EXPERIENCE (rol en ABATech: 'Software Engineer (Frontend)')
 // - Desarrolladora Frontend            <- CV_TITLE ('Frontend Developer & Game Developer (Unity)')
 //                                         y CV_EXPERIENCE (rol freelance: 'Frontend Developer (Freelance)')
 // - Desarrolladora de Videojuegos      <- segunda mitad de CV_TITLE ('Game Developer (Unity)')
-// - Resolución de Problemas            <- item de CV_SKILLS, categoría Habilidades Blandas
 //
 // Nota deliberada: "Creative Technologist" (sugerido por la spec original) se OMITE
 // porque no existe como término en ningún dato del CV. El hecho real detrás de esa
@@ -26,7 +30,6 @@ export const TECH_IDENTITY_ROLES: string[] = [
   'Ingeniera de Software',
   'Desarrolladora Frontend',
   'Desarrolladora de Videojuegos (Unity)',
-  'Resolución de Problemas',
 ];
 
 // Traducción fiel de fragmentos de CV_SUMMARY (el CV original está en
