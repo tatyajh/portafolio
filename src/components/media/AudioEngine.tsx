@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -408,21 +408,6 @@ export default function AudioEngine() {
               hilos invisibles
             </motion.p>
 
-            {/* Pista de interacción: un reclutador tiene medio minuto y
-                no va a experimentar solo. Aparece tarde para no competir
-                con el título, y desaparece apenas arrastra algo. */}
-            {!prefersReducedMotion && showHint && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 1, 0.75, 1] }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: 2.6, duration: 2.4, times: [0, 0.25, 0.6, 0.8, 1] }}
-                className="text-gold/55 text-xs sm:text-sm tracking-[0.18em] mb-6 font-light"
-              >
-                ✎ Arrastra los objetos — las tijeras cortan el título, la aguja lo cose
-              </motion.p>
-            )}
-
             {/* Línea decorativa inferior - borgoña */}
             <motion.div
               initial={{ scaleX: 0 }}
@@ -464,6 +449,38 @@ export default function AudioEngine() {
               </motion.button>
             </motion.div>
           </motion.div>
+
+          {/* Ventana emergente de descubrimiento. Va aparte del bloque
+              de texto, anclada abajo, para que se lea como un aviso y
+              no como parte del título. Un reclutador tiene medio minuto
+              y no va a experimentar por su cuenta: si no se le dice,
+              no se entera de que el fondo es jugable. */}
+          <AnimatePresence>
+            {!prefersReducedMotion && showHint && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.97, transition: { duration: 0.35 } }}
+                transition={{ delay: 2.2, duration: 0.6, ease: 'easeOut' }}
+                className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 z-10 w-[88%] max-w-sm pointer-events-auto"
+              >
+                <div className="relative border border-gold/45 bg-black-warm/85 backdrop-blur-sm px-5 py-4 pr-10 text-left shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+                  <button
+                    onClick={() => setShowHint(false)}
+                    aria-label="Cerrar aviso"
+                    className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-gold/60 hover:text-gold transition-colors cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                  <p className="font-script text-xl text-gold-mid mb-1 -rotate-1">Antes de entrar…</p>
+                  <p className="text-ivory/85 text-sm leading-relaxed">
+                    Prueba a arrastrar los iconos del fondo. Las tijeras cortan el título,
+                    la aguja lo cose y el saxofón va soltando notas.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
 

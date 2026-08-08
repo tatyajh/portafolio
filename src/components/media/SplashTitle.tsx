@@ -95,7 +95,12 @@ export default function SplashTitle() {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
       aria-label={TITLE}
-      className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
+      // whitespace-nowrap es obligatorio: al partir el título en un
+      // span por letra, cada uno es un inline-block y el navegador
+      // puede cortar la palabra entre letras. En móvil el título va
+      // justo al ancho de la pantalla, así que la "o" final se caía a
+      // la línea de abajo. Como palabra suelta nunca se partía.
+      className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase whitespace-nowrap"
     >
       {letters.map((letter, i) => {
         const cut = cuts[i];
