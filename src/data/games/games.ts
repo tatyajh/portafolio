@@ -33,11 +33,11 @@ export const GAMES: Game[] = [
     title: 'Drunk Driver',
     year: '2026',
     // Descripción tomada de la propia página del juego en itch.io.
-    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo durante una game jam. Yo me encargué de todo lo que se oye y de buena parte de lo que se siente: la música, los efectos de sonido, el impacto visual de los choques y el menú.',
-    // Detalle tomado de su propio commit en la rama `tati` del repo del
-    // equipo: "Sistema de audio completo (musica, SFX) y efectos
-    // visuales (shake, sangre, humo, chispas)".
-    rol: 'Audio, efectos visuales y menú',
+    desc: 'Beber y conducir son cosas que no deberías mezclar jamás. ¿O sí? Un juego de carreras caótico, hecho en equipo durante una game jam. Me encargué de todo lo que se oye, de buena parte de lo que se siente al chocar, y de la capa que envuelve la partida: menú, pausa y game over.',
+    // Detalle tomado de sus commits reales en la rama `tati` del repo
+    // del equipo, fusionada a `Develop` por el PR #2 (la rama `main`
+    // del repo quedó desactualizada). Nada de esto es interpretación.
+    rol: 'Audio, efectos visuales y flujo de juego',
     motor: 'Unity',
     lenguaje: 'C#',
     genero: 'Carreras',
@@ -46,7 +46,10 @@ export const GAMES: Game[] = [
     architecture: [
       { label: 'Sistema de audio', detail: 'Música y efectos de sonido del juego completo.' },
       { label: 'Efectos de impacto', detail: 'Sacudida de cámara, sangre, humo y chispas en los choques — lo que hace que atropellar algo se sienta.' },
-      { label: 'Menú', detail: 'La pantalla de entrada al juego.' },
+      { label: 'Flujo de juego', detail: 'Un GameFlowManager con estados de menú, partida, pausa y game over, que detecta el final observando la vida del carro y el nivel de alcohol.' },
+      { label: 'Menús', detail: 'Pantallas de menú, pausa y game over, armadas por código y conectadas al Input System nuevo de Unity, como el resto del proyecto.' },
+      { label: 'Post-procesado de borrachera', detail: 'Viñeta, aberración cromática y distorsión que se intensifican según el nivel de alcohol en la sangre del personaje.' },
+      { label: 'Arreglos de HUD', detail: 'Las barras de vida y de alcohol estaban invisibles en pantalla; quedaron funcionando.' },
     ],
   },
   {
