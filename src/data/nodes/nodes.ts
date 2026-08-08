@@ -140,8 +140,21 @@ export const NODES: Record<string, Node> = {
     subtitle: 'Capítulo 3',
     text: 'Ingeniera de sistemas, y también diseñadora.',
     content: 'Soy ingeniera de sistemas y desarrolladora frontend, y estoy estudiando diseño de modas.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador, y decidí estudiar moda.\n\nNo lo veo como dos carreras separadas. Termino usando lo mismo en las dos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
+    // Fuente de cada herramienta: o está en CV_SKILLS (src/data/cv/cv.ts)
+    // o se usa de verdad en alguno de sus repos públicos. Nada inventado.
+    //
+    // Se quitaron "ChatGPT" y "Copilot": nombrar productos concretos
+    // se lee como "sé usar un chat" y envejece rápido. Lo que sí dice
+    // algo es CÓMO trabaja con IA, y eso ya está literal en el CV:
+    // "Spec-Driven Development" y "Desarrollo Asistido por IA".
     tools: {
-      digital: ['React', 'TypeScript', 'Node.js', 'Git', 'Supabase', 'Jest', 'Playwright', 'ChatGPT', 'Copilot'],
+      digital: [
+        'React', 'React Native', 'Next.js', 'TypeScript', 'JavaScript',
+        'Node.js', 'Express', 'REST APIs', 'Supabase', 'PostgreSQL',
+        'Microfrontend (Single-SPA)', 'Tailwind CSS', 'Unity', 'C#',
+        'Jest', 'Cypress', 'Playwright', 'New Relic', 'Git',
+        'Spec-Driven Development', 'Desarrollo Asistido por IA', 'Agile', 'Scrum',
+      ],
       diseno: ['Canva', 'Illustrator', 'Optitex'],
     },
     connections: ['identidad', 'diseno', 'mapa'],
