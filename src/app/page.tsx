@@ -468,7 +468,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     {[node.videos[3], node.videos[4]].map((src, i) => (
                       <div key={i} className="flex flex-col gap-2">
-                        <div className="overflow-hidden bg-black border border-burgundy/30">
+                        <div className="overflow-hidden bg-black border border-burgundy/30 rounded-lg">
                           <video
                             src={src}
                             autoPlay
@@ -499,7 +499,7 @@ export default function Home() {
                   <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-4">
                     mi hoja de vida completa
                   </p>
-                  <div className="overflow-hidden border border-burgundy/10 mb-6">
+                  <div className="overflow-hidden border border-burgundy/10 mb-6 rounded-lg">
                     <Image
                       src="/media/cv/cv.png"
                       alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"

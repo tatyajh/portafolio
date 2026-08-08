@@ -431,7 +431,7 @@ export default function AudioEngine() {
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
-                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px] cursor-pointer"
+                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px] cursor-pointer rounded-lg"
               >
                 {'</>'} Directo a lo técnico
               </motion.button>
@@ -443,7 +443,7 @@ export default function AudioEngine() {
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}
-                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px] cursor-pointer"
+                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px] cursor-pointer rounded-lg"
               >
                 ✥ Conoce más sobre mí
               </motion.button>
@@ -467,7 +467,7 @@ export default function AudioEngine() {
                 {/* Panel de papel claro: sobre el fondo oscuro del
                     splash resalta mucho más que uno oscuro, y usa el
                     mismo lenguaje de papel del resto del sitio. */}
-                <div className="relative paper-card border border-burgundy/35 px-5 py-4 pr-10 text-left shadow-[0_10px_34px_rgba(0,0,0,0.5)]">
+                <div className="relative paper-card border border-burgundy/35 px-5 py-4 pr-10 text-left shadow-[0_10px_34px_rgba(0,0,0,0.5)] rounded-lg">
                   <button
                     onClick={() => setShowHint(false)}
                     aria-label="Cerrar aviso"

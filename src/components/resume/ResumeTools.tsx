@@ -15,7 +15,7 @@ export default function ResumeTools({ tools }: { tools: NonNullable<Node['tools'
         <p className="text-xs tracking-widest uppercase text-burgundy mb-3 text-center">Desarrollo</p>
         <div className="flex flex-wrap justify-center gap-2">
           {tools.digital.map(tool => (
-            <span key={tool} className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide">
+            <span key={tool} className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide rounded-lg">
               {tool}
             </span>
           ))}
@@ -25,7 +25,7 @@ export default function ResumeTools({ tools }: { tools: NonNullable<Node['tools'
         <p className="text-xs tracking-widest uppercase text-burgundy mb-3 text-center">Diseño de Modas</p>
         <div className="flex flex-wrap justify-center gap-2">
           {tools.diseno.map(tool => (
-            <span key={tool} className="px-3 py-1 border border-burgundy/40 text-gold/70 text-sm tracking-wide">
+            <span key={tool} className="px-3 py-1 border border-burgundy/40 text-gold/70 text-sm tracking-wide rounded-lg">
               {tool}
             </span>
           ))}

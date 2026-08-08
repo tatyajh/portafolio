@@ -13,7 +13,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
         transition={{ delay: 0.4, duration: 0.5 }}
         className="mb-10"
       >
-        <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[95%] mx-auto">
+        <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[95%] mx-auto rounded-lg">
           <video
             src={videos[0]}
             autoPlay
@@ -40,7 +40,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
       >
         {firstVideos.map((src, i) => (
           <div key={i} className="flex flex-col gap-2">
-            <div className="overflow-hidden bg-black border border-burgundy/30 w-full">
+            <div className="overflow-hidden bg-black border border-burgundy/30 w-full rounded-lg">
               <video
                 src={src}
                 autoPlay
@@ -68,7 +68,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
       >
         {/* me-01 grande */}
         {videos[0] && (
-          <div className="overflow-hidden bg-black border border-burgundy/30 w-full">
+          <div className="overflow-hidden bg-black border border-burgundy/30 w-full rounded-lg">
             <video
               src={videos[0]}
               autoPlay
@@ -82,7 +82,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
         )}
         {/* me-02 tal cual */}
         {videos[1] && (
-          <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px]">
+          <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px] rounded-lg">
             <video
               src={videos[1]}
               autoPlay
@@ -107,7 +107,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
       className="mb-10 flex flex-row flex-wrap justify-center gap-3"
     >
       {videos.map((src, i) => (
-        <div key={i} className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px]">
+        <div key={i} className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px] rounded-lg">
           <video
             src={src}
             autoPlay

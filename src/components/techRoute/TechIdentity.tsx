@@ -16,7 +16,7 @@ export default function TechIdentity() {
         {TECH_IDENTITY_ROLES.map(role => (
           <span
             key={role}
-            className="px-3 py-1.5 bg-burgundy/20 border border-burgundy/50 text-gold text-sm tracking-wide"
+            className="px-3 py-1.5 bg-burgundy/20 border border-burgundy/50 text-gold text-sm tracking-wide rounded-lg"
           >
             {role}
           </span>
@@ -30,7 +30,7 @@ export default function TechIdentity() {
         {CV_SKILLS.map(group => (
           <span
             key={group.category}
-            className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide"
+            className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide rounded-lg"
           >
             {group.category}
           </span>

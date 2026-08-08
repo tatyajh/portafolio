@@ -78,7 +78,7 @@ export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.
         {tape && (
           <div className={`tape -top-4 w-24 h-8 ${tape.side === 'left' ? 'left-4 -rotate-6' : 'right-4 rotate-6'}`} />
         )}
-        <div className="overflow-hidden">
+        <div className="overflow-hidden rounded-[6px]">
           <img
             src={src}
             alt={alt}
