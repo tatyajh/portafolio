@@ -14,6 +14,16 @@ interface ToolMoveDetail {
   x: number;
   y: number;
   category: string;
+  /** Eje del movimiento de la herramienta en ese instante. */
+  axis: 'h' | 'v';
+}
+
+// Un corte guarda por dónde pasó el filo y en qué sentido: arrastrar
+// las tijeras de lado parte la letra en dos mitades arriba/abajo;
+// arrastrarlas hacia arriba o abajo la parte izquierda/derecha.
+interface Cut {
+  axis: 'h' | 'v';
+  pct: number;
 }
 
 // Título del splash, letra por letra: las tijeras lo cortan y la aguja
@@ -26,17 +36,18 @@ interface ToolMoveDetail {
 // ícono cualquiera no dispara ni un render de React aquí.
 export default function SplashTitle() {
   const letters = TITLE.split('');
-  const [cuts, setCuts] = useState<(number | null)[]>(() => letters.map(() => null));
+  const [cuts, setCuts] = useState<(Cut | null)[]>(() => letters.map(() => null));
   const [repaired, setRepaired] = useState<Set<number>>(() => new Set());
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
     const onToolMove = (evt: Event) => {
-      const { x, y, category } = (evt as CustomEvent<ToolMoveDetail>).detail;
+      const { x, y, category, axis } = (evt as CustomEvent<ToolMoveDetail>).detail;
       if (category !== 'tijeras' && category !== 'aguja') return;
 
       const repairedNow: number[] = [];
+      let cutSomething = false;
 
       setCuts(prev => {
         let changed = false;
@@ -49,9 +60,14 @@ export default function SplashTitle() {
           if (x < r.left || x > r.right || y < r.top || y > r.bottom) return;
 
           if (category === 'tijeras' && next[i] === null) {
-            // El corte queda a la altura por donde pasó el filo.
-            const pct = ((y - r.top) / r.height) * 100;
-            next[i] = Math.min(Math.max(pct, MIN_CUT_PCT), MAX_CUT_PCT);
+            // El corte va por donde pasó el filo, en el eje en que se
+            // movían las tijeras: de lado corta a lo ancho, hacia
+            // arriba o abajo corta a lo largo.
+            const raw = axis === 'h'
+              ? ((y - r.top) / r.height) * 100
+              : ((x - r.left) / r.width) * 100;
+            next[i] = { axis, pct: Math.min(Math.max(raw, MIN_CUT_PCT), MAX_CUT_PCT) };
+            cutSomething = true;
             changed = true;
           } else if (category === 'aguja' && next[i] !== null) {
             next[i] = null;
@@ -62,6 +78,12 @@ export default function SplashTitle() {
 
         return changed ? next : prev;
       });
+
+      // El splash mantiene los botones bloqueados hasta el primer
+      // corte; este es el aviso de que ya se puede explorar.
+      if (cutSomething) {
+        window.dispatchEvent(new CustomEvent('splash-first-cut'));
+      }
 
       // Destello dorado breve en la letra recién cosida.
       if (repairedNow.length > 0) {
@@ -134,21 +156,33 @@ export default function SplashTitle() {
                 {/* Mantiene el ancho de la letra para que el título no
                     se reacomode al cortarse. */}
                 <span className="invisible">{letter}</span>
+                {/* Las dos mitades se separan en perpendicular al filo:
+                    un corte horizontal las manda arriba/abajo, uno
+                    vertical las manda a los lados. El pequeño rebote
+                    inicial es el tirón de la tijera al pasar. */}
                 <motion.span
                   className="absolute inset-0"
-                  style={{ clipPath: `inset(0 0 ${100 - cut}% 0)` }}
-                  initial={{ y: 0, x: 0, rotate: 0 }}
-                  animate={{ y: -4, x: -2, rotate: -2 }}
-                  transition={{ type: 'spring', stiffness: 180, damping: 14 }}
+                  style={{
+                    clipPath: cut.axis === 'h'
+                      ? `inset(0 0 ${100 - cut.pct}% 0)`
+                      : `inset(0 ${100 - cut.pct}% 0 0)`,
+                  }}
+                  initial={cut.axis === 'h' ? { y: 3, x: 0, rotate: 0 } : { x: 3, y: 0, rotate: 0 }}
+                  animate={cut.axis === 'h' ? { y: -4, x: -2, rotate: -2 } : { x: -6, y: -2, rotate: -2 }}
+                  transition={{ type: 'spring', stiffness: 180, damping: 13 }}
                 >
                   {letter}
                 </motion.span>
                 <motion.span
                   className="absolute inset-0"
-                  style={{ clipPath: `inset(${cut}% 0 0 0)` }}
-                  initial={{ y: 0, x: 0, rotate: 0, opacity: 1 }}
-                  animate={{ y: 14, x: 4, rotate: 6, opacity: 0.8 }}
-                  transition={{ type: 'spring', stiffness: 140, damping: 12 }}
+                  style={{
+                    clipPath: cut.axis === 'h'
+                      ? `inset(${cut.pct}% 0 0 0)`
+                      : `inset(0 0 0 ${cut.pct}%)`,
+                  }}
+                  initial={cut.axis === 'h' ? { y: -3, x: 0, rotate: 0, opacity: 1 } : { x: -3, y: 0, rotate: 0, opacity: 1 }}
+                  animate={cut.axis === 'h' ? { y: 14, x: 4, rotate: 6, opacity: 0.8 } : { x: 12, y: 5, rotate: 5, opacity: 0.8 }}
+                  transition={{ type: 'spring', stiffness: 140, damping: 11 }}
                 >
                   {letter}
                 </motion.span>

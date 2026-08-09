@@ -32,6 +32,13 @@ export default function AudioEngine() {
   // La pista de "arrastra los objetos" se retira sola en cuanto la
   // persona agarra algo: ya cumplió su función.
   const [showHint, setShowHint] = useState(true);
+  // Los botones de entrada se desbloquean tras cortar el título.
+  const [hasCut, setHasCut] = useState(false);
+  const [playgroundUnavailable, setPlaygroundUnavailable] = useState(false);
+  // Derivado en vez de un estado aparte: así el caso de reduced-motion
+  // no necesita un setState dentro del efecto (que además el lint
+  // prohíbe, con razón — encadena renders innecesarios).
+  const canEnter = prefersReducedMotion || hasCut || playgroundUnavailable;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
@@ -155,6 +162,30 @@ export default function AudioEngine() {
     window.addEventListener('splash-first-drag', handleFirstDrag);
     return () => window.removeEventListener('splash-first-drag', handleFirstDrag);
   }, []);
+
+  // Los botones se abren con el primer corte al título.
+  //
+  // Salvaguarda importante: si el playground no llega a estar listo
+  // (Pixi falló, no hay WebGL, reduced-motion no lo monta), no hay
+  // forma de cortar nada y el sitio quedaría inaccesible. Por eso los
+  // botones arrancan bloqueados solo si el playground confirma que
+  // está vivo dentro de un margen corto; si no confirma, se abren.
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    let ready = false;
+    const handleReady = () => { ready = true; };
+    const handleFirstCut = () => setHasCut(true);
+    window.addEventListener('splash-playground-ready', handleReady);
+    window.addEventListener('splash-first-cut', handleFirstCut);
+    const failsafe = setTimeout(() => {
+      if (!ready) setPlaygroundUnavailable(true);
+    }, 4000);
+    return () => {
+      window.removeEventListener('splash-playground-ready', handleReady);
+      window.removeEventListener('splash-first-cut', handleFirstCut);
+      clearTimeout(failsafe);
+    };
+  }, [prefersReducedMotion]);
 
   return (
     <>
@@ -430,26 +461,36 @@ export default function AudioEngine() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={canEnter ? { scale: 1.05 } : undefined}
+                whileTap={canEnter ? { scale: 0.95 } : undefined}
                 onClick={() => {
                   handleFirstInteraction();
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
-                className="px-8 py-4 border border-burgundy/60 text-gold-mid text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-burgundy/15 hover:border-burgundy min-w-[200px] cursor-pointer rounded-lg"
+                disabled={!canEnter}
+                className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
+                  canEnter
+                    ? 'border-burgundy/60 text-gold-mid hover:bg-burgundy/15 hover:border-burgundy cursor-pointer'
+                    : 'border-burgundy/20 text-gold-mid/30 cursor-not-allowed'
+                }`}
               >
                 {'</>'} Directo a lo técnico
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={canEnter ? { scale: 1.05 } : undefined}
+                whileTap={canEnter ? { scale: 0.95 } : undefined}
                 onClick={() => {
                   handleFirstInteraction();
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}
-                className="px-8 py-4 border border-gold/50 text-gold text-sm sm:text-base uppercase tracking-wider font-medium transition-all hover:bg-gold/10 hover:border-gold min-w-[200px] cursor-pointer rounded-lg"
+                disabled={!canEnter}
+                className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
+                  canEnter
+                    ? 'border-gold/50 text-gold hover:bg-gold/10 hover:border-gold cursor-pointer'
+                    : 'border-gold/20 text-gold/30 cursor-not-allowed'
+                }`}
               >
                 ✥ Conoce más sobre mí
               </motion.button>
@@ -484,14 +525,14 @@ export default function AudioEngine() {
                   >
                     ✕
                   </button>
-                  <p className="font-script text-xl text-burgundy mb-1 -rotate-1">Antes de entrar…</p>
+                  <p className="font-script text-xl text-burgundy mb-1 -rotate-1">¿Y si intentas cortar el portafolio?</p>
                   {/* Invitación, no manual de instrucciones: decir qué
                       hace cada objeto arruina el hallazgo. Un reto da
                       la misma información útil (se puede cortar, se
                       puede coser) sin resolverlo por la persona. */}
                   <p className="text-ink/85 text-sm leading-relaxed">
-                    Te reto a cortar algo y después volver a coserlo.
-                    Todo lo que flota en el fondo se puede arrastrar.
+                    Prueba a interactuar antes de entrar: arrastra las tijeras
+                    sobre el título y verás. Después, si quieres, cóselo.
                   </p>
                 </div>
               </motion.div>

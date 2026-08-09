@@ -493,7 +493,14 @@ export default function SplashPlayground() {
               const screenPos = toClient(icon.sprite.x, icon.sprite.y);
               window.dispatchEvent(
                 new CustomEvent('splash-tool-move', {
-                  detail: { x: screenPos.x, y: screenPos.y, category: icon.category },
+                  detail: {
+                    x: screenPos.x,
+                    y: screenPos.y,
+                    category: icon.category,
+                    // Eje dominante del movimiento: define si el corte
+                    // parte la letra a lo ancho o a lo largo.
+                    axis: Math.abs(icon.vx) >= Math.abs(icon.vy) ? 'h' : 'v',
+                  },
                 }),
               );
             }
@@ -586,6 +593,12 @@ export default function SplashPlayground() {
         let lastW = app.screen.width;
         let lastH = app.screen.height;
 
+        // El playground quedó vivo y jugable. El splash lo espera para
+        // decidir si bloquea los botones hasta el primer corte: si esto
+        // nunca llega (Pixi falló, WebGL no disponible, reduced-motion),
+        // desbloquea solo y nadie se queda encerrado en la portada.
+        window.dispatchEvent(new CustomEvent('splash-playground-ready'));
+
         app.ticker.add(() => {
           try {
             const screenW = app.screen.width;
@@ -618,6 +631,10 @@ export default function SplashPlayground() {
                 icon.skewX = lerp(icon.skewX, 0, RECOVERY_RATE);
                 icon.skewY = lerp(icon.skewY, 0, RECOVERY_RATE);
                 icon.sprite.skew.set(icon.skewX, icon.skewY);
+                // Las tijeras vuelven a quedar quietas al soltarlas.
+                if (icon.sprite.rotation !== 0) {
+                  icon.sprite.rotation = lerp(icon.sprite.rotation, 0, RECOVERY_RATE);
+                }
 
                 icon.sprite.scale.x = lerp(icon.sprite.scale.x, icon.baseSpriteScale, RECOVERY_RATE);
                 icon.sprite.scale.y = lerp(icon.sprite.scale.y, icon.baseSpriteScale, RECOVERY_RATE);
@@ -637,6 +654,16 @@ export default function SplashPlayground() {
 
                 icon.sprite.scale.x = icon.baseSpriteScale * 1.15 * (1 + stretchT * 0.34);
                 icon.sprite.scale.y = icon.baseSpriteScale * 1.15 * (1 - stretchT * 0.16);
+
+                // Tijereteo: mientras se arrastran, las tijeras abren y
+                // cierran. La frecuencia sube con la velocidad, así que
+                // moverlas rápido se siente como cortar de verdad y
+                // dejarlas quietas casi las detiene.
+                if (icon.category === 'tijeras') {
+                  const snipSpeed = 14 + stretchT * 26;
+                  icon.sprite.rotation =
+                    Math.sin((performance.now() / 1000) * snipSpeed) * (0.1 + stretchT * 0.22);
+                }
 
                 // El roce sigue pintando aunque el dedo se detenga un
                 // instante: la velocidad decae sola si no llegan más
