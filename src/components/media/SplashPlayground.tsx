@@ -94,14 +94,21 @@ interface PlacedInstance {
 // Toma N poses estáticas repartidas (no consecutivas) de cada
 // categoría, como instancias distintas — más variedad visual sin
 // animar nada.
+//
+// El recorrido va por VUELTAS y no por categoría: una de cada tipo,
+// luego la segunda de cada tipo, etc. Como las posiciones se asignan
+// según el índice en esta lista, recorrer por categoría dejaba las
+// tres tijeras (y los tres hilos, y los tres carretes…) en celdas
+// contiguas de la grilla, todas amontonadas en la misma zona.
 function pickInstances(groups: BackgroundAssetGroup[], perCategory: number): PlacedInstance[] {
+  // Las notas musicales NO se colocan en reposo: aparecen solo cuando
+  // se arrastra el saxofón, que las va soltando por el camino.
+  const usable = groups.filter(g => g.category !== 'nota');
   const out: PlacedInstance[] = [];
-  for (const group of groups) {
-    // Las notas musicales NO se colocan en reposo: aparecen solo
-    // cuando se arrastra el saxofón, que las va soltando por el camino.
-    if (group.category === 'nota') continue;
-    const frames = group.frames;
-    for (let n = 0; n < perCategory; n++) {
+
+  for (let n = 0; n < perCategory; n++) {
+    for (const group of usable) {
+      const frames = group.frames;
       const idx = Math.floor((n * frames.length) / perCategory) % frames.length;
       out.push({ category: group.category, url: frames[idx] });
     }
@@ -123,8 +130,21 @@ function gridPosition(i: number, cols: number, rows: number) {
   return {
     leftPct: (col + 0.5) * (100 / cols) + jitterX,
     topPct: topBand + jitterY,
+    /** Columna dentro de la grilla, para repartir a lo ancho las
+        categorías que se reubican (ver TITLE_BAND más abajo). */
+    col,
   };
 }
+
+// Las tijeras son la herramienta con la que se descubre el juego, así
+// que viven en la banda vertical donde está el título en vez de
+// repartidas por toda la pantalla: tenerlas a mano hace evidente qué
+// se puede cortar. Siguen separadas entre sí a lo ancho.
+const SCISSORS_TOP_BAND: [number, number] = [30, 64];
+
+// Una tijera acostada y otra de pie: así se ve desde el principio que
+// el corte puede ir en cualquiera de los dos sentidos.
+const SCISSORS_ANGLES = [0, Math.PI / 2, Math.PI / 5];
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -135,6 +155,8 @@ interface IconState {
   category: Category;
   /** Color propio de ESTA instancia: el de su categoría, corrido un poco. */
   tint: number;
+  /** Inclinación en reposo. Las tijeras la usan para verse acostadas o de pie. */
+  baseRotation: number;
   leftPct: number;
   topPct: number;
   baseSpriteScale: number;
@@ -269,14 +291,28 @@ export default function SplashPlayground() {
           const baseSpriteScale = iconSize / maxDim;
           sprite.scale.set(baseSpriteScale);
           sprite.alpha = IDLE_ALPHA;
-          const { leftPct, topPct } = gridPosition(i, gridCols, gridRows);
+          const { leftPct, topPct, col } = gridPosition(i, gridCols, gridRows);
+
+          // Las tijeras se suben a la banda del título, pero cada una a
+          // una altura distinta dentro de ella y conservando su columna,
+          // para que no queden las tres en fila ni amontonadas.
+          const isScissors = instance.category === 'tijeras';
+          const scissorsIndex = Math.floor(i / gridCols);
+          const bandT = SCISSORS_TOP_BAND[0]
+            + ((scissorsIndex % 3) / 2) * (SCISSORS_TOP_BAND[1] - SCISSORS_TOP_BAND[0]);
+          const baseRotation = isScissors
+            ? SCISSORS_ANGLES[scissorsIndex % SCISSORS_ANGLES.length]
+            : 0;
+          if (baseRotation !== 0) sprite.rotation = baseRotation;
+
           iconLayer.addChild(sprite);
           return {
             sprite,
             category: instance.category,
             tint: varyTint(PERSONALITY[instance.category].tint, i),
-            leftPct,
-            topPct,
+            leftPct: isScissors ? (col + 0.5) * (100 / gridCols) : leftPct,
+            topPct: isScissors ? bandT : topPct,
+            baseRotation,
             baseSpriteScale,
             skewX: 0,
             skewY: 0,
@@ -631,9 +667,10 @@ export default function SplashPlayground() {
                 icon.skewX = lerp(icon.skewX, 0, RECOVERY_RATE);
                 icon.skewY = lerp(icon.skewY, 0, RECOVERY_RATE);
                 icon.sprite.skew.set(icon.skewX, icon.skewY);
-                // Las tijeras vuelven a quedar quietas al soltarlas.
-                if (icon.sprite.rotation !== 0) {
-                  icon.sprite.rotation = lerp(icon.sprite.rotation, 0, RECOVERY_RATE);
+                // Al soltarlas, vuelven a su inclinación de reposo (0
+                // para casi todo, vertical u oblicua para las tijeras).
+                if (icon.sprite.rotation !== icon.baseRotation) {
+                  icon.sprite.rotation = lerp(icon.sprite.rotation, icon.baseRotation, RECOVERY_RATE);
                 }
 
                 icon.sprite.scale.x = lerp(icon.sprite.scale.x, icon.baseSpriteScale, RECOVERY_RATE);
@@ -661,8 +698,11 @@ export default function SplashPlayground() {
                 // dejarlas quietas casi las detiene.
                 if (icon.category === 'tijeras') {
                   const snipSpeed = 14 + stretchT * 26;
+                  // Oscila alrededor de SU inclinación, no de cero: una
+                  // tijera vertical debe tijeretear estando vertical.
                   icon.sprite.rotation =
-                    Math.sin((performance.now() / 1000) * snipSpeed) * (0.1 + stretchT * 0.22);
+                    icon.baseRotation
+                    + Math.sin((performance.now() / 1000) * snipSpeed) * (0.1 + stretchT * 0.22);
                 }
 
                 // El roce sigue pintando aunque el dedo se detenga un
