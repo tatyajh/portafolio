@@ -138,8 +138,13 @@ export const NODES: Record<string, Node> = {
     title: 'Perfil',
     category: 'esencia',
     subtitle: 'Capítulo 3',
-    text: 'Ingeniera de sistemas, y también diseñadora.',
-    content: 'Soy ingeniera de sistemas y desarrolladora frontend, y estoy estudiando diseño de modas.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador, y decidí estudiar moda.\n\nNo lo veo como dos carreras separadas. Termino usando lo mismo en las dos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
+    // Actualizado: ya terminó la técnica en diseño de modas (antes decía
+    // "estoy estudiando", en presente) y se agregó videojuegos — antes
+    // Perfil no lo mencionaba en ningún lado, a pesar de ser parte real
+    // de lo que hace (Unity, capítulo Videojuegos, CV: 'Frontend
+    // Developer & Game Developer (Unity)').
+    text: 'Ingeniera de sistemas, técnica en diseño de modas y desarrolladora de videojuegos.',
+    content: 'Soy ingeniera de sistemas y desarrolladora frontend. También terminé la técnica en diseño de modas, y desarrollo videojuegos en Unity.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador: primero fue la moda, después los videojuegos — otra forma más de construir algo de cero.\n\nNo lo veo como caminos separados. Termino usando lo mismo en todos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
     // Fuente de cada herramienta: o está en CV_SKILLS (src/data/cv/cv.ts)
     // o se usa de verdad en alguno de sus repos públicos. Nada inventado.
     //
