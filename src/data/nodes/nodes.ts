@@ -138,13 +138,12 @@ export const NODES: Record<string, Node> = {
     title: 'Perfil',
     category: 'esencia',
     subtitle: 'Capítulo 3',
-    // Actualizado: ya terminó la técnica en diseño de modas (antes decía
-    // "estoy estudiando", en presente) y se agregó videojuegos — antes
-    // Perfil no lo mencionaba en ningún lado, a pesar de ser parte real
-    // de lo que hace (Unity, capítulo Videojuegos, CV: 'Frontend
-    // Developer & Game Developer (Unity)').
+    // Segunda ronda de ajuste: los primeros dos párrafos siguen su
+    // redacción casi textual — videojuegos pasa a ser hacia dónde se
+    // enfoca su carrera, y la moda queda como el complemento que
+    // encontró en el camino, no como una carrera aparte.
     text: 'Ingeniera de sistemas, técnica en diseño de modas y desarrolladora de videojuegos.',
-    content: 'Soy ingeniera de sistemas y desarrolladora frontend. También terminé la técnica en diseño de modas, y desarrollo videojuegos en Unity.\n\nLlevo años haciendo aplicaciones web con React, TypeScript y Node. En algún momento me di cuenta de que las ganas de hacer cosas no se me quitaban al cerrar el computador: primero fue la moda, después los videojuegos — otra forma más de construir algo de cero.\n\nNo lo veo como caminos separados. Termino usando lo mismo en todos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
+    content: 'Estudié ingeniería de sistemas y diseño de modas, y me gusta mucho crear videojuegos. Llevo años construyendo aplicaciones web con React, TypeScript y Node — esa sigue siendo mi base como desarrolladora frontend.\n\nComo me gusta tanto aprender, y siempre me ha gustado crear, en algún momento quise intentar algo con las manos y me fui por el mundo de la moda. Sin saberlo, terminó siendo un complemento para el desarrollo de videojuegos, que es hacia donde se está enfocando mi carrera.\n\nNo lo veo como caminos separados. Termino usando lo mismo en todos: entender bien qué se necesita, probar, corregir y volver a probar hasta que quede.',
     // Fuente de cada herramienta: o está en CV_SKILLS (src/data/cv/cv.ts)
     // o se usa de verdad en alguno de sus repos públicos. Nada inventado.
     //
