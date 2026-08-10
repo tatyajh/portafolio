@@ -421,19 +421,24 @@ export default function Home() {
                         <span className="text-[10px] uppercase tracking-widest text-brown">{p.stack}</span>
                       </div>
                       <p className="font-script text-lg text-ink-light leading-snug mb-4">{p.desc}</p>
-                      <div className="flex flex-wrap gap-3">
-                        {p.links.map(l => (
-                          <a
-                            key={l.label}
-                            href={l.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-burgundy hover:bg-burgundy/5 transition-all"
-                          >
-                            {l.label} ↗
-                          </a>
-                        ))}
-                      </div>
+                      {/* Venux no tiene enlaces: son proyectos sin
+                          lanzar, no se muestra el código. Sin este
+                          condicional quedaba un contenedor vacío. */}
+                      {p.links.length > 0 && (
+                        <div className="flex flex-wrap gap-3">
+                          {p.links.map(l => (
+                            <a
+                              key={l.label}
+                              href={l.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-burgundy hover:bg-burgundy/5 transition-all"
+                            >
+                              {l.label} ↗
+                            </a>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </motion.div>

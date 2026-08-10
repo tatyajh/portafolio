@@ -8,7 +8,6 @@ import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backg
 
 const INSTANCE_COUNT = 12;
 const FRAME_INTERVAL_MS = 220;
-const GRID_COLS = 4;
 const GRID_ROWS = 3;
 const TRAIL_SPAWN_MS = 70;
 const TRAIL_LIFETIME_S = 0.6;
@@ -23,29 +22,39 @@ function sampleInstances(groups: BackgroundAssetGroup[], count: number): Backgro
   return Array.from({ length: count }, (_, i) => groups[i % groups.length]);
 }
 
-// Posición en grilla (GRID_COLS x GRID_ROWS) con variación determinista
-// por índice — reparte los íconos de forma pareja por la pantalla en
-// vez del hash modular anterior, que dejaba zonas muy juntas y otras
-// vacías.
-// Aparta un ícono de la columna central de lectura. El contenido de
-// los capítulos vive centrado (max-w-3xl), así que los íconos que
-// caían entre ~30% y ~70% del ancho quedaban justo detrás del texto y
-// la sección se veía revuelta. Se empujan al lado más cercano en vez
-// de eliminarlos: el fondo sigue igual de poblado, solo respira por el
-// centro.
-function pushOutOfReadingColumn(left: number) {
-  if (left > 30 && left < 50) return Math.max(left - 22, 3);
-  if (left >= 50 && left < 70) return Math.min(left + 22, 94);
-  return left;
+// El contenido de los capítulos vive centrado (max-w-3xl), así que los
+// íconos se reparten en dos franjas a los lados en vez de una grilla de
+// ancho completo. Un intento anterior generaba la grilla completa y
+// EMPUJABA lo que caía en el centro hacia el lado más cercano — pero
+// eso comprimía dos columnas en el espacio de una y las montaba entre
+// sí. Ahora cada franja tiene sus propias columnas desde el principio,
+// así que nunca hay dos íconos disputando el mismo espacio.
+const COLS_PER_SIDE = 2;
+const LEFT_BAND: [number, number] = [4, 27];
+const RIGHT_BAND: [number, number] = [73, 96];
+
+// Posición dentro de una franja: centro de su columna + un jitter
+// acotado a una fracción del ancho de columna, para que la variación
+// se sienta orgánica sin que la columna vecina invada su espacio.
+function bandPosition(subCol: number, band: [number, number], jitterSeed: number) {
+  const [start, end] = band;
+  const cellWidth = (end - start) / COLS_PER_SIDE;
+  const center = start + (subCol + 0.5) * cellWidth;
+  const maxJitter = cellWidth * 0.32;
+  const jitter = ((jitterSeed % 21) / 10 - 1) * maxJitter; // -maxJitter..+maxJitter
+  return center + jitter;
 }
 
 function gridPosition(i: number) {
-  const col = i % GRID_COLS;
-  const row = Math.floor(i / GRID_COLS) % GRID_ROWS;
-  const jitterX = ((i * 37) % 14) - 7;
+  const perRow = COLS_PER_SIDE * 2;
+  const posInRow = i % perRow;
+  const row = Math.floor(i / perRow) % GRID_ROWS;
+  const onLeft = posInRow < COLS_PER_SIDE;
+  const subCol = onLeft ? posInRow : posInRow - COLS_PER_SIDE;
+  const band = onLeft ? LEFT_BAND : RIGHT_BAND;
   const jitterY = ((i * 53) % 14) - 7;
   return {
-    left: pushOutOfReadingColumn((col + 0.5) * (100 / GRID_COLS) + jitterX),
+    left: bandPosition(subCol, band, i * 37),
     top: (row + 0.5) * (100 / GRID_ROWS) + jitterY,
   };
 }
