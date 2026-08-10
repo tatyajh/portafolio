@@ -45,7 +45,7 @@ def process_folder(folder: str, category: str) -> int:
     out_dir = os.path.join(OUT_ROOT, category)
     os.makedirs(out_dir, exist_ok=True)
 
-    count = 0
+    expected_names = set()
     for fname in sorted(os.listdir(src_dir)):
         name, ext = os.path.splitext(fname)
         if ext.lower() != '.png' or not name.isdigit():
@@ -57,8 +57,23 @@ def process_folder(folder: str, category: str) -> int:
         if bbox:
             im = im.crop(bbox)
         im.save(os.path.join(out_dir, fname))
-        count += 1
-    return count
+        expected_names.add(fname)
+
+    # Limpia huérfanos: si se borró un número de src/assets/{folder}/
+    # (o cambió de nombre), el .png procesado de esa vez se quedaba
+    # aquí para siempre — el script solo escribía, nunca borraba.
+    # Sucedió de verdad: al actualizar las imágenes se redujeron
+    # carretes/controles/codigo y quedaron archivos de calidad vieja
+    # sueltos en public/ que el sitio seguía usando.
+    removed = []
+    for existing in os.listdir(out_dir):
+        if existing not in expected_names:
+            os.remove(os.path.join(out_dir, existing))
+            removed.append(existing)
+    if removed:
+        print(f'  (limpiados {len(removed)} huérfanos en {category}: {", ".join(sorted(removed))})')
+
+    return len(expected_names)
 
 
 def main():

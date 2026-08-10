@@ -13,8 +13,13 @@ import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backg
 const INSTANCES_PER_CATEGORY_DESKTOP = 3;
 const INSTANCES_PER_CATEGORY_MOBILE = 2;
 
-const ICON_SIZE_DESKTOP = 60;
-const ICON_SIZE_MOBILE = 44;
+// Las imágenes de origen se recortaron más ajustado en la última
+// actualización de calidad (menos margen blanco alrededor del
+// dibujo), así que para el MISMO tamaño de caja el contenido visible
+// ahora llena más esa caja y se ve más grande que antes. Se compensa
+// bajando el tamaño objetivo, no cambiando la lógica de escalado.
+const ICON_SIZE_DESKTOP = 48;
+const ICON_SIZE_MOBILE = 36;
 // Piezas alargadas (aguja, hilo) se escalan manteniendo su proporción
 // real — el eje corto puede terminar en unos pocos px de ancho,
 // imposible de acertar con el dedo. El hit-test usa como mínimo esta
@@ -116,35 +121,55 @@ function pickInstances(groups: BackgroundAssetGroup[], perCategory: number): Pla
   return out;
 }
 
-// Posición en grilla con jitter determinista. El rango vertical se
-// mantiene dentro de una banda segura (8%-80%): en móvil, contenido
-// "fixed" de pantalla completa puede calcularse más alto que lo que el
-// navegador realmente muestra (barra de direcciones/tabs) y, al no
-// haber scroll aquí, esa parte quedaría inalcanzable.
+// Las tijeras son la herramienta con la que se descubre el juego, así
+// que viven en la banda vertical donde está el título en vez de
+// repartidas por toda la pantalla: tenerlas a mano hace evidente qué
+// se puede cortar.
+//
+// El resto de los íconos usan dos bandas propias (arriba/abajo) que
+// NUNCA tocan la banda de las tijeras. Antes las tijeras se reubicaban
+// aquí pero el resto de la grilla seguía calculándose a lo alto de
+// toda la pantalla — dos de cada tres filas normales caían justo
+// encima de esta franja y terminaban montadas con las tijeras.
+// Reservar el territorio de cada uno evita que eso vuelva a pasar,
+// sin depender de que el azar no los junte.
+const SCISSORS_BAND: [number, number] = [32, 62];
+const ICONS_TOP_BAND: [number, number] = [6, 26];
+const ICONS_BOTTOM_BAND: [number, number] = [70, 90];
+
+// Una tijera acostada y otra de pie: así se ve desde el principio que
+// el corte puede ir en cualquiera de los dos sentidos.
+const SCISSORS_ANGLES = [0, Math.PI / 2, Math.PI / 5];
+
+// Posición en grilla con jitter determinista. El resto de los íconos
+// (todo menos las tijeras) se reparte en dos franjas — arriba y abajo
+// de la pantalla — dejando libre el centro, que es territorio
+// exclusivo de las tijeras (ver SCISSORS_BAND). En móvil las franjas
+// se mantienen dentro de un rango seguro: contenido "fixed" de
+// pantalla completa puede calcularse más alto que lo que el navegador
+// realmente muestra (barra de direcciones/tabs) y, al no haber scroll
+// aquí, esa parte quedaría inalcanzable.
 function gridPosition(i: number, cols: number, rows: number) {
   const col = i % cols;
   const row = Math.floor(i / cols) % rows;
   const jitterX = ((i * 37) % 14) - 7;
   const jitterY = ((i * 53) % 10) - 5;
-  const topBand = rows <= 1 ? 44 : 8 + (row / (rows - 1)) * 72;
+
+  const t = rows <= 1 ? 0 : row / (rows - 1); // 0..1
+  const [topStart, topEnd] = ICONS_TOP_BAND;
+  const [botStart, botEnd] = ICONS_BOTTOM_BAND;
+  const topPct = t < 0.5
+    ? topStart + (t / 0.5) * (topEnd - topStart)
+    : botStart + ((t - 0.5) / 0.5) * (botEnd - botStart);
+
   return {
     leftPct: (col + 0.5) * (100 / cols) + jitterX,
-    topPct: topBand + jitterY,
-    /** Columna dentro de la grilla, para repartir a lo ancho las
-        categorías que se reubican (ver TITLE_BAND más abajo). */
+    topPct: topPct + jitterY,
+    /** Columna dentro de la grilla — sin uso hoy, se deja por si
+        alguna categoría futura necesita repartirse a lo ancho. */
     col,
   };
 }
-
-// Las tijeras son la herramienta con la que se descubre el juego, así
-// que viven en la banda vertical donde está el título en vez de
-// repartidas por toda la pantalla: tenerlas a mano hace evidente qué
-// se puede cortar. Siguen separadas entre sí a lo ancho.
-const SCISSORS_TOP_BAND: [number, number] = [30, 64];
-
-// Una tijera acostada y otra de pie: así se ve desde el principio que
-// el corte puede ir en cualquiera de los dos sentidos.
-const SCISSORS_ANGLES = [0, Math.PI / 2, Math.PI / 5];
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -283,6 +308,13 @@ export default function SplashPlayground() {
         const stampFilter = new RGBSplitFilter();
         stampSprite.filters = [stampFilter];
 
+        // Cuántas tijeras hay en total, para repartirlas a lo ancho de
+        // forma pareja (no según en qué columna de la grilla general
+        // les haya tocado caer — en móvil eso las dejaba a las dos en
+        // la misma columna, una encima de la otra en la práctica).
+        const scissorsTotal = placed.filter(p => p.category === 'tijeras').length;
+        let scissorsSeen = 0;
+
         const icons: IconState[] = placed.map((instance, i) => {
           const texture = textureMap[instance.url];
           const sprite = new Sprite(texture);
@@ -291,27 +323,32 @@ export default function SplashPlayground() {
           const baseSpriteScale = iconSize / maxDim;
           sprite.scale.set(baseSpriteScale);
           sprite.alpha = IDLE_ALPHA;
-          const { leftPct, topPct, col } = gridPosition(i, gridCols, gridRows);
+          const { leftPct, topPct } = gridPosition(i, gridCols, gridRows);
 
-          // Las tijeras se suben a la banda del título, pero cada una a
-          // una altura distinta dentro de ella y conservando su columna,
-          // para que no queden las tres en fila ni amontonadas.
           const isScissors = instance.category === 'tijeras';
-          const scissorsIndex = Math.floor(i / gridCols);
-          const bandT = SCISSORS_TOP_BAND[0]
-            + ((scissorsIndex % 3) / 2) * (SCISSORS_TOP_BAND[1] - SCISSORS_TOP_BAND[0]);
-          const baseRotation = isScissors
-            ? SCISSORS_ANGLES[scissorsIndex % SCISSORS_ANGLES.length]
-            : 0;
-          if (baseRotation !== 0) sprite.rotation = baseRotation;
+          let scissorsLeft = leftPct;
+          let scissorsTop = topPct;
+          let baseRotation = 0;
+
+          if (isScissors) {
+            const idx = scissorsSeen++;
+            // Repartidas a lo ancho con margen a los bordes, cada una
+            // en su propia franja — nunca comparten posición aunque
+            // scissorsTotal cambie (2 en móvil, 3 en escritorio).
+            scissorsLeft = 14 + ((idx + 0.5) / scissorsTotal) * 72;
+            scissorsTop = SCISSORS_BAND[0]
+              + ((idx % 3) / 2) * (SCISSORS_BAND[1] - SCISSORS_BAND[0]);
+            baseRotation = SCISSORS_ANGLES[idx % SCISSORS_ANGLES.length];
+            sprite.rotation = baseRotation;
+          }
 
           iconLayer.addChild(sprite);
           return {
             sprite,
             category: instance.category,
             tint: varyTint(PERSONALITY[instance.category].tint, i),
-            leftPct: isScissors ? (col + 0.5) * (100 / gridCols) : leftPct,
-            topPct: isScissors ? bandT : topPct,
+            leftPct: isScissors ? scissorsLeft : leftPct,
+            topPct: isScissors ? scissorsTop : topPct,
             baseRotation,
             baseSpriteScale,
             skewX: 0,

@@ -18,16 +18,30 @@ export interface BackgroundAssetGroup {
 // en vez de una mezcla genérica por temporada. 'mapa' y 'mixto' llevan
 // las 9 categorías (el índice y el nodo de "conexiones" son los únicos
 // pensados para mostrar todo mezclado).
+// Estos conteos son EL RESULTADO de correr
+// `python scripts/process-background-assets.py` sobre `src/assets/` —
+// no un número fijo. Cuando cambien los archivos de origen (agregar,
+// borrar, reemplazar), hay que volver a correr el script Y actualizar
+// estos números para que coincidan con lo que realmente quedó en
+// public/media/background/. Si no coinciden, o bien sobran archivos
+// viejos sin usar, o el sitio pide un frame que ya no existe.
+//
+// Actualizado tras la ronda de mejora de calidad de imágenes: carrete
+// bajó de 9 a 5, gamepad de 12 a 5, codigo de 13 a 12 (se redujeron
+// las fuentes). El script ahora también borra los archivos huérfanos
+// que quedaban de una corrida anterior — antes solo escribía, nunca
+// limpiaba, así que versiones viejas de baja calidad seguían viviendo
+// en public/ aunque el origen ya no las tuviera.
 const CATEGORY_CONFIG: { category: BackgroundAssetGroup['category']; count: number; sections: string[] }[] = [
   { category: 'aguja', count: 4, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
   { category: 'hilo', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'carrete', count: 9, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'carrete', count: 5, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
   { category: 'tijeras', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
   { category: 'patron', count: 8, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'codigo', count: 13, sections: ['mapa', 'mixto', 'inicio', 'estructura', 'tecnico', 'perfil'] },
+  { category: 'codigo', count: 12, sections: ['mapa', 'mixto', 'inicio', 'estructura', 'tecnico', 'perfil'] },
   { category: 'saxofon', count: 5, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },
   { category: 'nota', count: 24, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },
-  { category: 'gamepad', count: 12, sections: ['mapa', 'mixto', 'inicio', 'juego'] },
+  { category: 'gamepad', count: 5, sections: ['mapa', 'mixto', 'inicio', 'juego'] },
 ];
 
 // Los archivos numerados empiezan en 2.png (no hay 1.png en ninguna carpeta origen)
