@@ -525,14 +525,14 @@ export default function AudioEngine() {
                   >
                     ✕
                   </button>
-                  <p className="font-script text-xl text-burgundy mb-1 -rotate-1">¿Y si intentas cortar el portafolio?</p>
+                  <p className="font-script text-xl text-burgundy mb-1 -rotate-1">Antes de entrar…</p>
                   {/* Invitación, no manual de instrucciones: decir qué
                       hace cada objeto arruina el hallazgo. Un reto da
                       la misma información útil (se puede cortar, se
                       puede coser) sin resolverlo por la persona. */}
                   <p className="text-ink/85 text-sm leading-relaxed">
-                    Prueba a interactuar antes de entrar: arrastra las tijeras
-                    sobre el título y verás. Después, si quieres, cóselo.
+                    Interactúa con los diferentes elementos, descubre lo que puedes
+                    hacer, llevando las tijeras al Portafolio…
                   </p>
                 </div>
               </motion.div>
