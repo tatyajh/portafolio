@@ -183,19 +183,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Nota ingeniería + creatividad */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2, duration: 1 }}
-                className="mt-16 text-center max-w-md mx-auto"
-              >
-                <div className="stitch-line w-12 mx-auto mb-5" />
-                <p className="font-serif text-sm italic text-gold/50 leading-relaxed">
-                  Hecho con <span className="text-gold-mid">React</span>, <span className="text-gold-mid">Next.js</span> y <span className="text-gold-mid">TypeScript</span> — donde la ingeniería y la creatividad habitan el mismo espacio.
-                </p>
-                <div className="stitch-line w-12 mx-auto mt-5" />
-              </motion.div>
             </div>
           )}
 
