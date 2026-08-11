@@ -423,6 +423,9 @@ export default function Home() {
                   transition={{ delay: 0.55 }}
                   className="mb-10"
                 >
+                  <p className="mb-3 text-center text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gold/50">
+                    Dato curioso
+                  </p>
                   <div className="mb-8 flex items-center justify-center gap-4 sm:gap-6">
                     <img
                       src={node.gallery.find(s => s.includes('estructura-3'))}
