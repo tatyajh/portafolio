@@ -16,15 +16,16 @@ const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
   technical: 'default',
 };
 
+// Los originales que reemplazan las fotos de figurines son tableros
+// técnicos densos (paletas, fichas, bocetos pequeños) — en 2-3
+// columnas el texto quedaba ilegible. Una sola columna ancha, cada
+// figurín ocupa el ancho completo disponible para poder leerse.
+const BREAKOUT = 'lg:-mx-16 xl:-mx-28';
+
 // Grid estático y prolijo: a diferencia de Hero/Cluster/Spread, esta
 // plantilla no se arrastra ni se solapa a propósito — es para
 // secciones donde se prefiere ver todo ordenado de un vistazo, como
 // los figurines de diseño.
-//
-// Columnas CSS, no una grilla de celdas de igual alto: con aspect-
-// ratio fijo + object-cover las fotos quedaban "mochas" (recortadas).
-// Cada foto ahora se ve completa dentro de su propia columna — el
-// alto lo pone la imagen, no una caja que la recorta.
 export default function CollageGrid({ items, mode = 'editorial' }: CollageGridProps) {
   const captionVariant = MODE_CAPTION[mode];
 
@@ -34,7 +35,7 @@ export default function CollageGrid({ items, mode = 'editorial' }: CollageGridPr
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ delay: 0.2, duration: 0.5 }}
-      className="mb-16 columns-2 gap-4 sm:columns-3 sm:gap-6"
+      className={`mb-16 flex flex-col items-center gap-8 sm:gap-10 ${BREAKOUT}`}
     >
       {items.map((item, i) => (
         <motion.figure
@@ -43,7 +44,7 @@ export default function CollageGrid({ items, mode = 'editorial' }: CollageGridPr
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ delay: 0.15 + i * 0.05, duration: 0.4 }}
-          className="mb-4 break-inside-avoid sm:mb-6"
+          className="w-full max-w-2xl"
         >
           <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
             <div className="overflow-hidden rounded-[6px]">

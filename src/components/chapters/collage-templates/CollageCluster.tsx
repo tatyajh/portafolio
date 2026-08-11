@@ -68,11 +68,12 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
               alt={item.alt}
               caption={item.caption}
               tilt={slot.tilt}
-              tape={slot.tape}
+              tape={item.frameless ? undefined : slot.tape}
               rotateDeg={rotateDeg}
               captionVariant={captionVariant}
               delay={0.3 + i * 0.12}
               draggable
+              frameless={item.frameless}
             />
           </div>
         );

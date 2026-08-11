@@ -16,9 +16,13 @@ interface CollagePhotoProps {
   captionVariant?: 'default' | 'script';
   /** Permite reacomodar la foto arrastrándola, como una foto suelta sobre la mesa. */
   draggable?: boolean;
+  /** La foto ya trae su propio fondo/composición (recorte transparente
+      o degradado propio) — el marco de papel claro se ve pegado
+      encima en vez de enmarcarla, así que se omite y queda suelta. */
+  frameless?: boolean;
 }
 
-export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false }: CollagePhotoProps) {
+export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, frameless = false }: CollagePhotoProps) {
   const restRotate = tilt === 'l' ? -rotateDeg : tilt === 'r' ? rotateDeg : 0;
 
   return (
@@ -40,29 +44,39 @@ export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.
         : {})}
       className={`relative ${draggable ? 'cursor-grab touch-none' : ''}`}
     >
-      {/* El marco envuelve SOLO la imagen: con el mat delgado, dejar la
-          leyenda dentro la apretaba contra el filete. */}
-      <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
-        {tape && (
-          <div className={`tape -top-4 w-24 h-8 ${tape.side === 'left' ? 'left-4 -rotate-6' : 'right-4 rotate-6'}`} />
-        )}
-        <div className="overflow-hidden rounded-[6px]">
-          <img
-            src={src}
-            alt={alt}
-            className="w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-500"
-            loading="lazy"
-            draggable={false}
-          />
+      {frameless ? (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-transform duration-500 hover:scale-[1.02]"
+          loading="lazy"
+          draggable={false}
+        />
+      ) : (
+        // El marco envuelve SOLO la imagen: con el mat delgado, dejar la
+        // leyenda dentro la apretaba contra el filete.
+        <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
+          {tape && (
+            <div className={`tape -top-4 w-24 h-8 ${tape.side === 'left' ? 'left-4 -rotate-6' : 'right-4 rotate-6'}`} />
+          )}
+          <div className="overflow-hidden rounded-[6px]">
+            <img
+              src={src}
+              alt={alt}
+              className="w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-500"
+              loading="lazy"
+              draggable={false}
+            />
+          </div>
+          {/* Filigrana en las 4 esquinas: arco apuntado, cuadrifolio y
+              volutas — el ornamento que le da el aire de marco de espejo
+              gótico sin engrosar el marco en sí. */}
+          <GothicCorner className="-top-[7px] -left-[7px]" />
+          <GothicCorner className="-top-[7px] -right-[7px] rotate-90" />
+          <GothicCorner className="-bottom-[7px] -right-[7px] rotate-180" />
+          <GothicCorner className="-bottom-[7px] -left-[7px] -rotate-90" />
         </div>
-        {/* Filigrana en las 4 esquinas: arco apuntado, cuadrifolio y
-            volutas — el ornamento que le da el aire de marco de espejo
-            gótico sin engrosar el marco en sí. */}
-        <GothicCorner className="-top-[7px] -left-[7px]" />
-        <GothicCorner className="-top-[7px] -right-[7px] rotate-90" />
-        <GothicCorner className="-bottom-[7px] -right-[7px] rotate-180" />
-        <GothicCorner className="-bottom-[7px] -left-[7px] -rotate-90" />
-      </div>
+      )}
       {caption && (
         // caption-glow (dorado), no caption-glow-dark (rojo oscuro): la
         // leyenda vive fuera del marco de papel claro, directo sobre el

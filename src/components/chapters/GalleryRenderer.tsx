@@ -32,16 +32,28 @@ const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 
 // archivo (pole-N), no a la posición en la galería.
 const CUERPO_ALBUMS = [[1, 2, 3, 5], [7], [6, 9, 10, 11], [8, 12]];
 
+// Estas fotos ya traen su propio fondo (recorte transparente o
+// degradado propio) — el marco de papel claro se ve pegado encima en
+// vez de enmarcarlas, así que van sueltas, sin marco.
+const FRAMELESS: Record<string, string[]> = {
+  esencia: ['esencia-1', 'esencia-4'],
+  estructura: ['estructura-3'],
+};
+
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
   const captions = IMAGE_CAPTIONS[nodeId] || [];
+  const frameless = FRAMELESS[nodeId] ?? [];
   const items: CollageItem[] = gallery.map((src, index) => ({
     src,
     alt: captions[index] || `${nodeId} ${index + 1}`,
     caption: captions[index],
+    frameless: frameless.some(name => src.includes(name)),
   }));
 
   if (nodeId === 'cuerpo') {
-    return <CollageAlbums items={items} groups={CUERPO_ALBUMS} mode="documentary" />;
+    // pole-1 y pole-2 son horizontales — el recuadro 3:4 las dejaba
+    // "mochas" (recortadas); cada una ocupa su propia fila completa.
+    return <CollageAlbums items={items} groups={CUERPO_ALBUMS} mode="documentary" fullRowNumbers={[1, 2]} />;
   }
 
   // Herencia: siempre dos fotos por fila (dos columnas), pero

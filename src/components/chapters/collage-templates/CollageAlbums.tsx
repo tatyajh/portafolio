@@ -9,6 +9,9 @@ interface CollageAlbumsProps {
   /** Cada grupo es una lista de números de archivo (ej. pole-6 → 6), en el orden en que se agrupan. */
   groups: number[][];
   mode?: CollageMode;
+  /** Números de archivo que ocupan la fila completa, sin recorte
+      (ej. fotos horizontales que el recuadro 3:4 dejaba "mochas"). */
+  fullRowNumbers?: number[];
 }
 
 const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
@@ -27,7 +30,7 @@ function extractNumber(src: string): number | null {
 // tarjeta de papel, separados por una costura, en vez de un solo
 // tablero mezclado. Reutiliza el mismo marco gótico y grid estático
 // que CollageGrid, pero por grupo.
-export default function CollageAlbums({ items, groups, mode = 'documentary' }: CollageAlbumsProps) {
+export default function CollageAlbums({ items, groups, mode = 'documentary', fullRowNumbers = [] }: CollageAlbumsProps) {
   const captionVariant = MODE_CAPTION[mode];
   const byNumber = new Map<number, CollageItem>();
   items.forEach(item => {
@@ -59,40 +62,49 @@ export default function CollageAlbums({ items, groups, mode = 'documentary' }: C
                   : 'grid-cols-2 sm:grid-cols-3'
               }`}
             >
-              {groupItems.map((item, i) => (
-                <motion.figure
-                  key={item.src}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
-                >
-                  <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
-                    <div className="aspect-[3/4] overflow-hidden rounded-[6px]">
-                      <img
-                        src={item.src}
-                        alt={item.alt}
-                        className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                        loading="lazy"
-                        draggable={false}
-                      />
+              {groupItems.map((item, i) => {
+                const n = extractNumber(item.src);
+                const isFullRow = n !== null && fullRowNumbers.includes(n);
+                return (
+                  <motion.figure
+                    key={item.src}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: '-80px' }}
+                    transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
+                    className={isFullRow ? 'col-span-full' : undefined}
+                  >
+                    <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
+                      <div className={`overflow-hidden rounded-[6px] ${isFullRow ? '' : 'aspect-[3/4]'}`}>
+                        <img
+                          src={item.src}
+                          alt={item.alt}
+                          className={
+                            isFullRow
+                              ? 'h-auto w-full object-contain'
+                              : 'h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]'
+                          }
+                          loading="lazy"
+                          draggable={false}
+                        />
+                      </div>
+                      <GothicCorner className="-top-[7px] -left-[7px]" />
+                      <GothicCorner className="-top-[7px] -right-[7px] rotate-90" />
+                      <GothicCorner className="-bottom-[7px] -right-[7px] rotate-180" />
+                      <GothicCorner className="-bottom-[7px] -left-[7px] -rotate-90" />
                     </div>
-                    <GothicCorner className="-top-[7px] -left-[7px]" />
-                    <GothicCorner className="-top-[7px] -right-[7px] rotate-90" />
-                    <GothicCorner className="-bottom-[7px] -right-[7px] rotate-180" />
-                    <GothicCorner className="-bottom-[7px] -left-[7px] -rotate-90" />
-                  </div>
-                  {item.caption && (
-                    <figcaption
-                      className={`mt-2 text-center caption-glow ${
-                        captionVariant === 'script' ? 'font-script text-base' : 'text-xs italic'
-                      }`}
-                    >
-                      — {item.caption} —
-                    </figcaption>
-                  )}
-                </motion.figure>
-              ))}
+                    {item.caption && (
+                      <figcaption
+                        className={`mt-2 text-center caption-glow ${
+                          captionVariant === 'script' ? 'font-script text-base' : 'text-xs italic'
+                        }`}
+                      >
+                        — {item.caption} —
+                      </figcaption>
+                    )}
+                  </motion.figure>
+                );
+              })}
             </div>
           </motion.div>
         );

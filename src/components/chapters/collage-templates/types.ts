@@ -6,4 +6,7 @@ export interface CollageItem {
   src: string;
   alt: string;
   caption?: string;
+  /** La foto ya trae su propio fondo (recorte transparente o degradado
+      propio) — se muestra suelta, sin el marco de papel. */
+  frameless?: boolean;
 }
