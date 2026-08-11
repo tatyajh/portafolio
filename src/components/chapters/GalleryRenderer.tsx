@@ -6,6 +6,7 @@ import CollageCluster from './collage-templates/CollageCluster';
 import CollageSpread from './collage-templates/CollageSpread';
 import CollageGrid from './collage-templates/CollageGrid';
 import CollageAlbums from './collage-templates/CollageAlbums';
+import CollageDuo from './collage-templates/CollageDuo';
 import type { CollageItem, CollageMode } from './collage-templates/types';
 
 // Asignación plantilla + "modo" por nodo — no es una grilla genérica:
@@ -16,7 +17,6 @@ import type { CollageItem, CollageMode } from './collage-templates/types';
 // y ordenado en vez del collage arrastrable/superpuesto.
 const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 'grid'; mode: CollageMode }> = {
   esencia: { template: 'cluster', mode: 'journal' },
-  herencia: { template: 'cluster', mode: 'journal' },
   estructura: { template: 'cluster', mode: 'journal' },
   arte: { template: 'hero', mode: 'journal' },
   quiebre: { template: 'hero', mode: 'journal' },
@@ -42,6 +42,13 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
 
   if (nodeId === 'cuerpo') {
     return <CollageAlbums items={items} groups={CUERPO_ALBUMS} mode="documentary" />;
+  }
+
+  // Herencia: siempre dos fotos por fila (dos columnas), pero
+  // arrastrables como el resto del collage — a diferencia del grid
+  // estático de diseño.
+  if (nodeId === 'herencia') {
+    return <CollageDuo items={items} mode="journal" />;
   }
 
   const config = NODE_TEMPLATE[nodeId] ?? { template: 'cluster' as const, mode: 'journal' as const };
