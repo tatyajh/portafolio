@@ -14,7 +14,7 @@ import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks, ResumeDownloadButton } from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
-import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo } from '@/components/chapters';
+import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo, CollageGrid } from '@/components/chapters';
 
 // La leyenda original de la foto del vestido (estructura-1) — la
 // misma que ya vivía en IMAGE_CAPTIONS, ahora con "Dato curioso"
@@ -407,7 +407,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_34%] sm:gap-10"
+                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_26%] sm:gap-10"
                 >
                   <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
                     node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
@@ -417,7 +417,7 @@ export default function Home() {
                   <img
                     src={node.gallery.find(s => s.includes('esencia-4'))}
                     alt="Esencia"
-                    className="mx-auto h-auto w-[46%] max-w-[200px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
+                    className="mx-auto h-auto w-[34%] max-w-[150px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
                   />
                 </motion.div>
               )}
@@ -564,6 +564,23 @@ export default function Home() {
                     ))}
                   </div>
                 </motion.div>
+              )}
+
+              {/* Diseño: las fotos de la muñeca y la de retazos van al
+                  final, debajo de los últimos dos videos, no mezcladas
+                  con los figurines de arriba. */}
+              {node.id === 'diseno' && node.gallery && (
+                <CollageGrid
+                  items={node.gallery
+                    .filter(s => s.includes('diseño-1') || s.includes('diseño-2') || s.includes('diseño-4'))
+                    .map(src => ({
+                      src,
+                      alt: 'Diseño',
+                      caption: IMAGE_CAPTIONS.diseno?.[node.gallery!.indexOf(src)],
+                      paired: src.includes('diseño-1') || src.includes('diseño-2'),
+                    }))}
+                  mode="editorial"
+                />
               )}
 
               {/* Hoja de vida completa - solo en perfil, la imagen real tal cual */}

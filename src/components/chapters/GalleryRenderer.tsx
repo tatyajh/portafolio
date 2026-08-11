@@ -56,7 +56,7 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
     // con esencia-1 más grande.
     const rest = items
       .filter(it => !it.src.includes('esencia-4'))
-      .map(it => (it.src.includes('esencia-1') ? { ...it, widthOverride: 'w-[64%] sm:w-[52%]' } : it));
+      .map(it => (it.src.includes('esencia-1') ? { ...it, widthOverride: 'w-[72%] sm:w-[60%]' } : it));
     return <CollageCluster items={rest} mode="journal" />;
   }
 
@@ -86,11 +86,12 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }
 
   if (config.template === 'grid') {
-    // Las dos fotos de la muñeca (diseño-1, diseño-2) van una al lado
-    // de la otra en vez de cada una a ancho completo — el resto del
-    // grid sigue igual.
+    // Las fotos de la muñeca (diseño-1, diseño-2) y la de retazos
+    // (diseño-4) NO van acá — se muestran al final del nodo, debajo de
+    // los dos últimos videos (ver page.tsx). Este grid solo trae los
+    // figurines y diseño-3.
     const gridItems = nodeId === 'diseno'
-      ? items.map(it => (it.src.includes('diseño-1') || it.src.includes('diseño-2') ? { ...it, paired: true } : it))
+      ? items.filter(it => !it.src.includes('diseño-1') && !it.src.includes('diseño-2') && !it.src.includes('diseño-4'))
       : items;
     return <CollageGrid items={gridItems} mode={config.mode} />;
   }
