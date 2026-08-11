@@ -20,6 +20,11 @@ const MODE_CAPTION: Record<CollageMode, 'default' | 'script'> = {
 // plantilla no se arrastra ni se solapa a propósito — es para
 // secciones donde se prefiere ver todo ordenado de un vistazo, como
 // los figurines de diseño.
+//
+// Columnas CSS, no una grilla de celdas de igual alto: con aspect-
+// ratio fijo + object-cover las fotos quedaban "mochas" (recortadas).
+// Cada foto ahora se ve completa dentro de su propia columna — el
+// alto lo pone la imagen, no una caja que la recorta.
 export default function CollageGrid({ items, mode = 'editorial' }: CollageGridProps) {
   const captionVariant = MODE_CAPTION[mode];
 
@@ -29,7 +34,7 @@ export default function CollageGrid({ items, mode = 'editorial' }: CollageGridPr
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ delay: 0.2, duration: 0.5 }}
-      className="mb-16 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6"
+      className="mb-16 columns-2 gap-4 sm:columns-3 sm:gap-6"
     >
       {items.map((item, i) => (
         <motion.figure
@@ -38,13 +43,14 @@ export default function CollageGrid({ items, mode = 'editorial' }: CollageGridPr
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ delay: 0.15 + i * 0.05, duration: 0.4 }}
+          className="mb-4 break-inside-avoid sm:mb-6"
         >
           <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
-            <div className="aspect-[3/4] overflow-hidden rounded-[6px]">
+            <div className="overflow-hidden rounded-[6px]">
               <img
                 src={item.src}
                 alt={item.alt}
-                className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                className="h-auto w-full object-contain transition-transform duration-500 hover:scale-[1.02]"
                 loading="lazy"
                 draggable={false}
               />

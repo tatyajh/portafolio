@@ -147,6 +147,16 @@ const ICONS_BOTTOM_BAND: [number, number] = [70, 90];
 // el corte puede ir en cualquiera de los dos sentidos.
 const SCISSORS_ANGLES = [0, Math.PI / 2, Math.PI / 5];
 
+// Los 10 frames de tijeras NO vienen "las primeras 5 abiertas, las
+// últimas 5 cerradas en el mismo orden" — se revisó cada imagen y el
+// set en realidad mezcla 5 tijeras distintas (plateada, roja, dorada
+// con brillo, dorada lisa, beige de mango rojo), cada una con su
+// abierta y su cerrada en posiciones distintas. Este es el
+// emparejamiento real por índice dentro de `frames` (frames[0]=2.png
+// … frames[9]=11.png): plateada 0↔6, roja 1↔7, dorada-brillo 2↔8,
+// dorada-lisa 3↔9, beige/mango-rojo 4↔5.
+const SCISSORS_OPEN_CLOSED_PAIRS: [number, number][] = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 5]];
+
 // Posición en grilla con jitter determinista. El resto de los íconos
 // (todo menos las tijeras) se reparte en dos franjas — arriba y abajo
 // de la pantalla — dejando libre el centro, que es territorio
@@ -197,6 +207,11 @@ interface IconState {
   skewX: number;
   skewY: number;
   grabbed: boolean;
+  // Solo tijeras: si el filo está sobre el título ahora mismo. El
+  // tijereteo (animación + sonido) solo pasa mientras esto es true —
+  // el resto del arrastre se queda quieta, como una tijera que no
+  // está cortando nada.
+  overTitle: boolean;
   // Una vez soltado tras un arrastre, deja de volver a su posición de
   // grilla — se queda exactamente donde se soltó.
   pinned: boolean;
@@ -298,15 +313,11 @@ export default function SplashPlayground() {
         // azar y no habría con qué animar el tijereteo.
         const scissorsGroup = groups.find(g => g.category === 'tijeras');
         const scissorsTotal = placed.filter(p => p.category === 'tijeras').length;
-        const scissorsOpenCount = scissorsGroup
-          ? Math.max(1, Math.floor(scissorsGroup.frames.length / 2))
-          : 0;
         const scissorsPairs = Array.from({ length: scissorsTotal }, (_, k) => {
           if (!scissorsGroup) return null;
-          const openIdx = k % scissorsOpenCount;
-          const closedIdx = openIdx + scissorsOpenCount;
+          const [openIdx, closedIdx] = SCISSORS_OPEN_CLOSED_PAIRS[k % SCISSORS_OPEN_CLOSED_PAIRS.length];
           return {
-            open: scissorsGroup.frames[openIdx],
+            open: scissorsGroup.frames[openIdx] ?? scissorsGroup.frames[0],
             closed: scissorsGroup.frames[closedIdx] ?? scissorsGroup.frames[openIdx],
           };
         });
@@ -397,6 +408,7 @@ export default function SplashPlayground() {
             skewX: 0,
             skewY: 0,
             grabbed: false,
+            overTitle: false,
             pinned: false,
             dragOffsetX: 0,
             dragOffsetY: 0,
@@ -498,6 +510,19 @@ export default function SplashPlayground() {
           return point;
         }
 
+        // Rectángulo del título en pantalla, para saber si las tijeras
+        // están sobre él AHORA — el tijereteo (animación + sonido)
+        // depende de esto, no solo de que se estén arrastrando. Se
+        // vuelve a consultar el DOM en cada llamada porque el título
+        // puede moverse/reflow (aunque su caja exterior es estable).
+        let titleElCache: Element | null = null;
+        function getTitleRect(): DOMRect | null {
+          if (!titleElCache || !document.contains(titleElCache)) {
+            titleElCache = document.querySelector('h1[aria-label="Portafolio"]');
+          }
+          return titleElCache ? titleElCache.getBoundingClientRect() : null;
+        }
+
         // Inversa exacta de mapPositionToPoint: pasa una posición del
         // stage a coordenadas de pantalla, para avisarle al título DOM
         // por dónde va el filo de las tijeras o la punta de la aguja.
@@ -549,6 +574,7 @@ export default function SplashPlayground() {
                 window.dispatchEvent(new CustomEvent('splash-first-drag'));
               }
               icon.grabbed = true;
+              icon.overTitle = false;
               icon.dragOffsetX = icon.sprite.x - x;
               icon.dragOffsetY = icon.sprite.y - y;
               icon.lastMoveT = performance.now();
@@ -594,6 +620,17 @@ export default function SplashPlayground() {
             icon.strokeX = nx;
             icon.strokeY = ny;
 
+            // Solo tijeras: se calcula en cada movimiento, no solo en
+            // el throttle de abajo — el ticker necesita saberlo cada
+            // frame para decidir si tijeretea o se queda quieta.
+            if (icon.category === 'tijeras') {
+              const rect = getTitleRect();
+              const screenPos = toClient(nx, ny);
+              icon.overTitle = !!rect
+                && screenPos.x >= rect.left && screenPos.x <= rect.right
+                && screenPos.y >= rect.top && screenPos.y <= rect.bottom;
+            }
+
             const p = PERSONALITY[icon.category];
             if (now - icon.lastStampAt >= p.stampIntervalMs) {
               icon.lastStampAt = now;
@@ -629,6 +666,7 @@ export default function SplashPlayground() {
           if (!activeGesture) return;
           if (activeGesture.icon) {
             activeGesture.icon.grabbed = false;
+            activeGesture.icon.overTitle = false;
             activeGesture.icon.pinned = true;
             activeGesture.icon.hasStroke = false;
           }
@@ -779,24 +817,34 @@ export default function SplashPlayground() {
                 icon.sprite.scale.x = icon.baseSpriteScale * 1.15 * (1 + stretchT * 0.34);
                 icon.sprite.scale.y = icon.baseSpriteScale * 1.15 * (1 - stretchT * 0.16);
 
-                // Tijereteo: mientras se arrastran, las tijeras abren y
-                // cierran. La frecuencia sube con la velocidad, así que
-                // moverlas rápido se siente como cortar de verdad y
-                // dejarlas quietas casi las detiene.
+                // Tijereteo: SOLO mientras el filo está sobre el
+                // título — el resto del arrastre se queda quieta,
+                // como una tijera que no está cortando nada. La
+                // frecuencia del tijereteo sube con la velocidad, así
+                // que moverlas rápido sobre el título se siente como
+                // cortar de verdad.
                 if (icon.category === 'tijeras') {
-                  const snipSpeed = 14 + stretchT * 26;
-                  // Oscila alrededor de SU inclinación, no de cero: una
-                  // tijera vertical debe tijeretear estando vertical.
-                  const phase = Math.sin((performance.now() / 1000) * snipSpeed);
-                  icon.sprite.rotation = icon.baseRotation + phase * (0.1 + stretchT * 0.22);
-                  // El tijereteo real: cambia de textura (abierta ↔
-                  // cerrada) con la misma oscilación que mueve la
-                  // rotación, en vez de solo simular el gesto girando
-                  // un único dibujo.
-                  if (icon.snipOpen && icon.snipClosed) {
-                    const wantOpen = phase > 0;
-                    const target = wantOpen ? icon.snipOpen : icon.snipClosed;
-                    if (icon.sprite.texture !== target) icon.sprite.texture = target;
+                  if (icon.overTitle) {
+                    const snipSpeed = 14 + stretchT * 26;
+                    // Oscila alrededor de SU inclinación, no de cero:
+                    // una tijera vertical debe tijeretear estando
+                    // vertical.
+                    const phase = Math.sin((performance.now() / 1000) * snipSpeed);
+                    icon.sprite.rotation = icon.baseRotation + phase * (0.1 + stretchT * 0.22);
+                    // El tijereteo real: cambia de textura (abierta ↔
+                    // cerrada) con la misma oscilación que mueve la
+                    // rotación, en vez de solo simular el gesto girando
+                    // un único dibujo.
+                    if (icon.snipOpen && icon.snipClosed) {
+                      const wantOpen = phase > 0;
+                      const target = wantOpen ? icon.snipOpen : icon.snipClosed;
+                      if (icon.sprite.texture !== target) icon.sprite.texture = target;
+                    }
+                  } else {
+                    icon.sprite.rotation = lerp(icon.sprite.rotation, icon.baseRotation, RECOVERY_RATE);
+                    if (icon.snipOpen && icon.sprite.texture !== icon.snipOpen) {
+                      icon.sprite.texture = icon.snipOpen;
+                    }
                   }
                 }
 
