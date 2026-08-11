@@ -100,7 +100,12 @@ export default function Home() {
           animate={{ opacity: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, filter: 'blur(10px)' }}
           transition={{ duration: 0.5 }}
-          className={`min-h-screen flex flex-col items-center justify-center px-6 py-24 ${getTextClass()}`}
+          // Antes forzaba min-h-screen + justify-center: en nodos con
+          // poco contenido (ej. esencia, sin PROJECTS/tools/videos)
+          // eso dejaba un tramo enorme de scroll vacío al final. El
+          // fondo ya cubre toda la pantalla desde el wrapper raíz, así
+          // que aquí basta con el alto real del contenido.
+          className={`flex flex-col items-center px-6 py-16 sm:py-24 ${getTextClass()}`}
         >
 
           {/* ═══ MAPA INTERACTIVO ═══ */}
@@ -394,7 +399,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_26%] sm:gap-10"
+                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_18%] sm:gap-10"
                 >
                   <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
                     node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
@@ -404,7 +409,7 @@ export default function Home() {
                   <img
                     src={node.gallery.find(s => s.includes('esencia-4'))}
                     alt="Esencia"
-                    className="mx-auto h-auto w-[34%] max-w-[150px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
+                    className="mx-auto h-auto w-[24%] max-w-[100px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
                   />
                 </motion.div>
               )}
