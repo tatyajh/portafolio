@@ -22,7 +22,4 @@ export interface CollageItem {
   /** Etiqueta pequeña en mayúsculas encima de la leyenda (ej. "Dato
       curioso"). Solo tiene efecto si `caption` también está definido. */
   captionLabel?: string;
-  /** Se puede arrastrar una sola vez — al soltarla queda fija donde
-      cayó y deja de responder al arrastre. */
-  dragOnce?: boolean;
 }

@@ -36,7 +36,7 @@ export default function CollageDuo({ items, mode = 'journal' }: CollageDuoProps)
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className="mb-16 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10"
+      className="mb-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10"
     >
       {items.map((item, i) => (
         <CollagePhoto
@@ -51,7 +51,6 @@ export default function CollageDuo({ items, mode = 'journal' }: CollageDuoProps)
           captionVariant={captionVariant}
           delay={0.3 + i * 0.12}
           draggable
-          dragOnce={item.dragOnce}
         />
       ))}
     </motion.div>

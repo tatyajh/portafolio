@@ -345,11 +345,11 @@ export default function Home() {
                   izquierda del título, en espejo con esencia-4 que
                   queda a la derecha del párrafo de abajo. */}
               {node.id === 'esencia' && node.gallery ? (
-                <div className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[18%_1fr] sm:gap-8">
+                <div className="mb-5 grid grid-cols-1 items-center gap-5 sm:grid-cols-[30%_1fr] sm:gap-8">
                   <img
                     src={node.gallery.find(s => s.includes('esencia-1'))}
                     alt="Esencia"
-                    className="order-2 mx-auto h-auto w-[26%] max-w-[110px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:order-1 sm:w-full sm:max-w-none"
+                    className="order-2 mx-auto h-auto w-[46%] max-w-[190px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:order-1 sm:w-full sm:max-w-none"
                   />
                   <div className="order-1 text-center sm:order-2">
                     {SEASONS[node.id] && (
@@ -449,7 +449,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_18%] sm:gap-10"
+                  className="mb-5 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_18%] sm:gap-10"
                 >
                   <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
                     node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'

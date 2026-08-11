@@ -53,11 +53,8 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   if (nodeId === 'esencia') {
     // esencia-1 y esencia-4 ya se muestran arriba, chicas, junto al
     // título y al párrafo (ver page.tsx) — acá solo van las otras dos,
-    // juntas. La de fondo rojo (esencia-3) se puede arrastrar, pero
-    // solo una vez: después de soltarla queda fija.
-    const rest = items
-      .filter(it => !it.src.includes('esencia-1') && !it.src.includes('esencia-4'))
-      .map(it => (it.src.includes('esencia-3') ? { ...it, dragOnce: true } : it));
+    // juntas, arrastrables sin límite (como el resto del collage).
+    const rest = items.filter(it => !it.src.includes('esencia-1') && !it.src.includes('esencia-4'));
     return <CollageDuo items={rest} mode="journal" />;
   }
 
