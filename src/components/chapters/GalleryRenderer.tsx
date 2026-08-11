@@ -5,6 +5,7 @@ import CollageHero from './collage-templates/CollageHero';
 import CollageCluster from './collage-templates/CollageCluster';
 import CollageSpread from './collage-templates/CollageSpread';
 import CollageGrid from './collage-templates/CollageGrid';
+import CollageAlbums from './collage-templates/CollageAlbums';
 import type { CollageItem, CollageMode } from './collage-templates/types';
 
 // Asignación plantilla + "modo" por nodo — no es una grilla genérica:
@@ -22,9 +23,14 @@ const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 
   mixto: { template: 'hero', mode: 'journal' },
   proceso: { template: 'hero', mode: 'journal' },
   sonido: { template: 'spread', mode: 'documentary' },
-  cuerpo: { template: 'spread', mode: 'documentary' },
   diseno: { template: 'grid', mode: 'editorial' },
 };
+
+// Cuerpo (pole) tiene tantas fotos que se agrupan en álbumes por tipo
+// de figura, confirmado con ella: 1-2-3-5 juntas, 7 sola, 6-9-10-11
+// juntas, 8-12 juntas — los números refieren al nombre real del
+// archivo (pole-N), no a la posición en la galería.
+const CUERPO_ALBUMS = [[1, 2, 3, 5], [7], [6, 9, 10, 11], [8, 12]];
 
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
   const captions = IMAGE_CAPTIONS[nodeId] || [];
@@ -33,6 +39,10 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
     alt: captions[index] || `${nodeId} ${index + 1}`,
     caption: captions[index],
   }));
+
+  if (nodeId === 'cuerpo') {
+    return <CollageAlbums items={items} groups={CUERPO_ALBUMS} mode="documentary" />;
+  }
 
   const config = NODE_TEMPLATE[nodeId] ?? { template: 'cluster' as const, mode: 'journal' as const };
 
