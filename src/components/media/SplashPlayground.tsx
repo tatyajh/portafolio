@@ -212,6 +212,10 @@ interface IconState {
   // el resto del arrastre se queda quieta, como una tijera que no
   // está cortando nada.
   overTitle: boolean;
+  // Solo tijeras: sonido de tijereteo en loop, sonando exactamente
+  // mientras overTitle es true — no un clic por corte, sino continuo
+  // mientras el filo pasa por encima del título.
+  snipAudio?: HTMLAudioElement;
   // Una vez soltado tras un arrastre, deja de volver a su posición de
   // grilla — se queda exactamente donde se soltó.
   pinned: boolean;
@@ -244,6 +248,10 @@ export default function SplashPlayground() {
     let appInstance: Application | null = null;
     const listeners: Array<{ type: string; handler: EventListener; opts?: boolean | AddEventListenerOptions }> = [];
     const observers: ResizeObserver[] = [];
+    // Referencia externa a los <audio> de tijereteo: se llenan dentro
+    // del IIFE async de más abajo, pero el cleanup (fuera de ese
+    // scope) necesita poder pausarlos al desmontar.
+    const snipAudios: HTMLAudioElement[] = [];
 
     const isMobile = window.innerWidth < 768;
     const iconSize = isMobile ? ICON_SIZE_MOBILE : ICON_SIZE_DESKTOP;
@@ -395,6 +403,18 @@ export default function SplashPlayground() {
           }
 
           iconLayer.addChild(sprite);
+          // Un <audio> en loop por cada tijera — no un clic por corte,
+          // sino sonido continuo mientras el filo está sobre el
+          // título. Se crea en pausa; onPointerMove lo prende/apaga
+          // según overTitle.
+          let snipAudio: HTMLAudioElement | undefined;
+          if (isScissors) {
+            snipAudio = new Audio('/media/audio/tijeras.mp3');
+            snipAudio.loop = true;
+            snipAudio.volume = 0.4;
+            snipAudio.preload = 'auto';
+            snipAudios.push(snipAudio);
+          }
           return {
             sprite,
             category: instance.category,
@@ -404,6 +424,7 @@ export default function SplashPlayground() {
             baseRotation,
             snipOpen,
             snipClosed,
+            snipAudio,
             baseSpriteScale,
             skewX: 0,
             skewY: 0,
@@ -626,9 +647,21 @@ export default function SplashPlayground() {
             if (icon.category === 'tijeras') {
               const rect = getTitleRect();
               const screenPos = toClient(nx, ny);
+              const wasOverTitle = icon.overTitle;
               icon.overTitle = !!rect
                 && screenPos.x >= rect.left && screenPos.x <= rect.right
                 && screenPos.y >= rect.top && screenPos.y <= rect.bottom;
+              // El sonido suena EXACTAMENTE mientras el filo está sobre
+              // el título — arranca al entrar, para al salir (no un
+              // clic por corte, sino continuo mientras pasa por ahí).
+              if (icon.snipAudio && icon.overTitle !== wasOverTitle) {
+                if (icon.overTitle) {
+                  icon.snipAudio.currentTime = 0;
+                  void icon.snipAudio.play().catch(() => {});
+                } else {
+                  icon.snipAudio.pause();
+                }
+              }
             }
 
             const p = PERSONALITY[icon.category];
@@ -669,6 +702,9 @@ export default function SplashPlayground() {
             activeGesture.icon.overTitle = false;
             activeGesture.icon.pinned = true;
             activeGesture.icon.hasStroke = false;
+            // Soltarla en cualquier lado corta el sonido al toque —
+            // sin esperar a que el próximo movimiento note el cambio.
+            activeGesture.icon.snipAudio?.pause();
           }
           pendingSuppressClick = activeGesture.suppressClick;
           activeGesture = null;
@@ -874,6 +910,13 @@ export default function SplashPlayground() {
 
     return () => {
       cancelled = true;
+      for (const audio of snipAudios) {
+        try {
+          audio.pause();
+        } catch {
+          // defensivo — igual que el resto de la limpieza
+        }
+      }
       for (const observer of observers) {
         try {
           observer.disconnect();
