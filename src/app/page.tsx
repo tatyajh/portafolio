@@ -351,7 +351,7 @@ export default function Home() {
                     alt="Esencia"
                     className="order-2 mx-auto h-auto w-[46%] max-w-[190px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:order-1 sm:w-full sm:max-w-none"
                   />
-                  <div className="order-1 text-center sm:order-2">
+                  <div className="order-1 text-center sm:order-2 sm:text-left">
                     {SEASONS[node.id] && (
                       <motion.p
                         initial={{ opacity: 0, y: 10 }}

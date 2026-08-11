@@ -825,7 +825,7 @@ export default function SplashPlayground() {
                 // cortar de verdad.
                 if (icon.category === 'tijeras') {
                   if (icon.overTitle) {
-                    const snipSpeed = 14 + stretchT * 26;
+                    const snipSpeed = 7 + stretchT * 14;
                     // Oscila alrededor de SU inclinación, no de cero:
                     // una tijera vertical debe tijeretear estando
                     // vertical.
