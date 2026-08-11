@@ -16,7 +16,6 @@ import type { CollageItem, CollageMode } from './collage-templates/types';
 // diseño es la excepción deliberada: ahí se prefiere un grid estático
 // y ordenado en vez del collage arrastrable/superpuesto.
 const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 'grid'; mode: CollageMode }> = {
-  estructura: { template: 'cluster', mode: 'journal' },
   arte: { template: 'hero', mode: 'journal' },
   quiebre: { template: 'hero', mode: 'journal' },
   mixto: { template: 'hero', mode: 'journal' },
@@ -50,16 +49,24 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }));
 
   if (nodeId === 'esencia') {
-    // esencia-1 más grande; esencia-4 más chica y arriba (junto a
-    // esencia-1, no al final del grupo) — offsetOverride en 'mt-0'
-    // cancela el desfase hacia abajo que le tocaría por su slot.
-    const bySrc = new Map(items.map(it => [it.src, it]));
-    const e1 = bySrc.get(gallery.find(s => s.includes('esencia-1')) ?? '');
-    const e4 = bySrc.get(gallery.find(s => s.includes('esencia-4')) ?? '');
-    const rest = items.filter(it => it !== e1 && it !== e4);
+    // esencia-1 más grande, esencia-4 más chica — sin reordenar ni
+    // mover posición, eso ("arriba", como el ejemplo) era para
+    // estructura-3, no para esta.
+    const items2 = items.map(it => {
+      if (it.src.includes('esencia-1')) return { ...it, widthOverride: 'w-[64%] sm:w-[52%]' };
+      if (it.src.includes('esencia-4')) return { ...it, widthOverride: 'w-[34%] sm:w-[24%]' };
+      return it;
+    });
+    return <CollageCluster items={items2} mode="journal" />;
+  }
+
+  if (nodeId === 'estructura') {
+    // estructura-3 (la foto que ya tiene su propio degradado) va
+    // arriba, chica, junto al texto — como el ejemplo que mostró.
+    const e3 = items.find(it => it.src.includes('estructura-3'));
+    const rest = items.filter(it => it !== e3);
     const ordered = [
-      e1 && { ...e1, widthOverride: 'w-[64%] sm:w-[52%]' },
-      e4 && { ...e4, widthOverride: 'w-[34%] sm:w-[24%]', offsetOverride: 'mt-0' },
+      e3 && { ...e3, widthOverride: 'w-[38%] sm:w-[26%]', offsetOverride: 'mt-0' },
       ...rest,
     ].filter((it): it is CollageItem => Boolean(it));
     return <CollageCluster items={ordered} mode="journal" />;
