@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import GothicCorner from './GothicCorner';
 
 interface CollagePhotoProps {
@@ -18,14 +19,21 @@ interface CollagePhotoProps {
   captionVariant?: 'default' | 'script';
   /** Permite reacomodar la foto arrastrándola, como una foto suelta sobre la mesa. */
   draggable?: boolean;
+  /** Se puede arrastrar una sola vez: al soltarla, queda fija donde
+      cayó y ya no responde a un segundo arrastre. */
+  dragOnce?: boolean;
   /** La foto ya trae su propio fondo/composición (recorte transparente
       o degradado propio) — el marco de papel claro se ve pegado
       encima en vez de enmarcarla, así que se omite y queda suelta. */
   frameless?: boolean;
 }
 
-export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, frameless = false }: CollagePhotoProps) {
+export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, dragOnce = false, frameless = false }: CollagePhotoProps) {
   const restRotate = tilt === 'l' ? -rotateDeg : tilt === 'r' ? rotateDeg : 0;
+  // dragOnce: se puede soltar UNA vez; después de esa primera suelta
+  // se apaga el arrastre y la foto queda fija donde cayó.
+  const [hasDragged, setHasDragged] = useState(false);
+  const canDrag = draggable && !(dragOnce && hasDragged);
 
   return (
     <motion.div
@@ -36,15 +44,16 @@ export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, ta
       // exactamente donde se suelta, como una foto física reacomodada.
       // whileDrag la endereza y la sube de capa para que se vea entera
       // aunque esté debajo de otra.
-      {...(draggable
+      {...(canDrag
         ? {
             drag: true as const,
             dragMomentum: false,
             dragElastic: 0.12,
             whileDrag: { rotate: 0, scale: 1.04, zIndex: 50, cursor: 'grabbing' },
+            onDragEnd: () => setHasDragged(true),
           }
         : {})}
-      className={`relative ${draggable ? 'cursor-grab touch-none' : ''}`}
+      className={`relative ${canDrag ? 'cursor-grab touch-none' : ''}`}
     >
       {frameless ? (
         <img

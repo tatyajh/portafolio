@@ -51,6 +51,7 @@ export default function CollageDuo({ items, mode = 'journal' }: CollageDuoProps)
           captionVariant={captionVariant}
           delay={0.3 + i * 0.12}
           draggable
+          dragOnce={item.dragOnce}
         />
       ))}
     </motion.div>

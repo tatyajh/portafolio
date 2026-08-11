@@ -105,7 +105,7 @@ export default function Home() {
           // eso dejaba un tramo enorme de scroll vacío al final. El
           // fondo ya cubre toda la pantalla desde el wrapper raíz, así
           // que aquí basta con el alto real del contenido.
-          className={`flex flex-col items-center px-6 py-16 sm:py-24 ${getTextClass()}`}
+          className={`flex flex-col items-center px-6 py-20 sm:py-28 ${getTextClass()}`}
         >
 
           {/* ═══ MAPA INTERACTIVO ═══ */}
@@ -341,7 +341,56 @@ export default function Home() {
                 transition={{ duration: 0.8 }}
                 className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-8"
               />
-              {/* Header del nodo */}
+              {/* Header del nodo — en esencia, esencia-1 va chica a la
+                  izquierda del título, en espejo con esencia-4 que
+                  queda a la derecha del párrafo de abajo. */}
+              {node.id === 'esencia' && node.gallery ? (
+                <div className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[18%_1fr] sm:gap-8">
+                  <img
+                    src={node.gallery.find(s => s.includes('esencia-1'))}
+                    alt="Esencia"
+                    className="order-2 mx-auto h-auto w-[26%] max-w-[110px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:order-1 sm:w-full sm:max-w-none"
+                  />
+                  <div className="order-1 text-center sm:order-2">
+                    {SEASONS[node.id] && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="mb-2 text-[10px] uppercase tracking-[0.4em] text-gold/40"
+                      >
+                        {SEASONS[node.id].name}
+                      </motion.p>
+                    )}
+                    {node.subtitle && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="mb-4 text-xs uppercase tracking-[0.3em] text-gold-mid"
+                      >
+                        {node.subtitle}
+                      </motion.p>
+                    )}
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: 0.3, duration: 0.6 }}
+                      className="mb-6 font-serif text-4xl text-ivory sm:text-5xl md:text-6xl"
+                    >
+                      {node.title}
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, filter: 'blur(0px)' }}
+                      transition={{ delay: 0.5 }}
+                      className="font-serif text-xl italic text-gold sm:text-2xl"
+                    >
+                      {node.text}
+                    </motion.p>
+                  </div>
+                </div>
+              ) : (
               <div className="text-center mb-8">
                 {/* Indicador de temporada */}
                 {SEASONS[node.id] && (
@@ -389,6 +438,7 @@ export default function Home() {
                   {node.text}
                 </motion.p>
               </div>
+              )}
 
               {/* Contenido — en esencia y estructura va en dos columnas
                   con una foto sin leyenda al lado (derecha en esencia,
