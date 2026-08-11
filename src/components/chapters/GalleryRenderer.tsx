@@ -16,7 +16,6 @@ import type { CollageItem, CollageMode } from './collage-templates/types';
 // diseño es la excepción deliberada: ahí se prefiere un grid estático
 // y ordenado en vez del collage arrastrable/superpuesto.
 const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 'grid'; mode: CollageMode }> = {
-  esencia: { template: 'cluster', mode: 'journal' },
   estructura: { template: 'cluster', mode: 'journal' },
   arte: { template: 'hero', mode: 'journal' },
   quiebre: { template: 'hero', mode: 'journal' },
@@ -50,6 +49,22 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
     frameless: frameless.some(name => src.includes(name)),
   }));
 
+  if (nodeId === 'esencia') {
+    // esencia-1 más grande; esencia-4 más chica y arriba (junto a
+    // esencia-1, no al final del grupo) — offsetOverride en 'mt-0'
+    // cancela el desfase hacia abajo que le tocaría por su slot.
+    const bySrc = new Map(items.map(it => [it.src, it]));
+    const e1 = bySrc.get(gallery.find(s => s.includes('esencia-1')) ?? '');
+    const e4 = bySrc.get(gallery.find(s => s.includes('esencia-4')) ?? '');
+    const rest = items.filter(it => it !== e1 && it !== e4);
+    const ordered = [
+      e1 && { ...e1, widthOverride: 'w-[64%] sm:w-[52%]' },
+      e4 && { ...e4, widthOverride: 'w-[34%] sm:w-[24%]', offsetOverride: 'mt-0' },
+      ...rest,
+    ].filter((it): it is CollageItem => Boolean(it));
+    return <CollageCluster items={ordered} mode="journal" />;
+  }
+
   if (nodeId === 'cuerpo') {
     // pole-1 y pole-2 son horizontales — el recuadro 3:4 las dejaba
     // "mochas" (recortadas); cada una ocupa su propia fila completa.
@@ -76,7 +91,13 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }
 
   if (config.template === 'grid') {
-    return <CollageGrid items={items} mode={config.mode} />;
+    // Las dos fotos de la muñeca (diseño-1, diseño-2) van una al lado
+    // de la otra en vez de cada una a ancho completo — el resto del
+    // grid sigue igual.
+    const gridItems = nodeId === 'diseno'
+      ? items.map(it => (it.src.includes('diseño-1') || it.src.includes('diseño-2') ? { ...it, paired: true } : it))
+      : items;
+    return <CollageGrid items={gridItems} mode={config.mode} />;
   }
 
   return <CollageCluster items={items} mode={config.mode} />;

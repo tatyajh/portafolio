@@ -57,8 +57,13 @@ export default function CollageAlbums({ items, groups, mode = 'documentary', ful
             {gi > 0 && <div className="stitch-line w-16 mx-auto mb-8" />}
             <div
               className={`grid gap-4 sm:gap-6 ${
+                // 1 sola queda centrada y chica; 2 o 4 se reparten
+                // parejo (2 o 2x2) para que no quede una columna vacía
+                // en escritorio; el resto usa 2/3 columnas.
                 groupItems.length === 1
                   ? 'grid-cols-1 max-w-xs mx-auto'
+                  : groupItems.length === 2 || groupItems.length === 4
+                  ? 'grid-cols-2'
                   : 'grid-cols-2 sm:grid-cols-3'
               }`}
             >

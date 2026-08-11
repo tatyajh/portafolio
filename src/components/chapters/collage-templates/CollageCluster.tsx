@@ -61,8 +61,10 @@ export default function CollageCluster({ items, mode = 'journal' }: CollageClust
     >
       {visible.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];
+        const width = item.widthOverride ?? slot.width;
+        const offset = item.offsetOverride ?? slot.offset;
         return (
-          <div key={i} className={`${slot.width} ${slot.offset} ${slot.overlap} ${slot.z} relative`}>
+          <div key={i} className={`${width} ${offset} ${slot.overlap} ${slot.z} relative`}>
             <CollagePhoto
               src={item.src}
               alt={item.alt}
