@@ -399,8 +399,31 @@ export default function Home() {
                 </motion.p>
               </div>
 
-              {/* Contenido */}
-              {node.content && (
+              {/* Contenido — en esencia va en dos columnas, con
+                  esencia-4 al lado DERECHO del texto (mismo estilo que
+                  estructura, en espejo). El resto de la galería sigue
+                  abajo sin esta foto. */}
+              {node.content && node.id === 'esencia' && node.gallery && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[1fr_34%] sm:gap-10"
+                >
+                  <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
+                    node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
+                  }`}>
+                    {node.content}
+                  </p>
+                  <img
+                    src={node.gallery.find(s => s.includes('esencia-4'))}
+                    alt="Esencia"
+                    className="mx-auto h-auto w-[46%] max-w-[200px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
+                  />
+                </motion.div>
+              )}
+
+              {node.content && node.id !== 'esencia' && (
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

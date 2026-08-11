@@ -37,7 +37,7 @@ const CUERPO_ALBUMS = [[1, 2, 3, 5], [7], [6, 9, 10, 11], [8, 12]];
 // page.tsx (la foto de Women Who Code va arriba junto a su leyenda,
 // antes del desarrollo, no en el flujo genérico de este componente).
 const FRAMELESS: Record<string, string[]> = {
-  esencia: ['esencia-1', 'esencia-4'],
+  esencia: ['esencia-1'],
 };
 
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
@@ -51,15 +51,13 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }));
 
   if (nodeId === 'esencia') {
-    // esencia-1 más grande. esencia-4 va aún más chica y arriba, a un
-    // lado del texto — el mismo tratamiento que estructura-3.
-    const e4 = items.find(it => it.src.includes('esencia-4'));
-    const rest = items.filter(it => it !== e4);
-    const ordered = [
-      e4 && { ...e4, widthOverride: 'w-[28%] sm:w-[18%]', offsetOverride: 'mt-0' },
-      ...rest.map(it => (it.src.includes('esencia-1') ? { ...it, widthOverride: 'w-[64%] sm:w-[52%]' } : it)),
-    ].filter((it): it is CollageItem => Boolean(it));
-    return <CollageCluster items={ordered} mode="journal" />;
+    // esencia-4 ya se muestra arriba, al lado del texto de
+    // introducción (ver page.tsx) — acá solo van las otras tres,
+    // con esencia-1 más grande.
+    const rest = items
+      .filter(it => !it.src.includes('esencia-4'))
+      .map(it => (it.src.includes('esencia-1') ? { ...it, widthOverride: 'w-[64%] sm:w-[52%]' } : it));
+    return <CollageCluster items={rest} mode="journal" />;
   }
 
   if (nodeId === 'cuerpo') {
