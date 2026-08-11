@@ -30,11 +30,11 @@ const SLOTS: {
   tape?: { side: 'left' | 'right' };
 }[] = [
   { width: 'w-[56%] sm:w-[38%]', offset: 'mt-0', overlap: '', z: 'z-20', tilt: 'l', tape: { side: 'left' } },
-  { width: 'w-[42%] sm:w-[29%]', offset: 'mt-12 sm:mt-24', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
-  { width: 'w-[48%] sm:w-[31%]', offset: 'mt-6 sm:mt-4', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
-  { width: 'w-[50%] sm:w-[34%]', offset: 'mt-4 sm:mt-16', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
-  { width: 'w-[44%] sm:w-[29%]', offset: 'mt-14 sm:mt-2', overlap: '', z: 'z-30', tilt: 'l' },
-  { width: 'w-[52%] sm:w-[34%]', offset: 'mt-2 sm:mt-20', overlap: '-ml-3', z: 'z-10', tilt: 'r', tape: { side: 'left' } },
+  { width: 'w-[42%] sm:w-[29%]', offset: 'mt-8 sm:mt-14', overlap: '-ml-3 sm:-ml-5', z: 'z-30', tilt: 'r' },
+  { width: 'w-[48%] sm:w-[31%]', offset: 'mt-4 sm:mt-3', overlap: '', z: 'z-10', tilt: 'r', tape: { side: 'right' } },
+  { width: 'w-[50%] sm:w-[34%]', offset: 'mt-3 sm:mt-10', overlap: '-ml-2 sm:-ml-4', z: 'z-20', tilt: 'l' },
+  { width: 'w-[44%] sm:w-[29%]', offset: 'mt-9 sm:mt-2', overlap: '', z: 'z-30', tilt: 'l' },
+  { width: 'w-[52%] sm:w-[34%]', offset: 'mt-2 sm:mt-12', overlap: '-ml-3', z: 'z-10', tilt: 'r', tape: { side: 'left' } },
 ];
 
 // Los capítulos renderizan su contenido dentro de una columna de
@@ -67,7 +67,7 @@ export default function CollageSpread({ items, mode = 'documentary' }: CollageSp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
-      className={`mb-16 flex w-auto flex-wrap items-start justify-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 ${BREAKOUT}`}
+      className={`mb-12 flex w-auto flex-wrap items-start justify-center gap-x-3 gap-y-4 sm:gap-x-5 sm:gap-y-6 ${BREAKOUT}`}
     >
       {items.map((item, i) => {
         const slot = SLOTS[i % SLOTS.length];

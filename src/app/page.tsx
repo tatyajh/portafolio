@@ -93,7 +93,7 @@ export default function Home() {
           {/* ═══ MAPA INTERACTIVO ═══ */}
           {currentNode === 'mapa' && (
             <div className="w-full max-w-5xl relative">
-              <div className="text-center mb-12">
+              <div className="text-center mb-8">
                 <p className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1">los hilos de mi historia…</p>
                 <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-ivory">Índice</h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
@@ -190,7 +190,7 @@ export default function Home() {
           {/* ═══ NODO TÉCNICO - atajo directo para perfiles técnicos ═══ */}
           {currentNode === 'tecnico' && (
             <div className="w-full max-w-3xl">
-              <div className="text-center mb-12">
+              <div className="text-center mb-8">
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -213,7 +213,7 @@ export default function Home() {
 
               <TechIdentity />
 
-              <div className="space-y-5 mb-12">
+              <div className="space-y-5 mb-8">
                 {[
                   { id: 'perfil', num: '01', title: 'Perfil', desc: 'Más información sobre mí, mi CV y mis enlaces.' },
                   { id: 'estructura', num: '02', title: 'Desarrollo', desc: 'Aplicaciones web y móviles que hice de punta a punta, con su código.' },
@@ -277,7 +277,7 @@ export default function Home() {
           {currentNode === 'juego' && (
             <div className="w-full max-w-3xl">
               {/* Cabecera */}
-              <div className="text-center mb-12">
+              <div className="text-center mb-8">
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -317,7 +317,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="text-center text-ivory/80 leading-relaxed mb-12 text-base sm:text-lg max-w-xl mx-auto"
+                className="text-center text-ivory/80 leading-relaxed mb-8 text-base sm:text-lg max-w-xl mx-auto"
               >
                 {node.content}
               </motion.p>
@@ -334,10 +334,10 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.8 }}
-                className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-10"
+                className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-8"
               />
               {/* Header del nodo */}
-              <div className="text-center mb-10">
+              <div className="text-center mb-8">
                 {/* Indicador de temporada */}
                 {SEASONS[node.id] && (
                   <motion.p 
@@ -391,7 +391,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className={`text-center leading-relaxed mb-12 text-lg whitespace-pre-line ${
+                  className={`text-center leading-relaxed mb-8 text-lg whitespace-pre-line ${
                     node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
                   }`}
                 >
@@ -405,7 +405,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="mb-12 space-y-6"
+                  className="mb-8 space-y-6"
                 >
                   <p className="font-script text-2xl text-center text-gold-mid -rotate-1">
                     algunas cosas que he construido…
@@ -468,7 +468,7 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.2, duration: 0.5 }}
-                  className="mb-10 w-full"
+                  className="mb-8 w-full"
                 >
                   <div className="grid grid-cols-2 gap-3">
                     {[node.videos[3], node.videos[4]].map((src, i) => (
@@ -499,7 +499,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mb-10"
+                  className="mb-8"
                 >
                   <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-4">
                     mi hoja de vida completa
@@ -522,7 +522,7 @@ export default function Home() {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className={`w-16 h-px mx-auto mb-10 ${
+                className={`w-16 h-px mx-auto mb-8 ${
                   node.theme === 'light' ? 'bg-burgundy/20' : 'bg-gradient-to-r from-burgundy/0 via-burgundy/60 to-burgundy/0'
                 }`}
               />
