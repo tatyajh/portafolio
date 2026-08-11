@@ -22,7 +22,7 @@ FOLDER_TO_CATEGORY = {
     'controles': 'gamepad',
     'Figuras musicales': 'nota',
     'hilos': 'hilo',
-    'patrones': 'patron',
+    'maniquis': 'patron',  # antes 'patrones' — la categoría interna sigue llamándose 'patron', solo cambió el arte
     'saxofones': 'saxofon',
     'tijeras': 'tijeras',
 }

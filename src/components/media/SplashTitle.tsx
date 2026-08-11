@@ -17,6 +17,11 @@ const REPAIR_FLASH_MS = 700;
 // Cuánto se separan los pedazos. Suficiente para que se lea "roto",
 // no tanto como para que el título deje de leerse.
 const SPREAD_PX = 13;
+// Varias instancias del sonido en paralelo: si dos letras se cortan
+// casi al mismo tiempo (dos cortes válidos en el mismo movimiento),
+// un solo <audio> reiniciándose cortaría el primer sonido a la mitad.
+const SNIP_SOUND_POOL_SIZE = 4;
+const SNIP_SOUND_VOLUME = 0.4;
 
 interface ToolMoveDetail {
   x: number;
@@ -101,6 +106,37 @@ export default function SplashTitle() {
   const [repaired, setRepaired] = useState<Set<number>>(() => new Set());
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const snipPoolRef = useRef<HTMLAudioElement[]>([]);
+  const snipPoolIndexRef = useRef(0);
+
+  // Un pool en vez de un solo <audio>: si dos cortes válidos caen casi
+  // juntos, reiniciar el mismo elemento cortaría el sonido anterior a
+  // la mitad en vez de sonar como dos tijeretazos.
+  const playSnipSound = () => {
+    const pool = snipPoolRef.current;
+    if (pool.length === 0) return;
+    const audio = pool[snipPoolIndexRef.current];
+    snipPoolIndexRef.current = (snipPoolIndexRef.current + 1) % pool.length;
+    try {
+      audio.currentTime = 0;
+      void audio.play().catch(() => {});
+    } catch {
+      // el sonido es un extra — nunca debe romper el corte en sí
+    }
+  };
+
+  useEffect(() => {
+    snipPoolRef.current = Array.from({ length: SNIP_SOUND_POOL_SIZE }, () => {
+      const audio = new Audio('/media/audio/tijeras.mp3');
+      audio.volume = SNIP_SOUND_VOLUME;
+      audio.preload = 'auto';
+      return audio;
+    });
+    return () => {
+      snipPoolRef.current.forEach(a => a.pause());
+      snipPoolRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     const onToolMove = (evt: Event) => {
@@ -153,6 +189,7 @@ export default function SplashTitle() {
       // corte; este es el aviso de que ya se puede explorar.
       if (cutSomething) {
         window.dispatchEvent(new CustomEvent('splash-first-cut'));
+        playSnipSound();
       }
 
       // Destello dorado breve en la letra que quedó entera otra vez.

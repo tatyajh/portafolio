@@ -182,6 +182,9 @@ interface IconState {
   tint: number;
   /** Inclinación en reposo. Las tijeras la usan para verse acostadas o de pie. */
   baseRotation: number;
+  /** Solo tijeras: par de texturas para el tijereteo real al arrastrar. */
+  snipOpen?: Texture;
+  snipClosed?: Texture;
   leftPct: number;
   topPct: number;
   baseSpriteScale: number;
@@ -278,7 +281,32 @@ export default function SplashPlayground() {
         // Las notas no se colocan en reposo, pero sus texturas sí se
         // cargan: son lo que el saxofón va soltando al arrastrarlo.
         const noteUrls = groups.find(g => g.category === 'nota')?.frames ?? [];
-        const urls = Array.from(new Set([...placed.map((p) => p.url), ...noteUrls]));
+
+        // Tijeras abiertas/cerradas: la mitad de los frames de la
+        // categoría son poses abiertas, la otra mitad las mismas poses
+        // cerradas, en el mismo orden (ver CATEGORY_CONFIG en
+        // backgroundAssets.ts). Se arma un par abierta/cerrada por cada
+        // instancia de tijera ANTES de cargar texturas, para pedirle a
+        // Assets.load también la pareja que pickInstances no eligió —
+        // si no, solo existiría la textura de la pose que le tocó al
+        // azar y no habría con qué animar el tijereteo.
+        const scissorsGroup = groups.find(g => g.category === 'tijeras');
+        const scissorsTotal = placed.filter(p => p.category === 'tijeras').length;
+        const scissorsOpenCount = scissorsGroup
+          ? Math.max(1, Math.floor(scissorsGroup.frames.length / 2))
+          : 0;
+        const scissorsPairs = Array.from({ length: scissorsTotal }, (_, k) => {
+          if (!scissorsGroup) return null;
+          const openIdx = k % scissorsOpenCount;
+          const closedIdx = openIdx + scissorsOpenCount;
+          return {
+            open: scissorsGroup.frames[openIdx],
+            closed: scissorsGroup.frames[closedIdx] ?? scissorsGroup.frames[openIdx],
+          };
+        });
+        const scissorsUrls = scissorsPairs.flatMap(p => (p ? [p.open, p.closed] : []));
+
+        const urls = Array.from(new Set([...placed.map((p) => p.url), ...noteUrls, ...scissorsUrls]));
         const textureMap = (await Assets.load(urls)) as Record<string, Texture>;
         if (cancelled) return;
 
@@ -308,15 +336,16 @@ export default function SplashPlayground() {
         const stampFilter = new RGBSplitFilter();
         stampSprite.filters = [stampFilter];
 
-        // Cuántas tijeras hay en total, para repartirlas a lo ancho de
-        // forma pareja (no según en qué columna de la grilla general
-        // les haya tocado caer — en móvil eso las dejaba a las dos en
-        // la misma columna, una encima de la otra en la práctica).
-        const scissorsTotal = placed.filter(p => p.category === 'tijeras').length;
         let scissorsSeen = 0;
 
         const icons: IconState[] = placed.map((instance, i) => {
-          const texture = textureMap[instance.url];
+          const isScissors = instance.category === 'tijeras';
+          // Las tijeras siempre arrancan en pose ABIERTA — la pose que
+          // pickInstances le haya asignado al azar (instance.url) se
+          // ignora para esta categoría, se usa el par abierta/cerrada
+          // dedicado en su lugar.
+          const pair = isScissors ? scissorsPairs[scissorsSeen] : null;
+          const texture = pair ? textureMap[pair.open] : textureMap[instance.url];
           const sprite = new Sprite(texture);
           sprite.anchor.set(0.5);
           const maxDim = Math.max(texture.width, texture.height) || 1;
@@ -325,10 +354,11 @@ export default function SplashPlayground() {
           sprite.alpha = IDLE_ALPHA;
           const { leftPct, topPct } = gridPosition(i, gridCols, gridRows);
 
-          const isScissors = instance.category === 'tijeras';
           let scissorsLeft = leftPct;
           let scissorsTop = topPct;
           let baseRotation = 0;
+          let snipOpen: Texture | undefined;
+          let snipClosed: Texture | undefined;
 
           if (isScissors) {
             const idx = scissorsSeen++;
@@ -340,6 +370,10 @@ export default function SplashPlayground() {
               + ((idx % 3) / 2) * (SCISSORS_BAND[1] - SCISSORS_BAND[0]);
             baseRotation = SCISSORS_ANGLES[idx % SCISSORS_ANGLES.length];
             sprite.rotation = baseRotation;
+            if (pair) {
+              snipOpen = textureMap[pair.open];
+              snipClosed = textureMap[pair.closed];
+            }
           }
 
           iconLayer.addChild(sprite);
@@ -350,6 +384,8 @@ export default function SplashPlayground() {
             leftPct: isScissors ? scissorsLeft : leftPct,
             topPct: isScissors ? scissorsTop : topPct,
             baseRotation,
+            snipOpen,
+            snipClosed,
             baseSpriteScale,
             skewX: 0,
             skewY: 0,
@@ -709,6 +745,13 @@ export default function SplashPlayground() {
                 if (icon.sprite.rotation !== icon.baseRotation) {
                   icon.sprite.rotation = lerp(icon.sprite.rotation, icon.baseRotation, RECOVERY_RATE);
                 }
+                // En reposo, siempre abiertas — es la pose "lista para
+                // cortar". Si se soltaron a mitad de un tijereteo,
+                // vuelven a la textura abierta en vez de quedarse
+                // cerradas por accidente.
+                if (icon.snipOpen && icon.sprite.texture !== icon.snipOpen) {
+                  icon.sprite.texture = icon.snipOpen;
+                }
 
                 icon.sprite.scale.x = lerp(icon.sprite.scale.x, icon.baseSpriteScale, RECOVERY_RATE);
                 icon.sprite.scale.y = lerp(icon.sprite.scale.y, icon.baseSpriteScale, RECOVERY_RATE);
@@ -737,9 +780,17 @@ export default function SplashPlayground() {
                   const snipSpeed = 14 + stretchT * 26;
                   // Oscila alrededor de SU inclinación, no de cero: una
                   // tijera vertical debe tijeretear estando vertical.
-                  icon.sprite.rotation =
-                    icon.baseRotation
-                    + Math.sin((performance.now() / 1000) * snipSpeed) * (0.1 + stretchT * 0.22);
+                  const phase = Math.sin((performance.now() / 1000) * snipSpeed);
+                  icon.sprite.rotation = icon.baseRotation + phase * (0.1 + stretchT * 0.22);
+                  // El tijereteo real: cambia de textura (abierta ↔
+                  // cerrada) con la misma oscilación que mueve la
+                  // rotación, en vez de solo simular el gesto girando
+                  // un único dibujo.
+                  if (icon.snipOpen && icon.snipClosed) {
+                    const wantOpen = phase > 0;
+                    const target = wantOpen ? icon.snipOpen : icon.snipClosed;
+                    if (icon.sprite.texture !== target) icon.sprite.texture = target;
+                  }
                 }
 
                 // El roce sigue pintando aunque el dedo se detenga un
