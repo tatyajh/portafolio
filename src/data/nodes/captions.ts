@@ -19,7 +19,7 @@ export const IMAGE_CAPTIONS: Record<string, string[]> = {
     'Diseños propuestos para universo interior',         // Figurín 4 (index 3)
     'Actividades elaboradas durante el nivel 3 para fichas técnicas y conceptualizaciones', // Figurín 5 (index 4)
     'Vestido de baño realizado en la clase de confección en el nivel 3', // Figurín 6 (index 5)
-    '',                                                  // Diseño 1 (index 6)
+    'A veces también tejo',                               // Diseño 1 (index 6)
     '',                                                  // Diseño 2 (index 7)
     '',                                                  // Diseño 3 (index 8) - sin leyenda
     'Retazos de ropa de mi familia que quería transformar' // Diseño 4 (index 9)
