@@ -14,7 +14,13 @@ import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks, ResumeDownloadButton } from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
-import { VideoRenderer, GalleryRenderer, FramedVideo } from '@/components/chapters';
+import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo } from '@/components/chapters';
+
+// "Dato curioso" junto a la foto de estructura-3 (la de la camiseta
+// Women Who Code Medellín) — texto provisional hasta que ella
+// confirme el suyo; es una descripción de lo que se ve, no un dato
+// inventado.
+const ESTRUCTURA_PHOTO_CAPTION = 'Programando con la camiseta de Women Who Code Medellín puesta.';
 
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
@@ -407,6 +413,35 @@ export default function Home() {
                 </motion.p>
               )}
 
+              {/* Estructura: la foto con la camiseta de Women Who Code va
+                  arriba, chica, junto a su leyenda — y debajo las otras
+                  dos fotos, antes de llegar a "el desarrollo". */}
+              {node.id === 'estructura' && node.gallery && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.55 }}
+                  className="mb-10"
+                >
+                  <div className="mb-8 flex items-center justify-center gap-4 sm:gap-6">
+                    <img
+                      src={node.gallery.find(s => s.includes('estructura-3'))}
+                      alt="Tatiana programando con la camiseta de Women Who Code Medellín"
+                      className="w-[32%] sm:w-[20%] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] shrink-0"
+                    />
+                    <p className="font-script text-lg sm:text-2xl text-gold-mid leading-snug max-w-[56%] sm:max-w-xs -rotate-1">
+                      {ESTRUCTURA_PHOTO_CAPTION}
+                    </p>
+                  </div>
+                  <CollageDuo
+                    items={node.gallery
+                      .filter(s => s.includes('estructura-1') || s.includes('estructura-2'))
+                      .map(src => ({ src, alt: 'Estructura' }))}
+                    mode="journal"
+                  />
+                </motion.div>
+              )}
+
               {/* Proyectos de desarrollo - solo en estructura */}
               {node.id === 'estructura' && (
                 <motion.div
@@ -465,8 +500,10 @@ export default function Home() {
                 <VideoRenderer nodeId={node.id} videos={node.videos ?? (node.media ? [node.media.src as string] : [])} />
               )}
 
-              {/* Galería de imágenes - Layouts específicos por nodo */}
-              {node.gallery && node.gallery.length > 0 && (
+              {/* Galería de imágenes - Layouts específicos por nodo.
+                  estructura ya renderizó su galería arriba, junto al
+                  texto y antes del desarrollo. */}
+              {node.gallery && node.gallery.length > 0 && node.id !== 'estructura' && (
                 <GalleryRenderer nodeId={node.id} gallery={node.gallery} />
               )}
 

@@ -33,9 +33,11 @@ const CUERPO_ALBUMS = [[1, 2, 3, 5], [7], [6, 9, 10, 11], [8, 12]];
 // Estas fotos ya traen su propio fondo (recorte transparente o
 // degradado propio) — el marco de papel claro se ve pegado encima en
 // vez de enmarcarlas, así que van sueltas, sin marco.
+// estructura ya no pasa por acá: su galería se arma directamente en
+// page.tsx (la foto de Women Who Code va arriba junto a su leyenda,
+// antes del desarrollo, no en el flujo genérico de este componente).
 const FRAMELESS: Record<string, string[]> = {
   esencia: ['esencia-1', 'esencia-4'],
-  estructura: ['estructura-3'],
 };
 
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
@@ -49,25 +51,13 @@ export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; g
   }));
 
   if (nodeId === 'esencia') {
-    // esencia-1 más grande, esencia-4 más chica — sin reordenar ni
-    // mover posición, eso ("arriba", como el ejemplo) era para
-    // estructura-3, no para esta.
-    const items2 = items.map(it => {
-      if (it.src.includes('esencia-1')) return { ...it, widthOverride: 'w-[64%] sm:w-[52%]' };
-      if (it.src.includes('esencia-4')) return { ...it, widthOverride: 'w-[34%] sm:w-[24%]' };
-      return it;
-    });
-    return <CollageCluster items={items2} mode="journal" />;
-  }
-
-  if (nodeId === 'estructura') {
-    // estructura-3 (la foto que ya tiene su propio degradado) va
-    // arriba, chica, junto al texto — como el ejemplo que mostró.
-    const e3 = items.find(it => it.src.includes('estructura-3'));
-    const rest = items.filter(it => it !== e3);
+    // esencia-1 más grande. esencia-4 va aún más chica y arriba, a un
+    // lado del texto — el mismo tratamiento que estructura-3.
+    const e4 = items.find(it => it.src.includes('esencia-4'));
+    const rest = items.filter(it => it !== e4);
     const ordered = [
-      e3 && { ...e3, widthOverride: 'w-[38%] sm:w-[26%]', offsetOverride: 'mt-0' },
-      ...rest,
+      e4 && { ...e4, widthOverride: 'w-[28%] sm:w-[18%]', offsetOverride: 'mt-0' },
+      ...rest.map(it => (it.src.includes('esencia-1') ? { ...it, widthOverride: 'w-[64%] sm:w-[52%]' } : it)),
     ].filter((it): it is CollageItem => Boolean(it));
     return <CollageCluster items={ordered} mode="journal" />;
   }
