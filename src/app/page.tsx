@@ -423,18 +423,23 @@ export default function Home() {
                   transition={{ delay: 0.55 }}
                   className="mb-10"
                 >
-                  <p className="mb-3 text-center text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gold/50">
-                    Dato curioso
-                  </p>
-                  <div className="mb-8 flex items-center justify-center gap-4 sm:gap-6">
+                  {/* Foto a la izquierda, texto a la derecha — dos
+                      columnas en escritorio; en móvil se apila porque
+                      lado a lado no cabe. */}
+                  <div className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[38%_1fr] sm:gap-10">
                     <img
                       src={node.gallery.find(s => s.includes('estructura-3'))}
                       alt="Tatiana programando con la camiseta de Women Who Code Medellín"
-                      className="w-[32%] sm:w-[20%] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] shrink-0"
+                      className="mx-auto h-auto w-[52%] max-w-[220px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
                     />
-                    <p className="font-script text-lg sm:text-2xl text-gold-mid leading-snug max-w-[56%] sm:max-w-xs -rotate-1">
-                      {ESTRUCTURA_PHOTO_CAPTION}
-                    </p>
+                    <div className="text-center sm:text-left">
+                      <p className="mb-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gold/50">
+                        Dato curioso
+                      </p>
+                      <p className="font-script text-lg sm:text-2xl text-gold-mid leading-snug -rotate-1">
+                        {ESTRUCTURA_PHOTO_CAPTION}
+                      </p>
+                    </div>
                   </div>
                   <CollageDuo
                     items={node.gallery
