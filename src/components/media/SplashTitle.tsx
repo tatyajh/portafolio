@@ -22,6 +22,9 @@ const SPREAD_PX = 13;
 // un solo <audio> reiniciándose cortaría el primer sonido a la mitad.
 const SNIP_SOUND_POOL_SIZE = 4;
 const SNIP_SOUND_VOLUME = 0.4;
+// Tope duro de duración: el clip real dura más que un tijeretazo, así
+// que se corta acá para que suene seco y no se quede sonando de más.
+const SNIP_SOUND_MAX_MS = 260;
 
 interface ToolMoveDetail {
   x: number;
@@ -120,6 +123,14 @@ export default function SplashTitle() {
     try {
       audio.currentTime = 0;
       void audio.play().catch(() => {});
+      // El archivo dura más que un tijeretazo real — sin este corte,
+      // varios cortes seguidos dejaban la cola sonando de más incluso
+      // después de soltar las tijeras lejos del título.
+      const t = setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+      }, SNIP_SOUND_MAX_MS);
+      timeoutsRef.current.push(t);
     } catch {
       // el sonido es un extra — nunca debe romper el corte en sí
     }
