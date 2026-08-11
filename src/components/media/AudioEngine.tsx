@@ -22,6 +22,12 @@ const PLAYLIST = [
 // Inicio aleatorio
 const INITIAL_TRACK = Math.floor(Math.random() * PLAYLIST.length);
 
+// Volumen de fondo más suave — antes 0.3 sonaba muy fuerte sobre el
+// resto del sitio. La rebaja al reproducir un video usa la misma
+// proporción de antes (un tercio del volumen normal).
+const MUSIC_VOLUME = 0.15;
+const MUSIC_VOLUME_DUCKED = 0.05;
+
 /**
  * AudioEngine - Motor de audio para el portafolio
  * Maneja la pantalla de inicio, audio de fondo y control de video
@@ -41,7 +47,6 @@ export default function AudioEngine() {
   const canEnter = prefersReducedMotion || hasCut || playgroundUnavailable;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Cambiar a la siguiente canción
@@ -49,17 +54,15 @@ export default function AudioEngine() {
     setCurrentTrack((prev) => (prev + 1) % PLAYLIST.length);
   }, []);
 
-  // Intentar autoplay al montar (pantalla de inicio)
+  // La música ya no arranca en el splash: solo se prepara la pista,
+  // sin reproducirla. Empieza recién cuando se entra a un nodo (ver
+  // handleFirstInteraction), para que la pantalla de inicio quede en
+  // silencio.
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      audio.volume = 0.3;
+      audio.volume = MUSIC_VOLUME;
       audio.src = PLAYLIST[INITIAL_TRACK];
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        setAutoplayBlocked(true);
-      });
     }
   }, []);
 
@@ -89,24 +92,20 @@ export default function AudioEngine() {
     }
   }, [currentTrack]);
 
-  // Los navegadores solo dejan arrancar el audio tras una interacción
-  // real del usuario. Antes eso dependía del click que cerraba el
-  // splash; ahora que el fondo ya no lo cierra, cualquier toque en el
-  // fondo (ej. jugar con los íconos) igual sirve para desbloquearlo.
-  const unblockAudioIfNeeded = () => {
-    if (autoplayBlocked && audioRef.current) {
-      audioRef.current.volume = 0.3;
-      audioRef.current.src = PLAYLIST[currentTrack];
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-        setAutoplayBlocked(false);
-      }).catch(() => {});
-    }
+  // La música arranca recién acá, al entrar a un nodo real — no en el
+  // splash. Los navegadores solo dejan reproducir audio tras una
+  // interacción real, y hacer clic en uno de los botones de entrada
+  // cuenta como tal.
+  const startMusic = () => {
+    const audio = audioRef.current;
+    if (!audio || isPlaying) return;
+    audio.volume = MUSIC_VOLUME;
+    audio.play().then(() => setIsPlaying(true)).catch(() => {});
   };
 
   const handleFirstInteraction = () => {
     setHasInteracted(true);
-    unblockAudioIfNeeded();
+    startMusic();
   };
 
   const toggleAudio = () => {
@@ -126,14 +125,14 @@ export default function AudioEngine() {
     // Función para bajar volumen cuando se reproduce un video
     const lowerVolume = () => {
       if (audioRef.current) {
-        audioRef.current.volume = 0.1;
+        audioRef.current.volume = MUSIC_VOLUME_DUCKED;
       }
     };
 
     // Función para restaurar volumen
     const restoreVolume = () => {
       if (audioRef.current) {
-        audioRef.current.volume = 0.3;
+        audioRef.current.volume = MUSIC_VOLUME;
       }
     };
 
@@ -205,8 +204,9 @@ export default function AudioEngine() {
           // fondo ya no navega ni cierra nada (antes cerraba el splash
           // sin ir a ningún lado, lo que dejaba la pantalla en negro,
           // y el parche de navegar al índice tampoco era lo deseado).
-          // Así el fondo queda libre para jugar con los íconos.
-          onClick={unblockAudioIfNeeded}
+          // Así el fondo queda libre para jugar con los íconos. La
+          // música tampoco arranca aquí a propósito: se queda en
+          // silencio hasta que se entra a un nodo real.
         >
           {/* Fondo tipo constelación/aurora boreal con hilos */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -13,7 +13,7 @@ import { GameList } from '@/components/games';
 import { ResumeTools, ResumeLinks, ResumeDownloadButton } from '@/components/resume';
 import { PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
-import { VideoRenderer, GalleryRenderer } from '@/components/chapters';
+import { VideoRenderer, GalleryRenderer, FramedVideo } from '@/components/chapters';
 
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
@@ -473,17 +473,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     {[node.videos[3], node.videos[4]].map((src, i) => (
                       <div key={i} className="flex flex-col gap-2">
-                        <div className="overflow-hidden bg-black border border-burgundy/30 rounded-lg">
-                          <video
-                            src={src}
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            controls
-                            className="w-full h-auto max-h-[50vh] object-contain"
-                          />
-                        </div>
+                        <FramedVideo src={src} maxHeight="50vh" />
                         <p className="text-sm sm:text-base italic text-center caption-glow">
                           — {i === 0 ? 'Un recorrido por mis desfiles' : 'Portafolio de insumos de costura'} —
                         </p>

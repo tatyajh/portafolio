@@ -1,6 +1,45 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import GothicCorner from './GothicCorner';
+
+// Los videos van mudos en loop por defecto (autoplay con sonido lo
+// bloquea el navegador) — el marco de papel es el mismo lenguaje
+// visual que las fotos. Si la persona le sube el volumen con los
+// controles nativos del video, la música de fondo se agacha para que
+// se oiga; al bajarlo o pausar, la música vuelve a su volumen normal.
+function duckBackgroundMusic() {
+  (window as unknown as { lowerBackgroundVolume?: () => void }).lowerBackgroundVolume?.();
+}
+function restoreBackgroundMusic() {
+  (window as unknown as { restoreBackgroundVolume?: () => void }).restoreBackgroundVolume?.();
+}
+
+export function FramedVideo({ src, maxHeight = '60vh' }: { src: string; maxHeight?: string }) {
+  return (
+    <div className="paper-card gothic-frame relative p-1 sm:p-1.5">
+      <div className="overflow-hidden rounded-[6px] bg-black">
+        <video
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls
+          onVolumeChange={e => (e.currentTarget.muted ? restoreBackgroundMusic() : duckBackgroundMusic())}
+          onPause={restoreBackgroundMusic}
+          onEnded={restoreBackgroundMusic}
+          className="w-full h-auto object-contain"
+          style={{ maxHeight }}
+        />
+      </div>
+      <GothicCorner className="-top-[7px] -left-[7px]" />
+      <GothicCorner className="-top-[7px] -right-[7px] rotate-90" />
+      <GothicCorner className="-bottom-[7px] -right-[7px] rotate-180" />
+      <GothicCorner className="-bottom-[7px] -left-[7px] -rotate-90" />
+    </div>
+  );
+}
 
 // VIDEO RENDERER - Tamaños específicos por nodo
 export default function VideoRenderer({ nodeId, videos }: { nodeId: string; videos: readonly string[] }) {
@@ -11,19 +50,9 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="mb-10"
+        className="mb-10 max-w-[95%] mx-auto"
       >
-        <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[95%] mx-auto rounded-lg">
-          <video
-            src={videos[0]}
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls
-            className="w-full h-auto max-h-[80vh] object-contain"
-          />
-        </div>
+        <FramedVideo src={videos[0]} maxHeight="80vh" />
       </motion.div>
     );
   }
@@ -39,19 +68,7 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
         className="mb-10 flex flex-col gap-4"
       >
         {firstVideos.map((src, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            <div className="overflow-hidden bg-black border border-burgundy/30 w-full rounded-lg">
-              <video
-                src={src}
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                className="w-full h-auto max-h-[70vh] object-contain"
-              />
-            </div>
-          </div>
+          <FramedVideo key={i} src={src} maxHeight="70vh" />
         ))}
       </motion.div>
     );
@@ -66,32 +83,10 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
         transition={{ delay: 0.4, duration: 0.5 }}
         className="mb-10 flex flex-col gap-4 items-center"
       >
-        {/* me-01 grande */}
-        {videos[0] && (
-          <div className="overflow-hidden bg-black border border-burgundy/30 w-full rounded-lg">
-            <video
-              src={videos[0]}
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              className="w-full h-auto max-h-[80vh] object-contain"
-            />
-          </div>
-        )}
-        {/* me-02 tal cual */}
+        {videos[0] && <FramedVideo src={videos[0]} maxHeight="80vh" />}
         {videos[1] && (
-          <div className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px] rounded-lg">
-            <video
-              src={videos[1]}
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              className="w-full h-auto max-h-[60vh] object-contain"
-            />
+          <div className="w-full sm:max-w-[320px]">
+            <FramedVideo src={videos[1]} maxHeight="60vh" />
           </div>
         )}
       </motion.div>
@@ -107,16 +102,8 @@ export default function VideoRenderer({ nodeId, videos }: { nodeId: string; vide
       className="mb-10 flex flex-row flex-wrap justify-center gap-3"
     >
       {videos.map((src, i) => (
-        <div key={i} className="overflow-hidden bg-black border border-burgundy/30 max-w-[100%] sm:max-w-[320px] rounded-lg">
-          <video
-            src={src}
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls
-            className="w-full h-auto max-h-[60vh] object-contain"
-          />
+        <div key={i} className="w-full sm:max-w-[320px]">
+          <FramedVideo src={src} maxHeight="60vh" />
         </div>
       ))}
     </motion.div>

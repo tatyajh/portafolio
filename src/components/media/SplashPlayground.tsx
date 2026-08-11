@@ -30,6 +30,12 @@ const MAX_SPEED_PX_MS = 1.4;
 const PARALLAX_DEPTH = 24;
 const RECOVERY_RATE = 0.18;
 const IDLE_ALPHA = 0.6;
+// La aguja es una foto real muy alargada: al escalar por su lado más
+// largo, el lado corto queda de apenas unos px y casi no se nota
+// contra el fondo. Se compensa agrandándola y subiéndole el alfa de
+// reposo solo a ella, sin tocar el resto de las categorías.
+const CATEGORY_SIZE_MULT: Partial<Record<Category, number>> = { aguja: 1.9 };
+const CATEGORY_IDLE_ALPHA: Partial<Record<Category, number>> = { aguja: 0.88 };
 // Cada cuánto se le avisa al título (DOM) por dónde va la herramienta.
 // No hace falta cada frame: cortar una letra es un evento raro.
 const TOOL_NOTIFY_MS = 35;
@@ -349,9 +355,10 @@ export default function SplashPlayground() {
           const sprite = new Sprite(texture);
           sprite.anchor.set(0.5);
           const maxDim = Math.max(texture.width, texture.height) || 1;
-          const baseSpriteScale = iconSize / maxDim;
+          const sizeMult = CATEGORY_SIZE_MULT[instance.category] ?? 1;
+          const baseSpriteScale = (iconSize * sizeMult) / maxDim;
           sprite.scale.set(baseSpriteScale);
-          sprite.alpha = IDLE_ALPHA;
+          sprite.alpha = CATEGORY_IDLE_ALPHA[instance.category] ?? IDLE_ALPHA;
           const { leftPct, topPct } = gridPosition(i, gridCols, gridRows);
 
           let scissorsLeft = leftPct;
@@ -735,7 +742,7 @@ export default function SplashPlayground() {
                   icon.sprite.x = (icon.leftPct / 100) * screenW + px;
                   icon.sprite.y = (icon.topPct / 100) * screenH + py;
                 }
-                icon.sprite.alpha = IDLE_ALPHA;
+                icon.sprite.alpha = CATEGORY_IDLE_ALPHA[icon.category] ?? IDLE_ALPHA;
 
                 icon.skewX = lerp(icon.skewX, 0, RECOVERY_RATE);
                 icon.skewY = lerp(icon.skewY, 0, RECOVERY_RATE);
