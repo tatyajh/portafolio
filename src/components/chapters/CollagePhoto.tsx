@@ -7,6 +7,8 @@ interface CollagePhotoProps {
   src: string;
   alt: string;
   caption?: string;
+  /** Etiqueta pequeña en mayúsculas encima de la leyenda (ej. "Dato curioso"). */
+  captionLabel?: string;
   tilt?: 'l' | 'r';
   tape?: { side: 'left' | 'right' };
   delay?: number;
@@ -22,7 +24,7 @@ interface CollagePhotoProps {
   frameless?: boolean;
 }
 
-export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, frameless = false }: CollagePhotoProps) {
+export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, frameless = false }: CollagePhotoProps) {
   const restRotate = tilt === 'l' ? -rotateDeg : tilt === 'r' ? rotateDeg : 0;
 
   return (
@@ -78,19 +80,26 @@ export default function CollagePhoto({ src, alt, caption, tilt, tape, delay = 0.
         </div>
       )}
       {caption && (
-        // caption-glow (dorado), no caption-glow-dark (rojo oscuro): la
-        // leyenda vive fuera del marco de papel claro, directo sobre el
-        // fondo casi negro del sitio — rojo oscuro sobre negro no se
-        // notaba. Dorado es el mismo tono que ya usa el resto del sitio
-        // para texto sobre fondo oscuro (ej. la leyenda de diseño en
-        // page.tsx).
-        <p
-          className={`mt-3 text-center caption-glow ${
-            captionVariant === 'script' ? 'font-script text-lg sm:text-xl' : 'text-sm sm:text-base italic'
-          }`}
-        >
-          — {caption} —
-        </p>
+        <div className="mt-3 text-center">
+          {captionLabel && (
+            <p className="mb-1 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gold/50">
+              {captionLabel}
+            </p>
+          )}
+          {/* caption-glow (dorado), no caption-glow-dark (rojo oscuro): la
+              leyenda vive fuera del marco de papel claro, directo sobre el
+              fondo casi negro del sitio — rojo oscuro sobre negro no se
+              notaba. Dorado es el mismo tono que ya usa el resto del sitio
+              para texto sobre fondo oscuro (ej. la leyenda de diseño en
+              page.tsx). */}
+          <p
+            className={`caption-glow ${
+              captionVariant === 'script' ? 'font-script text-lg sm:text-xl' : 'text-sm sm:text-base italic'
+            }`}
+          >
+            — {caption} —
+          </p>
+        </div>
       )}
     </motion.div>
   );

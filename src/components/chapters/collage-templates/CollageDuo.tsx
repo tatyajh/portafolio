@@ -44,6 +44,7 @@ export default function CollageDuo({ items, mode = 'journal' }: CollageDuoProps)
           src={item.src}
           alt={item.alt}
           caption={item.caption}
+          captionLabel={item.captionLabel}
           tilt={i % 2 === 0 ? 'l' : 'r'}
           tape={i < 2 ? { side: i % 2 === 0 ? 'left' : 'right' } : undefined}
           rotateDeg={rotateDeg}

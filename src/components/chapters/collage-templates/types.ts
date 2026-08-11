@@ -19,4 +19,7 @@ export interface CollageItem {
       muestran una al lado de la otra en vez de cada una a ancho
       completo. */
   paired?: boolean;
+  /** Etiqueta pequeña en mayúsculas encima de la leyenda (ej. "Dato
+      curioso"). Solo tiene efecto si `caption` también está definido. */
+  captionLabel?: string;
 }

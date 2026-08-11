@@ -7,7 +7,7 @@ import AudioEngine from '@/components/media/AudioEngine';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
-import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS } from '@/data/nodes';
+import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
@@ -16,11 +16,10 @@ import { PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo } from '@/components/chapters';
 
-// "Dato curioso" junto a la foto de estructura-3 (la de la camiseta
-// Women Who Code Medellín) — texto provisional hasta que ella
-// confirme el suyo; es una descripción de lo que se ve, no un dato
-// inventado.
-const ESTRUCTURA_PHOTO_CAPTION = 'Programando con la camiseta de Women Who Code Medellín puesta.';
+// La leyenda original de la foto del vestido (estructura-1) — la
+// misma que ya vivía en IMAGE_CAPTIONS, ahora con "Dato curioso"
+// encima en vez de sola.
+const ESTRUCTURA_DRESS_CAPTION = IMAGE_CAPTIONS.estructura?.[0];
 
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
@@ -399,10 +398,10 @@ export default function Home() {
                 </motion.p>
               </div>
 
-              {/* Contenido — en esencia va en dos columnas, con
-                  esencia-4 al lado DERECHO del texto (mismo estilo que
-                  estructura, en espejo). El resto de la galería sigue
-                  abajo sin esta foto. */}
+              {/* Contenido — en esencia y estructura va en dos columnas
+                  con una foto sin leyenda al lado (derecha en esencia,
+                  izquierda en estructura — espejo una de otra). El
+                  resto de sus fotos sigue abajo, sin esta. */}
               {node.content && node.id === 'esencia' && node.gallery && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -423,7 +422,27 @@ export default function Home() {
                 </motion.div>
               )}
 
-              {node.content && node.id !== 'esencia' && (
+              {node.content && node.id === 'estructura' && node.gallery && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[34%_1fr] sm:gap-10"
+                >
+                  <img
+                    src={node.gallery.find(s => s.includes('estructura-3'))}
+                    alt="Tatiana programando con la camiseta de Women Who Code Medellín"
+                    className="mx-auto h-auto w-[46%] max-w-[200px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
+                  />
+                  <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
+                    node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
+                  }`}>
+                    {node.content}
+                  </p>
+                </motion.div>
+              )}
+
+              {node.content && node.id !== 'esencia' && node.id !== 'estructura' && (
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -436,9 +455,10 @@ export default function Home() {
                 </motion.p>
               )}
 
-              {/* Estructura: la foto con la camiseta de Women Who Code va
-                  arriba, chica, junto a su leyenda — y debajo las otras
-                  dos fotos, antes de llegar a "el desarrollo". */}
+              {/* Estructura: debajo del bloque de arriba van las otras
+                  dos fotos — la del vestido lleva su leyenda original
+                  con "Dato curioso" encima, la del cuarto de trabajo no
+                  lleva leyenda. Luego viene "el desarrollo". */}
               {node.id === 'estructura' && node.gallery && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -446,28 +466,15 @@ export default function Home() {
                   transition={{ delay: 0.55 }}
                   className="mb-10"
                 >
-                  {/* Foto a la izquierda, texto a la derecha — dos
-                      columnas en escritorio; en móvil se apila porque
-                      lado a lado no cabe. */}
-                  <div className="mb-8 grid grid-cols-1 items-center gap-5 sm:grid-cols-[38%_1fr] sm:gap-10">
-                    <img
-                      src={node.gallery.find(s => s.includes('estructura-3'))}
-                      alt="Tatiana programando con la camiseta de Women Who Code Medellín"
-                      className="mx-auto h-auto w-[52%] max-w-[220px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
-                    />
-                    <div className="text-center sm:text-left">
-                      <p className="mb-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gold/50">
-                        Dato curioso
-                      </p>
-                      <p className="font-script text-lg sm:text-2xl text-gold-mid leading-snug -rotate-1">
-                        {ESTRUCTURA_PHOTO_CAPTION}
-                      </p>
-                    </div>
-                  </div>
                   <CollageDuo
                     items={node.gallery
                       .filter(s => s.includes('estructura-1') || s.includes('estructura-2'))
-                      .map(src => ({ src, alt: 'Estructura' }))}
+                      .map(src => ({
+                        src,
+                        alt: 'Estructura',
+                        caption: src.includes('estructura-1') ? ESTRUCTURA_DRESS_CAPTION : undefined,
+                        captionLabel: src.includes('estructura-1') ? 'Dato curioso' : undefined,
+                      }))}
                     mode="journal"
                   />
                 </motion.div>
