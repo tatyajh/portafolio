@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import AudioEngine from '@/components/media/AudioEngine';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
@@ -42,6 +43,13 @@ export default function Home() {
     isTransitioning,
     enabled: currentNode !== 'inicio',
   });
+
+  // Cada nodo abre arriba del todo — sin esto, entrar a un nodo desde
+  // el mapa (o navegar entre nodos) conservaba el scroll del nodo
+  // anterior y podía arrancar a mitad de página.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, [currentNode]);
 
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-black-warm'; // Gris con tinte dorado
