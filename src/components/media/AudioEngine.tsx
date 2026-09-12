@@ -365,14 +365,6 @@ export default function AudioEngine() {
             transition={{ duration: 1 }}
             className="text-center px-6"
           >
-            {/* Línea decorativa superior - oro-rosa */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.2, duration: 1.2, ease: "easeOut" }}
-              className="w-32 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-10"
-            />
-
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -404,16 +396,6 @@ export default function AudioEngine() {
                 </motion.h1>
               ) : (
                 <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} />
-              )}
-              {!hasCutTitle && (
-                <motion.span
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: [0.45, 1, 0.45], y: [-3, 2, -3] }}
-                  transition={{ delay: 1.2, duration: 1.6, repeat: Infinity }}
-                  className="cut-title-pointer"
-                >
-                  {selectCopy(locale, '✂ corta el portafolio ↓', '✂ cut the portfolio ↓')}
-                </motion.span>
               )}
             </div>
 

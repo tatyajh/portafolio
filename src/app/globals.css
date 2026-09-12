@@ -64,7 +64,9 @@
   display: grid;
   justify-items: end;
   gap: 0.25rem;
-  pointer-events: none;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
 }
 
 .pixel-companion-message {
@@ -131,6 +133,16 @@
   cursor: grabbing;
 }
 
+.pixel-companion-avatar:focus {
+  outline: none;
+}
+
+.pixel-companion-avatar:focus-visible {
+  outline: 2px dashed rgba(212, 165, 116, 0.75);
+  outline-offset: 0.25rem;
+  border-radius: 1rem;
+}
+
 .pixel-pose-stage,
 .pixel-pose {
   position: absolute;
@@ -140,20 +152,24 @@
 }
 
 .pixel-pose-stage {
-  animation: pix-float 2.4s ease-in-out infinite;
+  animation: lia-hop 1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.pixel-companion.is-dragging .pixel-pose-stage {
+  animation-play-state: paused;
 }
 
 .pixel-companion-art {
   width: 100%;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 8px rgba(139, 0, 0, 0.32));
+  filter: drop-shadow(0 7px 7px rgba(0, 0, 0, 0.42));
   transform: translate(var(--lia-look-x), var(--lia-look-y)) rotate(var(--lia-look-tilt));
   transition: transform 300ms ease-out;
 }
 
 .pixel-companion.is-unlocked .pixel-companion-art {
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 12px rgba(232, 201, 160, 0.55));
+  filter: drop-shadow(0 7px 7px rgba(0, 0, 0, 0.42));
 }
 
 @media (min-width: 640px) {
@@ -168,29 +184,26 @@
   }
 }
 
-@keyframes pix-float {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-8px) rotate(2deg); }
+@media (min-width: 1024px) {
+  .pixel-companion:not(.is-exploring) {
+    top: clamp(14rem, 46vh, 20rem);
+    right: auto;
+    bottom: auto;
+    left: min(calc(100vw - 255px), calc(50% + 26rem));
+    justify-items: start;
+  }
+}
+
+@keyframes lia-hop {
+  0%, 100% { transform: translate(0, 0) rotate(-1deg); }
+  18% { transform: translate(-4px, -3px) rotate(-2deg); }
+  48% { transform: translate(6px, -16px) rotate(2deg); }
+  72% { transform: translate(9px, -3px) rotate(1deg); }
 }
 
 .splash-title-target {
   position: relative;
   display: inline-block;
-}
-
-.cut-title-pointer {
-  position: absolute;
-  top: -1.5rem;
-  right: 0;
-  z-index: 3;
-  color: var(--color-gold-mid);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(0.5rem, 1.5vw, 0.62rem);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
-  text-shadow: 0 0 12px rgba(212, 165, 116, 0.45);
 }
 
 /* La hoja de vida que se ve en el portafolio es editorial; los CV ATS

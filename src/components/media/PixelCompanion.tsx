@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -66,12 +66,12 @@ export default function PixelCompanion({
   const [messageIndex, setMessageIndex] = useState(0);
   const [poseIndex, setPoseIndex] = useState(0);
   const [showMessage, setShowMessage] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
   const boundsRef = useRef<HTMLDivElement>(null);
   const guideRef = useRef<HTMLDivElement>(null);
   const previousUnlocked = useRef(unlocked);
   const previousExploring = useRef(exploring);
   const wasDraggingRef = useRef(false);
-  const dragControls = useDragControls();
 
   useEffect(() => {
     if (!previousUnlocked.current && unlocked) {
@@ -116,6 +116,16 @@ export default function PixelCompanion({
     };
   }, [prefersReducedMotion]);
 
+  useEffect(() => {
+    if (prefersReducedMotion || !exploring || isDragging) return;
+
+    const poseTimer = window.setInterval(() => {
+      setPoseIndex(index => (index + 1) % POSES.length);
+    }, 2600);
+
+    return () => window.clearInterval(poseTimer);
+  }, [exploring, isDragging, prefersReducedMotion]);
+
   const messages = locale === 'en'
     ? exploring
       ? ENGLISH_MESSAGES.exploring
@@ -147,16 +157,19 @@ export default function PixelCompanion({
       <motion.div
         ref={guideRef}
         drag
-        dragListener={false}
-        dragControls={dragControls}
         dragConstraints={boundsRef}
         dragElastic={0.04}
         dragMomentum={false}
-        onDragStart={() => { wasDraggingRef.current = true; }}
+        onDragStart={() => {
+          wasDraggingRef.current = true;
+          setIsDragging(true);
+        }}
         onDragEnd={() => {
+          setIsDragging(false);
           window.setTimeout(() => { wasDraggingRef.current = false; }, 80);
         }}
-        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''}`}
+        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''}`}
+        data-lia-companion
       >
       <AnimatePresence mode="wait">
         {showMessage && (
@@ -190,7 +203,6 @@ export default function PixelCompanion({
 
       <motion.button
         type="button"
-        onPointerDown={event => dragControls.start(event)}
         onClick={() => {
           if (!wasDraggingRef.current) talk();
         }}
