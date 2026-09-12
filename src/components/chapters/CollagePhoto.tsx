@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from 'framer-motion';
+import { motion, useDragControls } from 'framer-motion';
 import GothicCorner from './GothicCorner';
 
 interface CollagePhotoProps {
@@ -26,6 +26,7 @@ interface CollagePhotoProps {
 
 export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, tape, delay = 0.3, rotateDeg = 3, captionVariant = 'default', draggable = false, frameless = false }: CollagePhotoProps) {
   const restRotate = tilt === 'l' ? -rotateDeg : tilt === 'r' ? rotateDeg : 0;
+  const dragControls = useDragControls();
 
   return (
     <motion.div
@@ -39,8 +40,14 @@ export default function CollagePhoto({ src, alt, caption, captionLabel, tilt, ta
       {...(draggable
         ? {
             drag: true as const,
+            dragListener: false,
+            dragControls,
             dragMomentum: false,
             dragElastic: 0.12,
+            onPointerDown: (event: React.PointerEvent<HTMLDivElement>) => {
+              event.preventDefault();
+              dragControls.start(event);
+            },
             whileDrag: { rotate: 0, scale: 1.04, zIndex: 50, cursor: 'grabbing' },
           }
         : {})}

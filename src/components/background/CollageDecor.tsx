@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { motion, useTransform } from 'framer-motion';
+import { motion, useDragControls, useTransform } from 'framer-motion';
 import { useCursorParallax } from '@/hooks/useCursorParallax';
 import { getBackgroundAssetGroups, type BackgroundAssetGroup } from '@/lib/backgroundAssets';
 
@@ -80,6 +80,7 @@ function DraggableIcon({ frames, startOffset, style, entranceDelay }: {
   const lastSpawnRef = useRef(0);
   const nextIdRef = useRef(0);
   const [currentFrame, setCurrentFrame] = useState(frames[startOffset % frames.length]);
+  const dragControls = useDragControls();
 
   const handleDrag = () => {
     const now = performance.now();
@@ -120,14 +121,20 @@ function DraggableIcon({ frames, startOffset, style, entranceDelay }: {
       <motion.div
         ref={wrapperRef}
         drag
+        dragListener={false}
+        dragControls={dragControls}
         dragMomentum={false}
         dragElastic={0.15}
+        onPointerDown={(event) => {
+          event.preventDefault();
+          dragControls.start(event);
+        }}
         onDrag={handleDrag}
         whileDrag={{ scale: 1.2, zIndex: 20 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.2, 0.32, 0.2] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: entranceDelay }}
-        className="absolute w-10 h-10 sm:w-14 sm:h-14 pointer-events-auto cursor-grab active:cursor-grabbing"
+        className="absolute w-10 h-10 sm:w-14 sm:h-14 pointer-events-auto cursor-grab active:cursor-grabbing touch-none select-none"
         style={style}
       >
         <FlipbookIconWithTracker frames={frames} startOffset={startOffset} onFrameChange={setCurrentFrame} />
