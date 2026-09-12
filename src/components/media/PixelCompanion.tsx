@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -47,6 +47,15 @@ const POSES = [
   '/media/avatar/pix-victory.png',
 ];
 
+interface LiaDragState {
+  pointerId: number;
+  pointerX: number;
+  pointerY: number;
+  motionX: number;
+  motionY: number;
+  bounds: { minX: number; maxX: number; minY: number; maxY: number };
+}
+
 interface PixelCompanionProps {
   unlocked: boolean;
   exploring?: boolean;
@@ -72,7 +81,9 @@ export default function PixelCompanion({
   const previousUnlocked = useRef(unlocked);
   const previousExploring = useRef(exploring);
   const wasDraggingRef = useRef(false);
-  const dragControls = useDragControls();
+  const dragStateRef = useRef<LiaDragState | null>(null);
+  const liaX = useMotionValue(0);
+  const liaY = useMotionValue(0);
 
   useEffect(() => {
     if (!previousUnlocked.current && unlocked) {
@@ -153,24 +164,69 @@ export default function PixelCompanion({
     setShowMessage(true);
   };
 
+  const beginDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const companion = guideRef.current;
+    if (!companion) return;
+
+    // La portada escucha el puntero globalmente para mover tijeras y
+    // agujas. Detener el evento aquí le da prioridad a Lía cuando la
+    // persona la toma directamente, evitando que ambos sistemas
+    // intenten controlar el mismo gesto.
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    const rect = companion.getBoundingClientRect();
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      pointerX: event.clientX,
+      pointerY: event.clientY,
+      motionX: liaX.get(),
+      motionY: liaY.get(),
+      bounds: {
+        minX: -rect.left,
+        maxX: window.innerWidth - rect.right,
+        minY: -rect.top,
+        maxY: window.innerHeight - rect.bottom,
+      },
+    };
+    wasDraggingRef.current = false;
+    setIsDragging(true);
+  };
+
+  const moveDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    const dx = event.clientX - dragState.pointerX;
+    const dy = event.clientY - dragState.pointerY;
+    if (Math.hypot(dx, dy) > 4) wasDraggingRef.current = true;
+
+    liaX.set(dragState.motionX + Math.min(Math.max(dx, dragState.bounds.minX), dragState.bounds.maxX));
+    liaY.set(dragState.motionY + Math.min(Math.max(dy, dragState.bounds.minY), dragState.bounds.maxY));
+  };
+
+  const endDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    dragStateRef.current = null;
+    setIsDragging(false);
+    window.setTimeout(() => { wasDraggingRef.current = false; }, 100);
+  };
+
   return (
     <div ref={boundsRef} className="lia-companion-layer">
       <motion.div
         ref={guideRef}
-        drag
-        dragListener={false}
-        dragControls={dragControls}
-        dragConstraints={boundsRef}
-        dragElastic={0.04}
-        dragMomentum={false}
-        onDragStart={() => {
-          wasDraggingRef.current = true;
-          setIsDragging(true);
-        }}
-        onDragEnd={() => {
-          setIsDragging(false);
-          window.setTimeout(() => { wasDraggingRef.current = false; }, 80);
-        }}
+        style={{ x: liaX, y: liaY }}
         className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''}`}
         data-lia-companion
       >
@@ -206,10 +262,10 @@ export default function PixelCompanion({
 
       <motion.button
         type="button"
-        onPointerDown={event => {
-          event.preventDefault();
-          dragControls.start(event);
-        }}
+        onPointerDown={beginDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
         onClick={() => {
           if (!wasDraggingRef.current) talk();
         }}
