@@ -48,7 +48,9 @@
 .lia-companion-layer {
   position: fixed;
   inset: 0;
-  z-index: 32;
+  /* La portada vive en z-50; Lía debe quedar por encima para poder
+     acompañar también la misión inicial y recibir interacción. */
+  z-index: 60;
   pointer-events: none;
 }
 
