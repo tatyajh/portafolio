@@ -1,8 +1,11 @@
 "use client";
 
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import PixelCompanion from './PixelCompanion';
+import { useLanguage } from '@/context/LanguageContext';
+import { selectCopy } from '@/data/translations';
 
 // Solo se carga en el cliente y solo cuando realmente se va a mostrar
 // el splash sin reduced-motion — pixi.js/pixi-filters no deben pesar
@@ -33,21 +36,16 @@ const MUSIC_VOLUME_DUCKED = 0.05;
  * Maneja la pantalla de inicio, audio de fondo y control de video
  */
 export default function AudioEngine() {
+  const { locale } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const [hasInteracted, setHasInteracted] = useState(false);
-  // La pista de "arrastra los objetos" se retira sola en cuanto la
-  // persona agarra algo: ya cumplió su función.
-  const [showHint, setShowHint] = useState(true);
-  // Los botones de entrada se desbloquean tras cortar el título.
-  const [hasCut, setHasCut] = useState(false);
+  const [hasCutTitle, setHasCutTitle] = useState(false);
   const [playgroundUnavailable, setPlaygroundUnavailable] = useState(false);
-  // Derivado en vez de un estado aparte: así el caso de reduced-motion
-  // no necesita un setState dentro del efecto (que además el lint
-  // prohíbe, con razón — encadena renders innecesarios).
-  const canEnter = prefersReducedMotion || hasCut || playgroundUnavailable;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const unlockAfterCut = useCallback(() => setHasCutTitle(true), []);
+  const reportPlaygroundUnavailable = useCallback(() => setPlaygroundUnavailable(true), []);
 
   // Cambiar a la siguiente canción
   const nextTrack = useCallback(() => {
@@ -154,37 +152,6 @@ export default function AudioEngine() {
     window.addEventListener('returnToSplash', handleReturnToSplash);
     return () => window.removeEventListener('returnToSplash', handleReturnToSplash);
   }, []);
-
-  // SplashPlayground avisa la primera vez que alguien agarra un ícono.
-  useEffect(() => {
-    const handleFirstDrag = () => setShowHint(false);
-    window.addEventListener('splash-first-drag', handleFirstDrag);
-    return () => window.removeEventListener('splash-first-drag', handleFirstDrag);
-  }, []);
-
-  // Los botones se abren con el primer corte al título.
-  //
-  // Salvaguarda importante: si el playground no llega a estar listo
-  // (Pixi falló, no hay WebGL, reduced-motion no lo monta), no hay
-  // forma de cortar nada y el sitio quedaría inaccesible. Por eso los
-  // botones arrancan bloqueados solo si el playground confirma que
-  // está vivo dentro de un margen corto; si no confirma, se abren.
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    let ready = false;
-    const handleReady = () => { ready = true; };
-    const handleFirstCut = () => setHasCut(true);
-    window.addEventListener('splash-playground-ready', handleReady);
-    window.addEventListener('splash-first-cut', handleFirstCut);
-    const failsafe = setTimeout(() => {
-      if (!ready) setPlaygroundUnavailable(true);
-    }, 4000);
-    return () => {
-      window.removeEventListener('splash-playground-ready', handleReady);
-      window.removeEventListener('splash-first-cut', handleFirstCut);
-      clearTimeout(failsafe);
-    };
-  }, [prefersReducedMotion]);
 
   return (
     <>
@@ -388,7 +355,9 @@ export default function AudioEngine() {
           {/* Playground de distorsión (Pixi) — íconos arrastrables con
               rastro cromático, exclusivo de esta pantalla. No toca
               CollageDecor, que sigue siendo el sistema del resto del sitio. */}
-          {!prefersReducedMotion && <SplashPlayground />}
+          {!prefersReducedMotion && (
+            <SplashPlayground onUnavailable={reportPlaygroundUnavailable} />
+          )}
 
           <motion.div
             initial={{ opacity: 0 }}
@@ -416,25 +385,37 @@ export default function AudioEngine() {
               // se lea de corrido en vez de letra por letra.
               className="text-gold-mid text-sm sm:text-base md:text-lg uppercase tracking-[0.25em] mb-5"
             >
-              Tatiana Alejandra Jaramillo
+              Tatiana Alejandra Jaramillo Hoyos
             </motion.p>
 
             {/* Título letra por letra: las tijeras lo cortan, la aguja
                 lo cose. Si hay reduced-motion, SplashPlayground no se
                 monta, así que nunca llegan eventos y el título se
                 comporta como texto normal. */}
-            {prefersReducedMotion ? (
-              <motion.h1
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-                className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
-              >
-                Portafolio
-              </motion.h1>
-            ) : (
-              <SplashTitle />
-            )}
+            <div className="splash-title-target">
+              {prefersReducedMotion ? (
+                <motion.h1
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
+                  className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
+                >
+                  {selectCopy(locale, 'Portafolio', 'Portfolio')}
+                </motion.h1>
+              ) : (
+                <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} />
+              )}
+              {!hasCutTitle && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: [0.45, 1, 0.45], y: [-3, 2, -3] }}
+                  transition={{ delay: 1.2, duration: 1.6, repeat: Infinity }}
+                  className="cut-title-pointer"
+                >
+                  {selectCopy(locale, '✂ corta el portafolio ↓', '✂ cut the portfolio ↓')}
+                </motion.span>
+              )}
+            </div>
 
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -442,7 +423,7 @@ export default function AudioEngine() {
               transition={{ delay: 0.8, duration: 1 }}
               className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-1 mb-6"
             >
-              hilos invisibles
+              {selectCopy(locale, 'hilos invisibles', 'invisible threads')}
             </motion.p>
 
             {/* Línea decorativa inferior - borgoña */}
@@ -461,85 +442,51 @@ export default function AudioEngine() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <motion.button
-                whileHover={canEnter ? { scale: 1.05 } : undefined}
-                whileTap={canEnter ? { scale: 0.95 } : undefined}
+                whileHover={hasCutTitle ? { scale: 1.05 } : undefined}
+                whileTap={hasCutTitle ? { scale: 0.95 } : undefined}
+                disabled={!hasCutTitle}
                 onClick={() => {
                   handleFirstInteraction();
                   // Atajo directo a las secciones técnicas
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
                 }}
-                disabled={!canEnter}
                 className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
-                  canEnter
+                  hasCutTitle
                     ? 'border-burgundy/60 text-gold-mid hover:bg-burgundy/15 hover:border-burgundy cursor-pointer'
-                    : 'border-burgundy/20 text-gold-mid/30 cursor-not-allowed'
+                    : 'border-gold/15 text-gold/30 cursor-not-allowed'
                 }`}
               >
-                {'</>'} Directo a lo técnico
+                {'</>'} {selectCopy(locale, 'Directo a lo técnico', 'Straight to the technical work')}
               </motion.button>
               <motion.button
-                whileHover={canEnter ? { scale: 1.05 } : undefined}
-                whileTap={canEnter ? { scale: 0.95 } : undefined}
+                whileHover={hasCutTitle ? { scale: 1.05 } : undefined}
+                whileTap={hasCutTitle ? { scale: 0.95 } : undefined}
+                disabled={!hasCutTitle}
                 onClick={() => {
                   handleFirstInteraction();
                   // Emitir evento personalizado para explorar
                   window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
                 }}
-                disabled={!canEnter}
                 className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
-                  canEnter
+                  hasCutTitle
                     ? 'border-gold/50 text-gold hover:bg-gold/10 hover:border-gold cursor-pointer'
-                    : 'border-gold/20 text-gold/30 cursor-not-allowed'
+                    : 'border-gold/15 text-gold/30 cursor-not-allowed'
                 }`}
               >
-                ✥ Conoce más sobre mí
+                {selectCopy(locale, 'Conoce más sobre mí', 'Discover more about me')}
               </motion.button>
             </motion.div>
           </motion.div>
 
-          {/* Ventana emergente de descubrimiento. Va aparte del bloque
-              de texto, anclada abajo, para que se lea como un aviso y
-              no como parte del título. Un reclutador tiene medio minuto
-              y no va a experimentar por su cuenta: si no se le dice,
-              no se entera de que el fondo es jugable. */}
-          <AnimatePresence>
-            {!prefersReducedMotion && showHint && (
-              <motion.div
-                initial={{ opacity: 0, y: -14, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.35 } }}
-                transition={{ delay: 2.2, duration: 0.6, ease: 'easeOut' }}
-                // Encima del título, no abajo: es donde cae la vista al
-                // entrar, así que ahí es imposible no leerlo. Abajo
-                // competía con los botones y se podía ignorar.
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[125%] sm:-translate-y-[135%] z-20 w-[88%] max-w-sm pointer-events-auto"
-              >
-                {/* Panel de papel claro: sobre el fondo oscuro del
-                    splash resalta mucho más que uno oscuro, y usa el
-                    mismo lenguaje de papel del resto del sitio. */}
-                <div className="relative paper-card border border-burgundy/35 px-5 py-4 pr-10 text-left shadow-[0_10px_34px_rgba(0,0,0,0.5)] rounded-lg">
-                  <button
-                    onClick={() => setShowHint(false)}
-                    aria-label="Cerrar aviso"
-                    className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-ink/45 hover:text-burgundy transition-colors cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                  <p className="font-script text-xl text-burgundy mb-1 -rotate-1">Antes de entrar…</p>
-                  {/* Invitación, no manual de instrucciones: decir qué
-                      hace cada objeto arruina el hallazgo. Un reto da
-                      la misma información útil (se puede cortar, se
-                      puede coser) sin resolverlo por la persona. */}
-                  <p className="text-ink/85 text-sm leading-relaxed">
-                    Interactúa con los diferentes elementos, descubre lo que puedes
-                    hacer, llevando las tijeras al Portafolio…
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       )}
+
+      <PixelCompanion
+        unlocked={hasCutTitle}
+        exploring={hasInteracted}
+        fallbackAvailable={!hasInteracted && (prefersReducedMotion || playgroundUnavailable)}
+        onFallbackCut={unlockAfterCut}
+      />
 
       {/* Botón de control de audio */}
       {hasInteracted && (
@@ -549,8 +496,10 @@ export default function AudioEngine() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={toggleAudio}
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-12 h-12 rounded-full border border-gold/50 bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-gold"
-          aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+          className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-40 w-12 h-12 rounded-full border border-gold/50 bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-gold"
+          aria-label={isPlaying
+            ? selectCopy(locale, 'Pausar música', 'Pause music')
+            : selectCopy(locale, 'Reproducir música', 'Play music')}
         >
           {isPlaying ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="2">

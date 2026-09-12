@@ -5,6 +5,8 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { NODES, CATEGORIES, STAMP_COLORS } from '@/data/nodes';
 import { RESUME_LINKS } from '@/data/resume';
 import { getJourneyProgress } from '@/lib/progress';
+import { useLanguage, type Locale } from '@/context/LanguageContext';
+import { getSeasonName, localizeNode, selectCopy } from '@/data/translations';
 
 interface PersistentNavProps {
   currentNode: string;
@@ -23,9 +25,9 @@ interface PersistentNavProps {
 }
 
 const RECRUITER_TARGETS = [
-  { id: 'tecnico', label: 'Ruta Técnica', activeOn: ['tecnico', 'estructura'] },
-  { id: 'perfil', label: 'CV completo', activeOn: ['perfil'] },
-  { id: 'juego', label: 'Game Dev', activeOn: ['juego'] },
+  { id: 'tecnico', es: 'Ruta técnica', en: 'Technical route', activeOn: ['tecnico', 'estructura'] },
+  { id: 'perfil', es: 'Perfil y CV', en: 'Profile & résumé', activeOn: ['perfil'] },
+  { id: 'juego', es: 'Videojuegos', en: 'Game Dev', activeOn: ['juego'] },
 ];
 
 function RecruiterPanel({
@@ -38,6 +40,7 @@ function RecruiterPanel({
   focusRing,
   githubUrl,
   linkedinUrl,
+  locale,
   onNavigate,
   onClose,
 }: {
@@ -50,6 +53,7 @@ function RecruiterPanel({
   focusRing: string;
   githubUrl?: string;
   linkedinUrl?: string;
+  locale: Locale;
   onNavigate: (nodeId: string) => void;
   onClose: () => void;
 }) {
@@ -80,7 +84,7 @@ function RecruiterPanel({
                 style={active ? { color: accentColor, fontWeight: 600 } : undefined}
                 aria-current={active ? 'page' : undefined}
               >
-                {t.label}
+                {locale === 'en' ? t.en : t.es}
               </button>
             );
           })}
@@ -127,6 +131,7 @@ export default function PersistentNav({
   onGoHome,
   onNavigate,
 }: PersistentNavProps) {
+  const { locale } = useLanguage();
   const [shortcutOpen, setShortcutOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const desktopShortcutRef = useRef<HTMLDivElement>(null);
@@ -179,7 +184,6 @@ export default function PersistentNav({
 
   const githubUrl = RESUME_LINKS.find(l => l.label === 'GitHub')?.url;
   const linkedinUrl = RESUME_LINKS.find(l => l.label === 'LinkedIn')?.url;
-
   const recruiterPanelProps = {
     open: shortcutOpen,
     currentNode,
@@ -189,6 +193,7 @@ export default function PersistentNav({
     focusRing,
     githubUrl,
     linkedinUrl,
+    locale,
     onNavigate,
     onClose: () => setShortcutOpen(false),
   };
@@ -198,18 +203,18 @@ export default function PersistentNav({
       {/* Desktop / tablet: barra flotante superior derecha */}
       <motion.nav
         {...(navMotionProps ?? { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 } })}
-        aria-label="Navegación del portafolio"
+        aria-label={selectCopy(locale, 'Navegación del portafolio', 'Portfolio navigation')}
         className="hidden md:flex fixed top-4 right-4 lg:top-6 lg:right-6 z-40 items-center gap-2"
       >
         {progress && (
           <p className={`text-[10px] uppercase tracking-[0.2em] mr-2 whitespace-nowrap flex items-center gap-1.5 ${textClass}/60`} aria-live="polite">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: accentColor }} aria-hidden="true" />
-            {progress.seasonName.replace(/^Temporada \d+: /, '')} — cap. {progress.chapterInSeason} de {progress.totalInSeason}
+            {getSeasonName(currentNode, progress.seasonName, locale).replace(/^(Temporada|Season) \d+: /, '')} — {selectCopy(locale, 'cap.', 'ch.')} {progress.chapterInSeason} {selectCopy(locale, 'de', 'of')} {progress.totalInSeason}
           </p>
         )}
 
         {isInLinear && !isFirstInLinear && (
-          <button onClick={onPrevious} aria-label="Capítulo anterior" className={iconBtn}>
+          <button onClick={onPrevious} aria-label={selectCopy(locale, 'Capítulo anterior', 'Previous chapter')} className={iconBtn}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
           </button>
         )}
@@ -217,7 +222,7 @@ export default function PersistentNav({
         {isInLinear && !isLastInLinear && (
           <button
             onClick={onNext}
-            aria-label={`Siguiente: ${nextNodeId ? NODES[nextNodeId]?.title ?? '' : ''}`}
+            aria-label={`${selectCopy(locale, 'Siguiente', 'Next')}: ${nextNodeId ? localizeNode(NODES[nextNodeId], locale)?.title ?? '' : ''}`}
             className={iconBtn}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
@@ -225,20 +230,20 @@ export default function PersistentNav({
         )}
 
         {currentNode !== 'mapa' && (
-          <button onClick={onGoToMap} aria-label="Volver al mapa" className={`h-9 px-3 flex items-center gap-2 border transition-all text-xs tracking-wider ${textClass} ${borderClass} ${focusRing}`}>
+          <button onClick={onGoToMap} aria-label={selectCopy(locale, 'Volver al mapa', 'Back to the map')} className={`h-9 px-3 flex items-center gap-2 border transition-all text-xs tracking-wider ${textClass} ${borderClass} ${focusRing}`}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /></svg>
-            <span className="hidden lg:inline">Mapa</span>
+            <span className="hidden lg:inline">{selectCopy(locale, 'Mapa', 'Map')}</span>
           </button>
         )}
 
-        <button onClick={onGoHome} aria-label="Volver al inicio" className={iconBtn}>
+        <button onClick={onGoHome} aria-label={selectCopy(locale, 'Volver al inicio', 'Back to the beginning')} className={iconBtn}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></svg>
         </button>
 
         <div className="relative" ref={desktopShortcutRef}>
           <button
             onClick={() => setShortcutOpen(v => !v)}
-            aria-label="Atajo de reclutador"
+            aria-label={selectCopy(locale, 'Atajo de reclutador', 'Recruiter shortcut')}
             aria-expanded={shortcutOpen}
             className={iconBtn}
           >
@@ -254,26 +259,26 @@ export default function PersistentNav({
       {/* Mobile: barra inferior simplificada */}
       <motion.nav
         {...(navMotionProps ?? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 } })}
-        aria-label="Navegación del portafolio (móvil)"
+        aria-label={selectCopy(locale, 'Navegación del portafolio (móvil)', 'Portfolio navigation (mobile)')}
         className={`flex md:hidden fixed bottom-0 inset-x-0 z-40 items-center justify-center gap-1 px-3 py-2 border-t backdrop-blur-sm ${
           theme === 'light' ? 'bg-ivory-pale/90 border-burgundy/20' : 'bg-black/90 border-gold/20'
         }`}
       >
         {isInLinear && !isFirstInLinear && (
-          <button onClick={onPrevious} aria-label="Capítulo anterior" className={iconBtn}>
+          <button onClick={onPrevious} aria-label={selectCopy(locale, 'Capítulo anterior', 'Previous chapter')} className={iconBtn}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
           </button>
         )}
         {currentNode !== 'mapa' && (
-          <button onClick={onGoToMap} aria-label="Volver al mapa" className={iconBtn}>
+          <button onClick={onGoToMap} aria-label={selectCopy(locale, 'Volver al mapa', 'Back to the map')} className={iconBtn}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /></svg>
           </button>
         )}
-        <button onClick={onGoHome} aria-label="Volver al inicio" className={iconBtn}>
+        <button onClick={onGoHome} aria-label={selectCopy(locale, 'Volver al inicio', 'Back to the beginning')} className={iconBtn}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></svg>
         </button>
         <div className="relative" ref={mobileShortcutRef}>
-          <button onClick={() => setShortcutOpen(v => !v)} aria-label="Atajo de reclutador" aria-expanded={shortcutOpen} className={iconBtn}>
+          <button onClick={() => setShortcutOpen(v => !v)} aria-label={selectCopy(locale, 'Atajo de reclutador', 'Recruiter shortcut')} aria-expanded={shortcutOpen} className={iconBtn}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
             </svg>
@@ -283,7 +288,7 @@ export default function PersistentNav({
         {isInLinear && !isLastInLinear && (
           <button
             onClick={onNext}
-            aria-label={`Siguiente: ${nextNodeId ? NODES[nextNodeId]?.title ?? '' : ''}`}
+            aria-label={`${selectCopy(locale, 'Siguiente', 'Next')}: ${nextNodeId ? localizeNode(NODES[nextNodeId], locale)?.title ?? '' : ''}`}
             className={iconBtn}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>

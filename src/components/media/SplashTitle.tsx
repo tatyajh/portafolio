@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
-const TITLE = 'Portafolio';
 // Se corta como máximo cerca de los bordes, nunca justo en el borde:
 // un corte al 2% no se leería como corte, solo como letra movida.
 const MIN_CUT_PCT = 18;
@@ -95,12 +94,18 @@ function buildFragments(c: LetterCuts) {
 // La comunicación con la capa Pixi es por eventos de window y solo
 // mientras se arrastra una herramienta, no cada frame — mover un
 // ícono cualquiera no dispara ni un render de React aquí.
-export default function SplashTitle() {
-  const letters = TITLE.split('');
+interface SplashTitleProps {
+  onFirstCut?: () => void;
+  title?: string;
+}
+
+export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: SplashTitleProps) {
+  const letters = title.split('');
   const [cuts, setCuts] = useState<LetterCuts[]>(() => letters.map(emptyCuts));
   const [repaired, setRepaired] = useState<Set<number>>(() => new Set());
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const firstCutReportedRef = useRef(false);
 
   useEffect(() => {
     const onToolMove = (evt: Event) => {
@@ -108,8 +113,6 @@ export default function SplashTitle() {
       if (category !== 'tijeras' && category !== 'aguja') return;
 
       const repairedNow: number[] = [];
-      let cutSomething = false;
-
       setCuts(prev => {
         let changed = false;
         const next = prev.slice();
@@ -136,8 +139,8 @@ export default function SplashTitle() {
             next[i] = axis === 'h'
               ? { h: [...current.h, pct], v: current.v }
               : { h: current.h, v: [...current.v, pct] };
-            cutSomething = true;
             changed = true;
+
           } else if (hasAnyCut(next[i])) {
             const after = removeNearestCut(next[i], xPct, yPct);
             next[i] = after;
@@ -148,12 +151,6 @@ export default function SplashTitle() {
 
         return changed ? next : prev;
       });
-
-      // El splash mantiene los botones bloqueados hasta el primer
-      // corte; este es el aviso de que ya se puede explorar.
-      if (cutSomething) {
-        window.dispatchEvent(new CustomEvent('splash-first-cut'));
-      }
 
       // Destello dorado breve en la letra que quedó entera otra vez.
       if (repairedNow.length > 0) {
@@ -181,12 +178,22 @@ export default function SplashTitle() {
     };
   }, []);
 
+  // El desbloqueo ocurre después de que React confirma el primer corte.
+  // El callback directo evita la carrera que tenía la versión basada
+  // en eventos globales durante el montaje del splash.
+  useEffect(() => {
+    if (firstCutReportedRef.current || !cuts.some(hasAnyCut)) return;
+    firstCutReportedRef.current = true;
+    onFirstCut?.();
+  }, [cuts, onFirstCut]);
+
   return (
     <motion.h1
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-      aria-label={TITLE}
+      aria-label={title}
+      data-splash-title
       // whitespace-nowrap es obligatorio: al partir el título en un
       // span por letra, cada uno es un inline-block y el navegador
       // puede cortar la palabra entre letras. En móvil el título va

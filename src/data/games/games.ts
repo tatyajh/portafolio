@@ -6,6 +6,34 @@ import type { Game } from './types';
 // nuevo va ARRIBA de la lista.
 export const GAMES: Game[] = [
   {
+    id: 'blighted-blossoms',
+    title: 'Blighted Blossoms',
+    year: '2026',
+    image: '/media/games/blighted-blossoms-title.png',
+    imageFit: 'contain',
+    statusLabel: 'Última aventura',
+    context: {
+      label: 'Proyecto final',
+      nombre: 'Generation Colombia · Cohorte 12',
+      url: 'https://itch.io/c/8040884/generation-colombia-ch12',
+    },
+    desc: 'Un juego de combate multijugador ambientado en una fantasía oscura: seis guardianes se enfrentan bajo la sombra de los Árboles Primordiales mientras el mundo es consumido por la podredumbre. El prototipo permite jugar 1v1, 2v2 y 3v3 online, o entrar al modo Entrenamiento para combatir contra una IA.',
+    rol: 'Gameplay, combate, multijugador y VFX',
+    motor: 'Unity 6.3',
+    lenguaje: 'C#',
+    genero: 'MOBA de arena / PvP',
+    playUrl: 'https://tarjah.itch.io/blighted-blossoms',
+    codeUrl: 'https://github.com/tatyajh/proyecto-final',
+    architecture: [
+      { label: 'Combate online', detail: 'Sincronización de jugadores, ataques y habilidades para partidas 1v1, 2v2 y 3v3 mediante Photon Fusion.' },
+      { label: 'Seis guardianes', detail: 'Catálogo de personajes con ataque básico y habilidad definitiva, alcances, daño, enfriamientos y efectos propios.' },
+      { label: 'Entrenamiento IA', detail: 'Modo local contra un oponente controlado por inteligencia artificial para probar el juego sin esperar a otra persona.' },
+      { label: 'Lectura táctica', detail: 'Cámara MOBA, fijación del rival más cercano, HUD de combate y alertas que hacen legibles la vida y los tiempos de habilidad.' },
+      { label: 'Arena viva', detail: 'Power-ups, recompensas y efectos mágicos que comunican impactos, áreas de peligro y poderes de cada personaje.' },
+      { label: 'Audio y opciones', detail: 'Música por escena, efectos de interfaz y habilidades, mezclador de audio y controles de volumen.' },
+    ],
+  },
+  {
     id: 'whackamole',
     title: 'Whack a Mole',
     year: '2026',

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Caveat, Inter } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from '@/context/LanguageContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,8 +43,8 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "Portafolio - Tatiana Alejandra",
-  description: "Portafolio interactivo de diseño de modas",
+  title: "Tatiana Jaramillo — Portafolio / Portfolio",
+  description: "Portafolio bilingüe de Tatiana Jaramillo: desarrollo de software, diseño creativo y videojuegos creados en Unity.",
 };
 
 export default function RootLayout({
@@ -53,10 +54,10 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col"><LanguageProvider>{children}</LanguageProvider></body>
     </html>
   );
 }

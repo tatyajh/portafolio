@@ -8,6 +8,8 @@ import CollageGrid from './collage-templates/CollageGrid';
 import CollageAlbums from './collage-templates/CollageAlbums';
 import CollageDuo from './collage-templates/CollageDuo';
 import type { CollageItem, CollageMode } from './collage-templates/types';
+import { useLanguage } from '@/context/LanguageContext';
+import { getImageCaptions } from '@/data/translations';
 
 // Asignación plantilla + "modo" por nodo — no es una grilla genérica:
 // cada sección tiene una personalidad editorial distinta (moda=revista,
@@ -41,7 +43,8 @@ const FRAMELESS: Record<string, string[]> = {
 };
 
 export default function GalleryRenderer({ nodeId, gallery }: { nodeId: string; gallery: readonly string[] }) {
-  const captions = IMAGE_CAPTIONS[nodeId] || [];
+  const { locale } = useLanguage();
+  const captions = getImageCaptions(nodeId, IMAGE_CAPTIONS[nodeId] || [], locale);
   const frameless = FRAMELESS[nodeId] ?? [];
   const items: CollageItem[] = gallery.map((src, index) => ({
     src,

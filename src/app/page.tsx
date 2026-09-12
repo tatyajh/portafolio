@@ -11,23 +11,24 @@ import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS 
 import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
-import { ResumeTools, ResumeLinks, ResumeDownloadButton } from '@/components/resume';
-import { PersistentNav } from '@/components/navigation';
+import { ResumeTools, ResumeLinks, ResumeCVPanel } from '@/components/resume';
+import { LanguageToggle, PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo, CollageGrid } from '@/components/chapters';
+import { useLanguage } from '@/context/LanguageContext';
+import { getCategoryLabel, getImageCaptions, getSeasonName, localizeNode, localizeProject, selectCopy } from '@/data/translations';
 
 // La leyenda original de la foto del vestido (estructura-1) — la
 // misma que ya vivía en IMAGE_CAPTIONS, ahora con "Dato curioso"
 // encima en vez de sola.
-const ESTRUCTURA_DRESS_CAPTION = IMAGE_CAPTIONS.estructura?.[0];
-
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════
 export default function Home() {
+  const { locale } = useLanguage();
   const {
     currentNode,
-    node,
+    node: baseNode,
     history,
     isTransitioning,
     navigateTo,
@@ -39,6 +40,9 @@ export default function Home() {
     isInLinear,
     nextNodeId,
   } = useNodeNavigation();
+  const node = localizeNode(baseNode, locale);
+  const imageCaptions = getImageCaptions(node.id, IMAGE_CAPTIONS[node.id] ?? [], locale);
+  const structureDressCaption = getImageCaptions('estructura', IMAGE_CAPTIONS.estructura ?? [], locale)[0];
 
   useKeyboardNavigation({
     goToPrevious,
@@ -74,6 +78,21 @@ export default function Home() {
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' : undefined }}>
       <BackgroundLayer visible={currentNode !== 'inicio'} section={currentNode} />
       <AudioEngine />
+      <LanguageToggle theme={node.theme} />
+
+      {currentNode !== 'inicio' && (
+        <motion.div
+          key={`achievement-${currentNode}`}
+          initial={{ opacity: 0, y: -14, scale: 0.96 }}
+          animate={{ opacity: [0, 1, 1, 0], y: [-14, 0, 0, -4], scale: [0.96, 1, 1, 1] }}
+          transition={{ duration: 3.2, times: [0, 0.12, 0.76, 1], ease: 'easeOut' }}
+          className="achievement-toast"
+          aria-live="polite"
+        >
+          <span>{selectCopy(locale, 'Logro desbloqueado', 'Achievement unlocked')}</span>
+          <strong>{node.title}</strong>
+        </motion.div>
+      )}
 
       {/* Navegación persistente flotante - oculta durante splash */}
       <PersistentNav
@@ -112,15 +131,15 @@ export default function Home() {
           {currentNode === 'mapa' && (
             <div className="w-full max-w-5xl relative">
               <div className="text-center mb-8">
-                <p className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1">los hilos de mi historia…</p>
-                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-ivory">Índice</h2>
+                <p className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1">{selectCopy(locale, 'los hilos de mi historia…', 'the threads of my story…')}</p>
+                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-ivory">{selectCopy(locale, 'Índice', 'Map')}</h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
-                <p className="text-gold/70">Elige cualquier nodo. No hay orden correcto.</p>
+                <p className="text-gold/70">{selectCopy(locale, 'Elige cualquier nodo. No hay orden correcto.', 'Choose any node. There is no right order.')}</p>
                 <button
                   onClick={() => navigateTo('tecnico')}
                   className="mt-3 font-script text-xl text-gold-mid hover:text-gold transition-colors underline decoration-dashed underline-offset-4"
                 >
-                  ¿vienes por lo técnico? atajo por aquí →
+                  {selectCopy(locale, '¿vienes por lo técnico? atajo por aquí →', 'here for the technical work? take this shortcut →')}
                 </button>
               </div>
 
@@ -136,12 +155,12 @@ export default function Home() {
                         className="stamp w-24 h-24 px-2 text-[11px] font-semibold tracking-[0.08em] uppercase font-serif bg-paper"
                         style={{ color: stampColor, transform: 'rotate(-3deg)' }}
                       >
-                        {cat.label}
+                        {getCategoryLabel(key, cat.label, locale)}
                       </div>
                     </div>
                     <div className="space-y-3">
                       {cat.nodes.map((nodeId, cardIdx) => {
-                        const n = NODES[nodeId];
+                        const n = localizeNode(NODES[nodeId], locale);
                         const visited = history.includes(nodeId);
                         const chapterNum = LINEAR_ORDER.indexOf(nodeId as typeof LINEAR_ORDER[number]) + 1;
                         return (
@@ -184,7 +203,7 @@ export default function Home() {
               {/* Progreso */}
               <div className="mt-12 text-center">
                 <p className="font-script text-xl text-gold-mid/70">
-                  hilvanado: {new Set(history.filter(id => (LINEAR_ORDER as readonly string[]).includes(id))).size} / {LINEAR_ORDER.length} nodos
+                  {selectCopy(locale, 'aventura explorada', 'adventure explored')}: {new Set(history.filter(id => (LINEAR_ORDER as readonly string[]).includes(id))).size} / {LINEAR_ORDER.length} {selectCopy(locale, 'misiones', 'missions')}
                 </p>
               </div>
 
@@ -202,7 +221,7 @@ export default function Home() {
                   transition={{ delay: 0.1 }}
                   className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-2 mb-1"
                 >
-                  sin rodeos…
+                  {selectCopy(locale, 'sin rodeos…', 'straight to the point…')}
                 </motion.p>
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
@@ -210,22 +229,22 @@ export default function Home() {
                   transition={{ delay: 0.2, duration: 0.6 }}
                   className="font-serif text-5xl sm:text-6xl mb-4 text-ivory"
                 >
-                  Lo técnico
+                  {selectCopy(locale, 'Lo técnico', 'The technical route')}
                 </motion.h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
-                <p className="text-gold/70">Perfil, código y juego. La historia completa te espera en el mapa.</p>
+                <p className="text-gold/70">{selectCopy(locale, 'Perfil, código y juego. La historia completa te espera en el mapa.', 'Profile, code and games. The complete story is waiting on the map.')}</p>
               </div>
 
               <TechIdentity />
 
               <div className="space-y-5 mb-8">
                 {[
-                  { id: 'perfil', num: '01', title: 'Perfil', desc: 'Más información sobre mí, mi CV y mis enlaces.' },
-                  { id: 'estructura', num: '02', title: 'Desarrollo', desc: 'Aplicaciones web y móviles que hice de punta a punta, con su código.' },
+                  { id: 'perfil', num: '01', title: selectCopy(locale, 'Perfil', 'Profile'), desc: selectCopy(locale, 'Más información sobre mí, mi CV y mis enlaces.', 'More about me, my résumés and my links.') },
+                  { id: 'estructura', num: '02', title: selectCopy(locale, 'Desarrollo', 'Development'), desc: selectCopy(locale, 'Aplicaciones web y móviles que hice de punta a punta, con su código.', 'Web and mobile applications I built end to end, with their source code.') },
                   // 'destacado': la ruta técnica existe sobre todo para
                   // mostrar los videojuegos, así que esta tarjeta se
                   // diferencia de las otras dos en vez de perderse en la fila.
-                  { id: 'juego', num: '03', title: 'Videojuegos', desc: 'Hechos en Unity y C#, publicados y jugables en el navegador.', destacado: true },
+                  { id: 'juego', num: '03', title: selectCopy(locale, 'Videojuegos', 'Video Games'), desc: selectCopy(locale, 'Hechos en Unity y C#, publicados y jugables en el navegador.', 'Made with Unity and C#, published and playable in the browser.'), destacado: true },
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
@@ -243,7 +262,7 @@ export default function Home() {
                   >
                     {item.destacado && (
                       <span className="absolute -top-3 right-5 bg-burgundy text-[#f7f1e4] text-[10px] uppercase tracking-[0.18em] px-3 py-1 font-serif">
-                        Lo que más disfruto
+                        {selectCopy(locale, 'Lo que más disfruto', 'What I enjoy most')}
                       </span>
                     )}
                     <div className="flex items-start gap-4">
@@ -272,7 +291,7 @@ export default function Home() {
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
                   </svg>
-                  <span>Explorar el resto del portafolio</span>
+                  <span>{selectCopy(locale, 'Explorar el resto del portafolio', 'Explore the rest of the portfolio')}</span>
                 </motion.button>
               </div>
             </div>
@@ -283,13 +302,14 @@ export default function Home() {
             <div className="w-full max-w-3xl">
               {/* Cabecera */}
               <div className="text-center mb-8">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-gold-mid/70">{selectCopy(locale, 'Nueva misión desbloqueada', 'New mission unlocked')}</p>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   className="text-[10px] tracking-[0.4em] uppercase mb-2 text-gold/50"
                 >
-                  Temporada 5: Conexiones
+                  {selectCopy(locale, 'Temporada 5: Conexiones', 'Season 5: Connections')}
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
@@ -359,7 +379,7 @@ export default function Home() {
                         transition={{ delay: 0.1 }}
                         className="mb-2 text-[10px] uppercase tracking-[0.4em] text-gold/40"
                       >
-                        {SEASONS[node.id].name}
+                        {getSeasonName(node.id, SEASONS[node.id].name, locale)}
                       </motion.p>
                     )}
                     {node.subtitle && (
@@ -402,7 +422,7 @@ export default function Home() {
                       node.theme === 'light' ? 'text-burgundy/50' : 'text-gold/40'
                     }`}
                   >
-                    {SEASONS[node.id].name}
+                    {getSeasonName(node.id, SEASONS[node.id].name, locale)}
                   </motion.p>
                 )}
                 {node.subtitle && (
@@ -473,7 +493,7 @@ export default function Home() {
                 >
                   <img
                     src={node.gallery.find(s => s.includes('estructura-3'))}
-                    alt="Tatiana programando con la camiseta de Women Who Code Medellín"
+                    alt={selectCopy(locale, 'Tatiana programando con la camiseta de Women Who Code Medellín', 'Tatiana coding in a Women Who Code Medellín shirt')}
                     className="mx-auto h-auto w-[46%] max-w-[200px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:w-full sm:max-w-none"
                   />
                   <p className={`text-center leading-relaxed text-lg whitespace-pre-line sm:text-left ${
@@ -513,9 +533,9 @@ export default function Home() {
                       .filter(s => s.includes('estructura-1') || s.includes('estructura-2'))
                       .map(src => ({
                         src,
-                        alt: 'Estructura',
-                        caption: src.includes('estructura-1') ? ESTRUCTURA_DRESS_CAPTION : undefined,
-                        captionLabel: src.includes('estructura-1') ? 'Dato curioso' : undefined,
+                        alt: selectCopy(locale, 'Estructura', 'Structure'),
+                        caption: src.includes('estructura-1') ? structureDressCaption : undefined,
+                        captionLabel: src.includes('estructura-1') ? selectCopy(locale, 'Dato curioso', 'A small detail') : undefined,
                       }))}
                     mode="journal"
                   />
@@ -531,9 +551,9 @@ export default function Home() {
                   className="mb-8 space-y-6"
                 >
                   <p className="font-script text-2xl text-center text-gold-mid -rotate-1">
-                    algunas cosas que he construido…
+                    {selectCopy(locale, 'algunas cosas que he construido…', 'a few things I have built…')}
                   </p>
-                  {PROJECTS.map((p, i) => (
+                  {PROJECTS.map(project => localizeProject(project, locale)).map((p, i) => (
                     <div
                       key={p.id}
                       className={`paper-card stitch-border relative p-5 sm:p-6 ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
@@ -600,7 +620,9 @@ export default function Home() {
                       <div key={i} className="flex flex-col gap-2">
                         <FramedVideo src={src} maxHeight="50vh" />
                         <p className="text-sm sm:text-base italic text-center caption-glow">
-                          — {i === 0 ? 'Un recorrido por mis desfiles' : 'Portafolio de insumos de costura'} —
+                          — {i === 0
+                            ? selectCopy(locale, 'Un recorrido por mis desfiles', 'A journey through my runway shows')
+                            : selectCopy(locale, 'Portafolio de insumos de costura', 'Sewing materials portfolio')} —
                         </p>
                       </div>
                     ))}
@@ -617,36 +639,17 @@ export default function Home() {
                     .filter(s => s.includes('diseño-1') || s.includes('diseño-2') || s.includes('diseño-4'))
                     .map(src => ({
                       src,
-                      alt: 'Diseño',
-                      caption: IMAGE_CAPTIONS.diseno?.[node.gallery!.indexOf(src)],
+                      alt: selectCopy(locale, 'Diseño', 'Design'),
+                      caption: imageCaptions[node.gallery!.indexOf(src)],
                       paired: src.includes('diseño-1') || src.includes('diseño-2'),
                     }))}
                   mode="editorial"
                 />
               )}
 
-              {/* Hoja de vida completa - solo en perfil, la imagen real tal cual */}
+              {/* Presentación editorial y selector de CV por enfoque e idioma. */}
               {node.id === 'perfil' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="mb-8"
-                >
-                  <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-4">
-                    mi hoja de vida completa
-                  </p>
-                  <div className="overflow-hidden border border-burgundy/10 mb-6 rounded-lg">
-                    <Image
-                      src="/media/cv/cv.png"
-                      alt="Currículum de Tatiana Alejandra Jaramillo Hoyos"
-                      width={1024}
-                      height={1536}
-                      className="w-full h-auto object-contain"
-                    />
-                  </div>
-                  <ResumeDownloadButton />
-                </motion.div>
+                <ResumeCVPanel />
               )}
 
               {/* Línea decorativa */}

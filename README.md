@@ -1,6 +1,10 @@
-# Portfolio Cinematográfico
+# Portafolio interactivo de Tatiana Jaramillo
 
-Una experiencia narrativa inmersiva para diseñadora de moda que conecta infancia, cuerpo, música y diseño como un hilo continuo.
+Una experiencia narrativa bilingüe que conecta ingeniería de software, videojuegos, diseño, música e historia personal como un hilo continuo.
+
+**Sitio publicado:** https://portafolio-tatiana-jaramillo.vercel.app
+
+La experiencia incluye una entrada interactiva que se desbloquea cortando el título, una ruta técnica para reclutadores, proyectos web, videojuegos jugables, una acompañante interactiva y una sección de CV con versiones especializadas en español e inglés.
 
 ## Concepto
 

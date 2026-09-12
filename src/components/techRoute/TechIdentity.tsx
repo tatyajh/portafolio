@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { CV_SKILLS } from '@/data/cv';
 import { TECH_IDENTITY_ROLES } from '@/data/techRoute';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Se leen del propio CV en vez de escribirlas otra vez aquí: si algún
 // día cambian en cv.ts, esta sección se actualiza sola.
@@ -10,6 +11,13 @@ const SOFT_SKILLS =
   CV_SKILLS.find(group => group.category === 'Habilidades Blandas')?.items ?? [];
 
 export default function TechIdentity() {
+  const { locale } = useLanguage();
+  const roles = locale === 'en'
+    ? ['Software Engineer', 'Frontend Developer', 'Game Developer (Unity)']
+    : TECH_IDENTITY_ROLES;
+  const softSkills = locale === 'en'
+    ? ['Problem Solving', 'Teamwork', 'Communication', 'Adaptability', 'Continuous Learning']
+    : SOFT_SKILLS;
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -22,7 +30,7 @@ export default function TechIdentity() {
           Angostando el contenedor el reparto queda 2 y 2 (y 3 y 3 en
           capacidades), que se lee mucho más ordenado. */}
       <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-2xl mx-auto">
-        {TECH_IDENTITY_ROLES.map(role => (
+        {roles.map(role => (
           <span
             key={role}
             className="px-3 py-1.5 bg-burgundy/20 border border-burgundy/50 text-gold text-sm tracking-wide rounded-lg"
@@ -40,10 +48,10 @@ export default function TechIdentity() {
           blandas de verdad, que es lo único que no está en ninguna otra
           parte del sitio. */}
       <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-6">
-        habilidades blandas
+        {locale === 'en' ? 'soft skills' : 'habilidades blandas'}
       </p>
       <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
-        {SOFT_SKILLS.map(skill => (
+        {softSkills.map(skill => (
           <span
             key={skill}
             className="px-3 py-1 border border-gold/20 text-gold/70 text-sm tracking-wide rounded-lg"

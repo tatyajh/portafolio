@@ -236,7 +236,11 @@ interface IconState {
 // CollageDecor, que sigue siendo el sistema DOM del resto del sitio),
 // estáticos en reposo, arrastrables, y que van PINTANDO un rastro que
 // se queda dibujado, tipo light-painting.
-export default function SplashPlayground() {
+interface SplashPlaygroundProps {
+  onUnavailable?: () => void;
+}
+
+export default function SplashPlayground({ onUnavailable }: SplashPlaygroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const parallax = useCursorParallax();
 
@@ -539,7 +543,7 @@ export default function SplashPlayground() {
         let titleElCache: Element | null = null;
         function getTitleRect(): DOMRect | null {
           if (!titleElCache || !document.contains(titleElCache)) {
-            titleElCache = document.querySelector('h1[aria-label="Portafolio"]');
+            titleElCache = document.querySelector('h1[data-splash-title]');
           }
           return titleElCache ? titleElCache.getBoundingClientRect() : null;
         }
@@ -783,12 +787,6 @@ export default function SplashPlayground() {
         let lastW = app.screen.width;
         let lastH = app.screen.height;
 
-        // El playground quedó vivo y jugable. El splash lo espera para
-        // decidir si bloquea los botones hasta el primer corte: si esto
-        // nunca llega (Pixi falló, WebGL no disponible, reduced-motion),
-        // desbloquea solo y nadie se queda encerrado en la portada.
-        window.dispatchEvent(new CustomEvent('splash-playground-ready'));
-
         app.ticker.add(() => {
           try {
             const screenW = app.screen.width;
@@ -897,6 +895,7 @@ export default function SplashPlayground() {
         });
       } catch (err) {
         console.error('[SplashPlayground] fallo al inicializar Pixi, se omite la capa decorativa', err);
+        onUnavailable?.();
         if (appInstance) {
           try {
             appInstance.destroy(true, { children: true });
@@ -940,7 +939,7 @@ export default function SplashPlayground() {
         appInstance = null;
       }
     };
-  }, [parallax.x, parallax.y]);
+  }, [onUnavailable, parallax.x, parallax.y]);
 
   // pointer-events-none es obligatorio aquí: este wrapper cubre toda
   // la pantalla del splash y, sin esto, tapa (invisible) los botones

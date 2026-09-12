@@ -2,8 +2,13 @@
 
 import { motion } from 'framer-motion';
 import type { Game } from '@/data/games';
+import { useLanguage } from '@/context/LanguageContext';
+import { selectCopy } from '@/data/translations';
 
 export default function GameCard({ game, index }: { game: Game; index: number }) {
+  const { locale } = useLanguage();
+  const projectContext = game.context ?? game.jam;
+
   return (
     <motion.div
       key={game.id}
@@ -23,6 +28,13 @@ export default function GameCard({ game, index }: { game: Game; index: number })
 
       <h3 className="font-serif text-3xl sm:text-4xl text-ink mb-5">{game.title}</h3>
 
+      {game.statusLabel && (
+        <p className="mb-5 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-burgundy">
+          <span aria-hidden="true">✦</span>
+          {game.statusLabel}
+        </p>
+      )}
+
       {/* Gameplay en loop; si todavía no hay video, la portada del juego */}
       {game.video ? (
         <div className="mb-8 stitch-border-gold overflow-hidden">
@@ -36,22 +48,27 @@ export default function GameCard({ game, index }: { game: Game; index: number })
           />
         </div>
       ) : game.image ? (
-        <div className="mb-8 stitch-border-gold overflow-hidden">
+        <div className={`mb-8 stitch-border-gold overflow-hidden ${game.imageFit === 'contain' ? 'game-logo-cover' : ''}`}>
           {/* eslint-disable-next-line @next/next/no-img-element -- portadas de terceros sin dimensiones catalogadas */}
-          <img src={game.image} alt={`Portada de ${game.title}`} className="w-full h-auto" loading="lazy" />
+          <img
+            src={game.image}
+            alt={`${selectCopy(locale, 'Portada de', 'Cover art for')} ${game.title}`}
+            className={game.imageFit === 'contain' ? 'h-auto w-full object-contain p-6 sm:p-10' : 'h-auto w-full'}
+            loading="lazy"
+          />
         </div>
       ) : null}
 
-      {/* Game jam en la que se hizo */}
-      {game.jam && (
+      {/* Contexto del proyecto: game jam, proyecto final u otra convocatoria. */}
+      {projectContext && (
         <a
-          href={game.jam.url}
+          href={projectContext.url}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 mb-6 stitch-border-gold px-4 py-2 bg-paper-deep/50 hover:bg-burgundy/5 transition-all"
         >
-          <span className="text-[10px] uppercase tracking-widest text-brown">Game jam</span>
-          <span className="font-serif text-ink text-sm sm:text-base">{game.jam.nombre}</span>
+          <span className="text-[10px] uppercase tracking-widest text-brown">{game.context?.label ?? 'Game jam'}</span>
+          <span className="font-serif text-ink text-sm sm:text-base">{projectContext.nombre}</span>
         </a>
       )}
 
@@ -62,10 +79,10 @@ export default function GameCard({ game, index }: { game: Game; index: number })
       {/* Ficha técnica */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-center">
         {[
-          { label: 'Rol', value: game.rol },
-          { label: 'Motor', value: game.motor },
-          { label: 'Lenguaje', value: game.lenguaje },
-          { label: 'Género', value: game.genero },
+          { label: selectCopy(locale, 'Rol', 'Role'), value: game.rol },
+          { label: selectCopy(locale, 'Motor', 'Engine'), value: game.motor },
+          { label: selectCopy(locale, 'Lenguaje', 'Language'), value: game.lenguaje },
+          { label: selectCopy(locale, 'Género', 'Genre'), value: game.genero },
         ].map(item => (
           <div key={item.label} className="stitch-border-gold p-3 bg-paper-deep/50">
             <p className="text-[10px] uppercase tracking-widest text-brown mb-1">{item.label}</p>
@@ -77,7 +94,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
       {/* Por dentro - arquitectura técnica, sourced del README real del proyecto */}
       {game.architecture && game.architecture.length > 0 && (
         <div className="mb-10">
-          <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">¿Y yo qué aporté?</p>
+          <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">{selectCopy(locale, '¿Y yo qué aporté?', 'What did I contribute?')}</p>
           <div className="stitch-border-gold p-5 bg-paper-deep/30 divide-y divide-brown/25">
             {game.architecture.map(item => (
               <div key={item.label} className="py-3 first:pt-0 last:pb-0 grid sm:grid-cols-[9rem_1fr] gap-1 sm:gap-4">
@@ -90,7 +107,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
       )}
 
       {/* Banderín de enlaces */}
-      <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">Enlaces para ver más…</p>
+      <p className="font-script text-2xl text-burgundy mb-4 -rotate-1">{selectCopy(locale, 'Continuar la aventura…', 'Continue the adventure…')}</p>
       <div className="flex flex-wrap gap-4">
         <a
           href={game.playUrl}
@@ -101,7 +118,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
           </svg>
-          Jugar en itch.io
+          {selectCopy(locale, 'Jugar en itch.io', 'Play on itch.io')}
         </a>
         <a
           href={game.codeUrl}
@@ -112,7 +129,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
           </svg>
-          Ver el código
+          {selectCopy(locale, 'Ver el código', 'View source code')}
         </a>
       </div>
     </motion.div>
