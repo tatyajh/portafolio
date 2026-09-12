@@ -176,9 +176,11 @@ export default function Home() {
                             }}
                           >
                             <div className="flex items-start gap-3">
-                              <span className="font-serif text-3xl leading-none" style={{ color: `${stampColor}CC` }}>
-                                {nodeId === 'fin' ? '✦' : String(chapterNum).padStart(2, '0')}
-                              </span>
+                              {nodeId !== 'fin' && (
+                                <span className="font-serif text-3xl leading-none" style={{ color: `${stampColor}CC` }}>
+                                  {String(chapterNum).padStart(2, '0')}
+                                </span>
+                              )}
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
                                   <span className="font-serif text-lg text-ink">{n.title}</span>

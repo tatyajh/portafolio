@@ -110,6 +110,16 @@ const CAPTIONS_EN: Record<string, string[]> = {
 };
 
 const PROJECT_EN: Record<string, Partial<Project>> = {
+  verse: {
+    title: 'Versé Intimates',
+    desc: 'The online store for my intimate apparel brand. The experience begins as a closed box that opens into the catalogue, product details, cart and order flow. I built its two-world visual system - night and silk - a centralized catalogue and a secure Wompi integration that calculates and signs payments on the server.',
+    links: [{ label: 'Code', url: 'https://github.com/tatyajh/verse' }],
+  },
+  'tirame-un-poemita': {
+    title: 'Tírame un Poemita',
+    desc: 'An interface for discovering random poems, searching them by meaning and listening to them. I designed it as a typewriter: text appears letter by letter with sounds synthesized through Web Audio, while the audio player takes the shape of a reel-to-reel tape. It includes routes for poems, authors and semantic search.',
+    links: [{ label: 'Frontend code', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
+  },
   portafolio: {
     desc: 'This very site. Instead of a project list, I wanted an experience to move through: connected chapters, background music, draggable collages and a playful interactive backdrop. It is where I experiment with animation, interaction and canvas rendering, so it is always evolving.',
     links: [{ label: 'Code', url: 'https://github.com/tatyajh/portafolio' }],
@@ -219,4 +229,3 @@ export function getImageCaptions(nodeId: string, spanish: string[], locale: Loca
 export function selectCopy<T>(locale: Locale, spanish: T, english: T): T {
   return locale === 'en' ? english : spanish;
 }
-

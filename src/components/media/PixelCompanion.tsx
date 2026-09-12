@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -72,6 +72,7 @@ export default function PixelCompanion({
   const previousUnlocked = useRef(unlocked);
   const previousExploring = useRef(exploring);
   const wasDraggingRef = useRef(false);
+  const dragControls = useDragControls();
 
   useEffect(() => {
     if (!previousUnlocked.current && unlocked) {
@@ -157,6 +158,8 @@ export default function PixelCompanion({
       <motion.div
         ref={guideRef}
         drag
+        dragListener={false}
+        dragControls={dragControls}
         dragConstraints={boundsRef}
         dragElastic={0.04}
         dragMomentum={false}
@@ -203,6 +206,10 @@ export default function PixelCompanion({
 
       <motion.button
         type="button"
+        onPointerDown={event => {
+          event.preventDefault();
+          dragControls.start(event);
+        }}
         onClick={() => {
           if (!wasDraggingRef.current) talk();
         }}
@@ -230,6 +237,7 @@ export default function PixelCompanion({
                 width={172}
                 height={206}
                 loading="eager"
+                draggable={false}
                 className="pixel-companion-art"
               />
             </motion.span>

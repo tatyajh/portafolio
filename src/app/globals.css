@@ -149,6 +149,7 @@
   inset: 0;
   display: grid;
   place-items: center;
+  pointer-events: none;
 }
 
 .pixel-pose-stage {
@@ -163,6 +164,8 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+  pointer-events: none;
+  user-select: none;
   filter: drop-shadow(0 7px 7px rgba(0, 0, 0, 0.42));
   transform: translate(var(--lia-look-x), var(--lia-look-y)) rotate(var(--lia-look-tilt));
   transition: transform 300ms ease-out;

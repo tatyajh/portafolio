@@ -87,7 +87,7 @@ export const GAMES: Game[] = [
   {
     id: 'quemasparcero',
     title: '¡Qué Más Parcero!',
-    year: '2026',
+    year: '2021',
     video: '/media/video/juego-01.mp4',
     desc: 'Un paisa recorre los tejados de una comuna esquivando frijoles saltarines y recolectando empanadas. Salta, usa el súper salto gastando maná, recupera vida con pociones y aguanta: entre más lejos llegues, más rápido va todo. Hecho para el curso de Ubicua.',
     rol: 'Programadora',

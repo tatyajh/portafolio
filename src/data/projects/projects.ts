@@ -7,6 +7,20 @@ import type { Project } from './types';
 // arrancó el proyecto (fecha de creación del repo en GitHub).
 export const PROJECTS: Project[] = [
   {
+    id: 'verse',
+    title: 'Versé Intimates',
+    desc: 'La tienda de mi marca de ropa íntima. La experiencia empieza como una caja cerrada que se abre y conecta catálogo, detalle de producto, carrito y pedido. Construí el sistema visual de dos mundos —noche y seda—, un catálogo centralizado y la integración segura con Wompi para calcular y firmar los pagos desde el servidor.',
+    stack: 'Next.js · React · TypeScript · Wompi',
+    links: [{ label: 'Código', url: 'https://github.com/tatyajh/verse' }],
+  },
+  {
+    id: 'tirame-un-poemita',
+    title: 'Tírame un Poemita',
+    desc: 'Una interfaz para descubrir poemas al azar, buscarlos por significado y escucharlos. La diseñé como una máquina de escribir: el texto aparece letra por letra con sonidos creados en Web Audio y el reproductor toma la forma de un carrete de cinta. Incluye rutas para poemas, autores y búsqueda semántica.',
+    stack: 'Next.js · TypeScript · Web Audio API',
+    links: [{ label: 'Código frontend', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
+  },
+  {
     id: 'portafolio',
     title: 'Hilos Invisibles',
     desc: 'Este mismo sitio. En vez de una lista de proyectos quise que fuera algo que se recorre: capítulos conectados entre sí, música de fondo, collages que se pueden mover y un fondo con el que se puede jugar. Es donde pruebo cosas — animación, interacción, render en canvas — y por eso siempre está cambiando.',

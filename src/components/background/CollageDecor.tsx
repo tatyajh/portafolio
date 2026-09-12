@@ -183,7 +183,12 @@ export default function CollageDecor({ section }: { section: string }) {
   const iconsY = useTransform(y, [-1, 1], [-28, 28]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    // Esta capa debe vivir por encima del rectángulo transparente del
+    // contenido. Con -z-10 los íconos se veían, pero el <main> recibía
+    // el puntero antes que ellos y el drag era imposible con mouse.
+    // El contenedor sigue ignorando eventos: solo las piezas de 56 px
+    // con pointer-events-auto quedan agarrables.
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[5]">
       {/* Hilos procedurales: constelación de líneas que aparecen y se desvanecen */}
       <motion.div className="absolute inset-0" style={{ x: threadX, y: threadY }}>
         <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.12 }}>
