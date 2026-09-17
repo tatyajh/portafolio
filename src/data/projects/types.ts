@@ -11,4 +11,7 @@ export interface Project {
   preview?: { image: string; alt: string; url?: string };
   // Caso de estudio en Behance, cuando existe uno para este proyecto.
   behanceUrl?: string;
+  // Año en que arrancó el proyecto (fecha de creación del repo en
+  // GitHub). Opcional: Venux no tiene repo verificable todavía.
+  year?: number;
 }

@@ -118,11 +118,6 @@ const PROJECT_EN: Record<string, Partial<Project>> = {
       { label: 'Code', url: 'https://github.com/tatyajh/verse' },
     ],
   },
-  'tirame-un-poemita': {
-    title: 'Tírame un Poemita',
-    desc: 'An interface for discovering random poems, searching them by meaning and listening to them. I designed it as a typewriter: text appears letter by letter with sounds synthesized through Web Audio, while the audio player takes the shape of a reel-to-reel tape. It includes routes for poems, authors and semantic search.',
-    links: [{ label: 'Frontend code', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
-  },
   portafolio: {
     desc: 'This very site. Instead of a project list, I wanted an experience to move through: connected chapters, background music, draggable collages and a playful interactive backdrop. It is where I experiment with animation, interaction and canvas rendering, so it is always evolving.',
     links: [{ label: 'Code', url: 'https://github.com/tatyajh/portafolio' }],
@@ -142,13 +137,16 @@ const PROJECT_EN: Record<string, Partial<Project>> = {
     title: 'Hotel booking',
     desc: 'A hotel search and booking interface: filter, browse hotel cards and open the details. I built it with atomic design, organizing the interface from its smallest pieces to complete pages, so changing one button does not require reviewing half the application.',
     links: [
-      { label: 'Live site', url: 'https://hotel-react-reto4.vercel.app' },
+      { label: 'Live site', url: 'https://tatyajh.github.io/hotel-react-reto4/' },
       { label: 'Code', url: 'https://github.com/tatyajh/hotel-react-reto4' },
     ],
   },
   posticks: {
     desc: 'A post-it style notes app for creating, editing, searching and deleting notes. My favorite problem was the trash: deleted notes stay recoverable until the user chooses to restore them individually or empty everything. Notes are stored in the browser and remain there when you return.',
-    links: [{ label: 'Code', url: 'https://github.com/tatyajh/posticks' }],
+    links: [
+      { label: 'Live site', url: 'https://tatyajh.github.io/posticks/' },
+      { label: 'Code', url: 'https://github.com/tatyajh/posticks' },
+    ],
   },
 };
 

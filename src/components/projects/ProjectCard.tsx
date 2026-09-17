@@ -41,7 +41,10 @@ export default function ProjectCard({ project, index }: { project: Project; inde
 
       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
         <h3 className="font-serif text-2xl text-ink">{project.title}</h3>
-        <span className="text-[10px] uppercase tracking-widest text-brown">{project.stack}</span>
+        <span className="text-[10px] uppercase tracking-widest text-brown">
+          {project.year && `${project.year} · `}
+          {project.stack}
+        </span>
       </div>
       <p className="font-script text-lg text-ink-light leading-snug mb-4">{project.desc}</p>
 

@@ -16,20 +16,17 @@ export const PROJECTS: Project[] = [
       { label: 'Código', url: 'https://github.com/tatyajh/verse' },
     ],
     preview: { image: '/media/projects/verse.png', alt: 'Portada de Versé Intimates', url: 'verse-intimates.vercel.app' },
+    year: 2026,
   },
-  {
-    id: 'tirame-un-poemita',
-    title: 'Tírame un Poemita',
-    desc: 'Una interfaz para descubrir poemas al azar, buscarlos por significado y escucharlos. La diseñé como una máquina de escribir: el texto aparece letra por letra con sonidos creados en Web Audio y el reproductor toma la forma de un carrete de cinta. Incluye rutas para poemas, autores y búsqueda semántica.',
-    stack: 'Next.js · TypeScript · Web Audio API',
-    links: [{ label: 'Código frontend', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
-  },
+  // Tírame un Poemita: retirado del portafolio por ahora a pedido de
+  // Tatiana (el frontend no está listo para mostrarse todavía).
   {
     id: 'portafolio',
     title: 'Hilos Invisibles',
     desc: 'Este mismo sitio. En vez de una lista de proyectos quise que fuera algo que se recorre: capítulos conectados entre sí, música de fondo, collages que se pueden mover y un fondo con el que se puede jugar. Es donde pruebo cosas — animación, interacción, render en canvas — y por eso siempre está cambiando.',
     stack: 'Next.js · TypeScript · Framer Motion',
     links: [{ label: 'Código', url: 'https://github.com/tatyajh/portafolio' }],
+    year: 2026,
   },
   // Venux son dos proyectos distintos: la app móvil (React Native +
   // Expo) y la web, que NO usa Expo — es su propia interfaz, aunque
@@ -66,6 +63,7 @@ export const PROJECTS: Project[] = [
       { label: 'Frontend', url: 'https://github.com/tatyajh/Mi-Vaquita-FE' },
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
+    year: 2024,
   },
   {
     id: 'hotel',
@@ -73,16 +71,22 @@ export const PROJECTS: Project[] = [
     desc: 'Una vista de búsqueda y reserva de hoteles: filtrar, ver las tarjetas de cada hotel y entrar al detalle. Lo armé con diseño atómico, que es organizar la interfaz de lo más chiquito a lo más grande — botones, luego tarjetas, luego secciones, luego la página. Suena a formalidad, pero es lo que hace que cambiar un botón no te obligue a revisar media aplicación.',
     stack: 'Next.js · React · CSS Modules',
     links: [
-      { label: 'Ver en línea', url: 'https://hotel-react-reto4.vercel.app' },
+      { label: 'Ver en línea', url: 'https://tatyajh.github.io/hotel-react-reto4/' },
       { label: 'Código', url: 'https://github.com/tatyajh/hotel-react-reto4' },
     ],
-    preview: { image: '/media/projects/hotel.png', alt: 'Portada de la app de reserva de hoteles', url: 'hotel-react-reto4.vercel.app' },
+    preview: { image: '/media/projects/hotel.png', alt: 'Portada de la app de reserva de hoteles', url: 'tatyajh.github.io/hotel-react-reto4' },
+    year: 2023,
   },
   {
     id: 'posticks',
     title: 'Posticks',
     desc: 'Una app de notas tipo post-it: crear, editar, buscar y borrar. Lo que más me gustó resolver fue la papelera — las notas borradas no se pierden de una, quedan ahí y uno decide si las restaura una por una o vacía todo. Las notas quedan guardadas en el navegador, así que siguen ahí al volver.',
     stack: 'React · Tailwind CSS',
-    links: [{ label: 'Código', url: 'https://github.com/tatyajh/posticks' }],
+    links: [
+      { label: 'Ver en línea', url: 'https://tatyajh.github.io/posticks/' },
+      { label: 'Código', url: 'https://github.com/tatyajh/posticks' },
+    ],
+    preview: { image: '/media/projects/posticks.png', alt: 'Portada de Posticks', url: 'tatyajh.github.io/posticks' },
+    year: 2022,
   },
 ];
