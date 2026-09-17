@@ -3,9 +3,30 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { NODES, LINEAR_ORDER, TECH_ROUTE_ORDER } from '@/data/nodes';
 
-export function useNodeNavigation() {
-  const [currentNode, setCurrentNode] = useState<string>('inicio');
-  const [history, setHistory] = useState<string[]>([]);
+// Nodos que tienen una ruta real en el App Router (el resto de los 17
+// nodos sigue viviendo solo en el estado de React, sin URL propia).
+// El sync de URL es un efecto añadido sobre la navegación existente:
+// usamos window.history.pushState/replaceState en vez de
+// router.push/replace de next/navigation a propósito — así solo se
+// actualiza la barra de direcciones, sin disparar una navegación real
+// de Next (que desmontaría este árbol de componentes, cortando las
+// animaciones y el historial en memoria de useNodeNavigation).
+const NODE_TO_ROUTE: Record<string, string> = {
+  inicio: '/',
+  mapa: '/mapa',
+  tecnico: '/tecnico',
+  estructura: '/estructura',
+  perfil: '/perfil',
+  juego: '/juego',
+};
+
+const ROUTE_TO_NODE: Record<string, string> = Object.fromEntries(
+  Object.entries(NODE_TO_ROUTE).map(([node, route]) => [route, node])
+);
+
+export function useNodeNavigation(initialNode: string = 'inicio') {
+  const [currentNode, setCurrentNode] = useState<string>(initialNode);
+  const [history, setHistory] = useState<string[]>(initialNode !== 'inicio' ? [initialNode] : []);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const node = NODES[currentNode] ?? NODES['esencia'];
@@ -30,12 +51,23 @@ export function useNodeNavigation() {
     [isTechRouteContext]
   );
 
+  // Actualiza solo la barra de direcciones (ver comentario de
+  // NODE_TO_ROUTE arriba) para los nodos que tienen ruta real. Los
+  // demás nodos no tocan la URL, igual que antes.
+  const syncUrl = useCallback((nodeId: string) => {
+    if (typeof window === 'undefined') return;
+    const route = NODE_TO_ROUTE[nodeId];
+    if (!route || window.location.pathname === route) return;
+    window.history.pushState({ node: nodeId }, '', route);
+  }, []);
+
   const navigateTo = useCallback((nodeId: string) => {
     if (isTransitioning || !NODES[nodeId]) return;
     // Navegación instantánea desde splash screen
     if (currentNode === 'inicio') {
       setCurrentNode(nodeId);
       setHistory(prev => [...prev, nodeId]);
+      syncUrl(nodeId);
       return;
     }
     setIsTransitioning(true);
@@ -43,8 +75,9 @@ export function useNodeNavigation() {
       setCurrentNode(nodeId);
       setHistory(prev => [...prev, nodeId]);
       setIsTransitioning(false);
+      syncUrl(nodeId);
     }, 300);
-  }, [isTransitioning, currentNode]);
+  }, [isTransitioning, currentNode, syncUrl]);
 
   // Navegación lineal (narrativa o ruta técnica, según el contexto)
   const goToNext = useCallback(() => {
@@ -75,6 +108,23 @@ export function useNodeNavigation() {
   const isLastInLinear = activeIndex === activeOrder.length - 1;
   const isInLinear = activeIndex >= 0;
   const nextNodeId = isInLinear && !isLastInLinear ? activeOrder[activeIndex + 1] : undefined;
+
+  // Atrás/adelante del navegador: como la URL se actualiza a mano con
+  // pushState (ver syncUrl), Next.js no re-renderiza nada por su
+  // cuenta al volver — hay que leer la ruta destino y reflejarla en el
+  // estado nosotros mismos. Solo actuamos si el pathname corresponde a
+  // uno de los nodos con ruta propia; si no, lo dejamos como está.
+  useEffect(() => {
+    const handlePopState = () => {
+      const nodeId = ROUTE_TO_NODE[window.location.pathname];
+      if (!nodeId || !NODES[nodeId]) return;
+      setIsTransitioning(false);
+      setCurrentNode(nodeId);
+      setHistory(prev => (prev[prev.length - 1] === nodeId ? prev : [...prev, nodeId]));
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Escuchar eventos de navegación del AudioEngine
   useEffect(() => {
