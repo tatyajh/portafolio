@@ -60,9 +60,11 @@ export const PROJECTS: Project[] = [
     desc: 'Para cuando salimos en grupo y al final nadie se acuerda de quién puso qué. Uno arma el grupo, va anotando los gastos y la app saca la cuenta: cuánto puso cada quien y quién le debe a quién. Lo hice de punta a punta — la interfaz en React y, por detrás, una API en Express separada en tres capas (rutas, lógica y datos), para que agregar algo nuevo no signifique tocar todo lo demás.',
     stack: 'React · Express · Node.js',
     links: [
+      { label: 'Ver en línea', url: 'https://mi-vaquita-fe.vercel.app' },
       { label: 'Frontend', url: 'https://github.com/tatyajh/Mi-Vaquita-FE' },
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
+    preview: { image: '/media/projects/mivaquita.png', alt: 'Portada de Mi Vaquita', url: 'mi-vaquita-fe.vercel.app' },
     year: 2024,
   },
   {
