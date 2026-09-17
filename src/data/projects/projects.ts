@@ -11,7 +11,11 @@ export const PROJECTS: Project[] = [
     title: 'Versé Intimates',
     desc: 'La tienda de mi marca de ropa íntima. La experiencia empieza como una caja cerrada que se abre y conecta catálogo, detalle de producto, carrito y pedido. Construí el sistema visual de dos mundos —noche y seda—, un catálogo centralizado y la integración segura con Wompi para calcular y firmar los pagos desde el servidor.',
     stack: 'Next.js · React · TypeScript · Wompi',
-    links: [{ label: 'Código', url: 'https://github.com/tatyajh/verse' }],
+    links: [
+      { label: 'Ver en línea', url: 'https://verse-intimates.vercel.app' },
+      { label: 'Código', url: 'https://github.com/tatyajh/verse' },
+    ],
+    preview: { image: '/media/projects/verse.png', alt: 'Portada de Versé Intimates', url: 'verse-intimates.vercel.app' },
   },
   {
     id: 'tirame-un-poemita',
@@ -43,12 +47,15 @@ export const PROJECTS: Project[] = [
     stack: 'React Native · Expo · JavaScript · Supabase (PostgreSQL)',
     links: [],
   },
+  // La captura sí se muestra (es solo el login, nada del producto sin
+  // lanzar), pero sigue sin link — ver el comentario de arriba.
   {
     id: 'venux-web',
     title: 'Venux — Versión web',
     desc: 'La misma app de citas, hecha para el navegador y desplegada para que se pueda entrar y usarla sin instalar nada. Comparte la base de datos y las cuentas con la versión móvil, así que un usuario es el mismo en los dos lados, pero la interfaz está pensada para pantalla grande, mouse y teclado en vez de para el pulgar.',
     stack: 'React · Vite · JavaScript · Supabase (PostgreSQL)',
     links: [],
+    preview: { image: '/media/projects/venux.png', alt: 'Pantalla de inicio de sesión de Venux', url: 'venux-web.vercel.app' },
   },
   {
     id: 'mivaquita',
@@ -69,6 +76,7 @@ export const PROJECTS: Project[] = [
       { label: 'Ver en línea', url: 'https://hotel-react-reto4.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/hotel-react-reto4' },
     ],
+    preview: { image: '/media/projects/hotel.png', alt: 'Portada de la app de reserva de hoteles', url: 'hotel-react-reto4.vercel.app' },
   },
   {
     id: 'posticks',

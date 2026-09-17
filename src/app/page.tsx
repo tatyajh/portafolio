@@ -8,15 +8,15 @@ import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
-import { PROJECTS } from '@/data/projects';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
+import { ProjectList } from '@/components/projects';
 import { ResumeTools, ResumeLinks, ResumeCVPanel } from '@/components/resume';
 import { LanguageToggle, PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo, CollageGrid } from '@/components/chapters';
 import { useLanguage } from '@/context/LanguageContext';
-import { getCategoryLabel, getImageCaptions, getSeasonName, localizeNode, localizeProject, selectCopy } from '@/data/translations';
+import { getCategoryLabel, getImageCaptions, getSeasonName, localizeNode, selectCopy } from '@/data/translations';
 
 // La leyenda original de la foto del vestido (estructura-1) — la
 // misma que ya vivía en IMAGE_CAPTIONS, ahora con "Dato curioso"
@@ -552,40 +552,20 @@ export default function Home() {
                   transition={{ delay: 0.6 }}
                   className="mb-8 space-y-6"
                 >
-                  <p className="font-script text-2xl text-center text-gold-mid -rotate-1">
-                    {selectCopy(locale, 'algunas cosas que he construido…', 'a few things I have built…')}
-                  </p>
-                  {PROJECTS.map(project => localizeProject(project, locale)).map((p, i) => (
-                    <div
-                      key={p.id}
-                      className={`paper-card stitch-border relative p-5 sm:p-6 ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`}
+                  <div className="text-center">
+                    <p className="font-script text-2xl text-gold-mid -rotate-1">
+                      {selectCopy(locale, 'algunas cosas que he construido…', 'a few things I have built…')}
+                    </p>
+                    <a
+                      href="https://www.behance.net/tatianajaramil11"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-1 font-script text-base text-gold-mid/60 hover:text-gold-mid underline decoration-dashed underline-offset-4"
                     >
-                      <div className="tape -top-3 left-8 -rotate-6" />
-                      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                        <h3 className="font-serif text-2xl text-ink">{p.title}</h3>
-                        <span className="text-[10px] uppercase tracking-widest text-brown">{p.stack}</span>
-                      </div>
-                      <p className="font-script text-lg text-ink-light leading-snug mb-4">{p.desc}</p>
-                      {/* Venux no tiene enlaces: son proyectos sin
-                          lanzar, no se muestra el código. Sin este
-                          condicional quedaba un contenedor vacío. */}
-                      {p.links.length > 0 && (
-                        <div className="flex flex-wrap gap-3">
-                          {p.links.map(l => (
-                            <a
-                              key={l.label}
-                              href={l.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-4 py-2 stitch-border text-sm font-serif tracking-wider text-burgundy hover:bg-burgundy/5 transition-all"
-                            >
-                              {l.label} ↗
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      {selectCopy(locale, 'mi lado de diseño vive en Behance ↗', 'my design side lives on Behance ↗')}
+                    </a>
+                  </div>
+                  <ProjectList />
                 </motion.div>
               )}
 

@@ -113,7 +113,10 @@ const PROJECT_EN: Record<string, Partial<Project>> = {
   verse: {
     title: 'Versé Intimates',
     desc: 'The online store for my intimate apparel brand. The experience begins as a closed box that opens into the catalogue, product details, cart and order flow. I built its two-world visual system - night and silk - a centralized catalogue and a secure Wompi integration that calculates and signs payments on the server.',
-    links: [{ label: 'Code', url: 'https://github.com/tatyajh/verse' }],
+    links: [
+      { label: 'Live site', url: 'https://verse-intimates.vercel.app' },
+      { label: 'Code', url: 'https://github.com/tatyajh/verse' },
+    ],
   },
   'tirame-un-poemita': {
     title: 'Tírame un Poemita',
