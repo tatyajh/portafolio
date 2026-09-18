@@ -111,3 +111,4 @@ Recomendado deploy en Vercel para optimización automática de imágenes y CDN.
 ---
 
 *Diseñado con ❤️ como experiencia narrativa inmersiva*
+
