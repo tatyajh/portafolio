@@ -85,7 +85,7 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
     <div className={`relative z-0 min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' : undefined }}>
       <BackgroundLayer visible={currentNode !== 'inicio'} section={currentNode} />
-      <AudioEngine />
+      <AudioEngine initialNode={initialNode} />
       <LanguageToggle theme={node.theme} />
 
       {currentNode !== 'inicio' && (

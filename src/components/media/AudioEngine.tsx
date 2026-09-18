@@ -31,14 +31,27 @@ const INITIAL_TRACK = Math.floor(Math.random() * PLAYLIST.length);
 const MUSIC_VOLUME = 0.15;
 const MUSIC_VOLUME_DUCKED = 0.05;
 
+interface AudioEngineProps {
+  // Nodo con el que arrancó esta carga de página (ver
+  // PortfolioExperience). Si no es "inicio" significa que se entró por
+  // un deep link directo (ej. /tecnico) y el splash de bienvenida no
+  // debe reproducirse — solo tiene sentido para quien aterriza en "/".
+  initialNode?: string;
+}
+
 /**
  * AudioEngine - Motor de audio para el portafolio
  * Maneja la pantalla de inicio, audio de fondo y control de video
  */
-export default function AudioEngine() {
+export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps) {
   const { locale } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
-  const [hasInteracted, setHasInteracted] = useState(false);
+  // Arranca ya "interactuado" (sin splash) cuando la carga inicial de
+  // la página fue un deep link a un nodo distinto de "inicio". Al
+  // volver a "inicio" desde dentro de la app, goHome() sigue
+  // reactivando el splash vía el evento returnToSplash (ver abajo),
+  // así que esto solo afecta la primera carga.
+  const [hasInteracted, setHasInteracted] = useState(initialNode !== 'inicio');
   const [hasCutTitle, setHasCutTitle] = useState(false);
   const [playgroundUnavailable, setPlaygroundUnavailable] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
