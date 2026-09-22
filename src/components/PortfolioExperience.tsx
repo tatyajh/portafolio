@@ -250,7 +250,7 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
               <div className="space-y-5 mb-8">
                 {[
                   { id: 'perfil', num: '01', title: selectCopy(locale, 'Perfil', 'Profile'), desc: selectCopy(locale, 'Más información sobre mí, mi CV y mis enlaces.', 'More about me, my résumés and my links.') },
-                  { id: 'estructura', num: '02', title: selectCopy(locale, 'Desarrollo', 'Development'), desc: selectCopy(locale, 'Aplicaciones web y móviles que hice de punta a punta, con su código.', 'Web and mobile applications I built end to end, with their source code.') },
+                  { id: 'estructura', num: '02', title: selectCopy(locale, 'Desarrollo', 'Development'), desc: selectCopy(locale, 'Diseño de interfaces, desarrollo web y móvil, y trabajo como webmaster.', 'Interface design, web and mobile development, and webmaster work.') },
                   // 'destacado': la ruta técnica existe sobre todo para
                   // mostrar los videojuegos, así que esta tarjeta se
                   // diferencia de las otras dos en vez de perderse en la fila.
@@ -363,7 +363,7 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
           )}
 
           {currentNode !== 'inicio' && currentNode !== 'mapa' && currentNode !== 'juego' && currentNode !== 'tecnico' && (
-            <div className="w-full max-w-3xl">
+            <div className={`w-full ${currentNode === 'estructura' ? 'max-w-6xl' : 'max-w-3xl'}`}>
               {/* Línea decorativa */}
               <motion.div
                 initial={{ scaleX: 0 }}

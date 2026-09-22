@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posticks - Composición</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #F5F5F5 0%, #EFEFEF 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .composition {
+      width: 1400px;
+      height: 1050px;
+      position: relative;
+      overflow: hidden;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 80px 100px;
+      gap: 60px;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .content h1 {
+      font-size: 52px;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .content p {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .visual-section {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Desktop mockup */
+    .browser-window {
+      position: relative;
+      width: 480px;
+      height: 520px;
+      background: #F8F8F8;
+      border-radius: 12px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+      overflow: hidden;
+      transform: perspective(1200px) rotateX(5deg) rotateY(-8deg);
+      border: 1px solid #DDD;
+    }
+
+    .browser-top {
+      height: 40px;
+      background: #EEE;
+      border-bottom: 1px solid #DDD;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .browser-dot { width: 12px; height: 12px; border-radius: 50%; background: #DDD; }
+
+    .browser-content {
+      width: 100%;
+      height: calc(100% - 40px);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .search-bar {
+      width: 100%;
+      height: 44px;
+      background: white;
+      border: 1px solid #DDD;
+      border-radius: 8px;
+      padding: 0 16px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    .sticky-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .sticky-note {
+      height: 100px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .note-yellow { background: #FFD93D; color: #333; }
+    .note-blue { background: #6BCB77; color: white; }
+    .note-pink { background: #FF6B9D; color: white; }
+
+    /* Floating note */
+    .floating-note {
+      position: absolute;
+      bottom: 30px;
+      right: -40px;
+      width: 220px;
+      height: 140px;
+      background: #FFE066;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      padding: 16px;
+      transform: rotate(12deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="composition">
+    <div class="container">
+      <div class="content">
+        <h1>Posticks</h1>
+        <p>Una app de notas tipo post-it: crear, editar, buscar y borrar.</p>
+        <p>Lo que más me gustó resolver fue la papelera — las notas borradas no se pierden de una, quedan ahí y uno decide si las restaura una por una o vacía todo.</p>
+        <p>Las notas quedan guardadas en el navegador, así que siguen ahí al volver.</p>
+      </div>
+
+      <div class="visual-section">
+        <div class="browser-window">
+          <div class="browser-top">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <span style="margin-left: auto;">posticks.vercel.app</span>
+          </div>
+          <div class="browser-content">
+            <input type="text" class="search-bar" placeholder="What are you looking for...?">
+            <div class="sticky-grid">
+              <div class="sticky-note note-yellow">Ideas</div>
+              <div class="sticky-note note-blue">Tareas</div>
+              <div class="sticky-note note-pink">Notas</div>
+              <div class="sticky-note note-yellow">Pendientes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-note">
+          Guardadas en<br/>tu navegador
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

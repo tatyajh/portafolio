@@ -109,45 +109,53 @@ const CAPTIONS_EN: Record<string, string[]> = {
   ],
 };
 
-const PROJECT_EN: Record<string, Partial<Project>> = {
+const PROJECT_EN: Record<string, Partial<Omit<Project, 'preview'>> & { preview?: Partial<Project['preview']> }> = {
   verse: {
-    title: 'Versé Intimates',
-    desc: 'The online store for my intimate apparel brand. The experience begins as a closed box that opens into the catalogue, product details, cart and order flow. I built its two-world visual system - night and silk - a centralized catalogue and a secure Wompi integration that calculates and signs payments on the server.',
-    links: [
-      { label: 'Live site', url: 'https://verse-intimates.vercel.app' },
-      { label: 'Code', url: 'https://github.com/tatyajh/verse' },
-    ],
+    desc: 'The online store for my intimate apparel brand. I designed the interface and developed the experience: a box that opens into the catalogue, product details, cart and order flow, with a visual system of night and silk and a Wompi payment integration.',
+    preview: { alt: 'Saved homepage of Versé Intimates' },
+  },
+  'tirame-un-poemita': {
+    desc: 'I designed and developed the frontend for discovering random poems, searching by meaning and listening to them. The interface draws on a typewriter, with letter-by-letter text, synthesized Web Audio sounds and a reel-style audio player. It connects to the poetry service for authors, search and audio.',
+    preview: { alt: 'Typographic cover of Tírame un Poemita, not an application screenshot', note: 'Project presentation; the interface is available in the frontend repository.' },
+  },
+  gyg: {
+    desc: 'I manage and update the GYG Empaquetaduras website, originally created by 20S Agencia. My work includes updating images and prices, adjusting the payment flow, and improving responsiveness and visibility on mobile and desktop, following the client’s requests.',
+    preview: { alt: 'KC036 gasket kit photograph from the GYG catalogue', note: 'A sample from the catalogue I maintain.' },
   },
   portafolio: {
-    desc: 'This very site. Instead of a project list, I wanted an experience to move through: connected chapters, background music, draggable collages and a playful interactive backdrop. It is where I experiment with animation, interaction and canvas rendering, so it is always evolving.',
-    links: [{ label: 'Code', url: 'https://github.com/tatyajh/portafolio' }],
+    desc: 'This very site. I designed and developed an experience built around connected chapters, music, draggable collages and an interactive backdrop. A place to experiment with animation, interaction and canvas rendering.',
+    preview: { alt: 'Cutout portrait used in Hilos Invisibles', detailAlt: 'A collage element from Hilos Invisibles', note: 'Composition using visual assets from the portfolio.' },
   },
   venux: {
-    title: 'Venux - Mobile app',
-    desc: 'A mobile dating app with the complete flow: registration, profile, swiping, matching and chat. Thirteen connected screens built in JavaScript, with PostgreSQL in Supabase storing users, matches and messages and handling authentication. The biggest lesson was designing for the thumb: gestures, screen-to-screen navigation and making it feel fluid on a real phone.',
+    title: 'Venux — Mobile app',
+    desc: 'I developed the mobile application from a supplied Figma design. I implemented registration, profiles, swipe gestures, matches and chat, with authentication and data in Supabase.',
+    preview: { alt: 'Venux identity shown on the web login screen', note: 'Visual reference from the web version, not a screenshot of the mobile app.' },
   },
   'venux-web': {
-    title: 'Venux - Web version',
-    desc: 'The same dating app, built for the browser so it can be used without installing anything. It shares its database and accounts with the mobile version, but the interface is designed for large screens, mouse and keyboard rather than the thumb.',
+    title: 'Venux — Web version',
+    desc: 'I developed the browser version from a supplied Figma design. It shares accounts and a database with the mobile app and brings authentication and application flows to the web.',
+    preview: { alt: 'Saved login screen of Venux for the web' },
   },
   mivaquita: {
-    desc: 'For group outings when nobody remembers who paid for what. Create a group, record expenses, and the app calculates how much each person contributed and who owes whom. I built it end to end: a React interface and an Express API split into routes, logic and data layers so new features do not require changing everything else.',
+    desc: 'For group outings when nobody remembers who paid for what. I designed the interface and developed a React application and an Express API to create groups, record expenses and calculate who owes whom.',
+    preview: { alt: 'Saved login screen of Mi Vaquita' },
   },
   hotel: {
     title: 'Hotel booking',
-    desc: 'A hotel search and booking interface: filter, browse hotel cards and open the details. I built it with atomic design, organizing the interface from its smallest pieces to complete pages, so changing one button does not require reviewing half the application.',
-    links: [
-      { label: 'Live site', url: 'https://tatyajh.github.io/hotel-react-reto4/' },
-      { label: 'Code', url: 'https://github.com/tatyajh/hotel-react-reto4' },
-    ],
+    desc: 'I implemented a supplied Figma design: hotel search, filters, details and reservations. I used atomic design to organize reusable buttons, cards and sections, and adapted the interface to different screen sizes.',
+    preview: { alt: 'Saved homepage of the hotel booking app' },
   },
   posticks: {
-    desc: 'A post-it style notes app for creating, editing, searching and deleting notes. My favorite problem was the trash: deleted notes stay recoverable until the user chooses to restore them individually or empty everything. Notes are stored in the browser and remain there when you return.',
-    links: [
-      { label: 'Live site', url: 'https://tatyajh.github.io/posticks/' },
-      { label: 'Code', url: 'https://github.com/tatyajh/posticks' },
-    ],
+    desc: 'A post-it style notes app for creating, editing, searching and deleting notes. Deleted notes can be restored individually or removed permanently. Notes are stored in the browser and remain there when you return.',
+    preview: { alt: 'Saved notes interface of Posticks' },
   },
+};
+
+const PROJECT_LINK_EN: Record<string, string> = {
+  'Ver en línea': 'Live site',
+  'Ver versión web': 'Web version',
+  'Código': 'Code',
+  'Código frontend': 'Frontend code',
 };
 
 const GAME_EN: Record<string, Partial<Game>> = {
@@ -208,7 +216,14 @@ export function localizeNode(node: Node, locale: Locale): Node {
 }
 
 export function localizeProject(project: Project, locale: Locale): Project {
-  return locale === 'en' && PROJECT_EN[project.id] ? { ...project, ...PROJECT_EN[project.id] } : project;
+  if (locale !== 'en') return project;
+  const copy = PROJECT_EN[project.id];
+  return {
+    ...project,
+    ...copy,
+    preview: { ...project.preview, ...copy?.preview },
+    links: project.links.map(link => ({ ...link, label: PROJECT_LINK_EN[link.label] ?? link.label })),
+  };
 }
 
 export function localizeGame(game: Game, locale: Locale): Game {

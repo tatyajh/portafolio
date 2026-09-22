@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tírame un Poemita - Composición</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%);
+      font-family: 'Georgia', serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .composition {
+      width: 1400px;
+      height: 1050px;
+      position: relative;
+      overflow: hidden;
+      background: #FAF6F1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 100px;
+    }
+
+    .title-section {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .title-section h1 {
+      font-size: 72px;
+      color: #8B4513;
+      margin-bottom: 12px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+
+    .title-section p {
+      font-size: 20px;
+      color: #A0826D;
+      font-style: italic;
+    }
+
+    .visual-section {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 40px;
+    }
+
+    /* Typewriter visual */
+    .typewriter {
+      width: 280px;
+      height: 200px;
+      background: #F8EFE3;
+      border: 3px solid #8B4513;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .typewriter-line {
+      height: 4px;
+      background: #8B4513;
+      border-radius: 2px;
+    }
+
+    .typewriter-line:nth-child(2) { width: 85%; }
+    .typewriter-line:nth-child(3) { width: 70%; }
+    .typewriter-line:nth-child(4) { width: 90%; }
+    .typewriter-line:nth-child(5) { width: 75%; }
+
+    /* Decorative poem text */
+    .poem-visual {
+      text-align: center;
+      color: #8B4513;
+      font-size: 14px;
+      line-height: 2;
+    }
+
+    .poem-visual p {
+      margin: 8px 0;
+      font-style: italic;
+    }
+
+    /* Carrete (spool) */
+    .carrete {
+      width: 120px;
+      height: 120px;
+      border: 6px solid #8B4513;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle, #F8EFE3 0%, #F0E4D7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .carrete::before {
+      content: '';
+      width: 40px;
+      height: 40px;
+      background: #8B4513;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="composition">
+    <div class="container">
+      <div class="title-section">
+        <h1>Tírame un Poemita</h1>
+        <p>Poemas al azar, música y máquina de escribir</p>
+      </div>
+
+      <div class="visual-section">
+        <div class="typewriter">
+          <div class="typewriter-line"></div>
+          <div class="typewriter-line"></div>
+          <div class="typewriter-line"></div>
+          <div class="typewriter-line"></div>
+          <div class="typewriter-line"></div>
+        </div>
+
+        <div class="poem-visual">
+          <p>Una palabra</p>
+          <p>a la vez</p>
+          <p>apareciéndose</p>
+        </div>
+
+        <div class="carrete"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

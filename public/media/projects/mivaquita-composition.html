@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Vaquita - Composición</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #FFF8F0 0%, #FFF0E6 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .composition {
+      width: 1400px;
+      height: 1050px;
+      position: relative;
+      overflow: hidden;
+      background: #FFF8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Decorative circles */
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 107, 107, 0.08);
+    }
+    .circle-1 { width: 400px; height: 400px; top: -100px; right: -100px; }
+    .circle-2 { width: 300px; height: 300px; bottom: -50px; left: -50px; background: rgba(107, 180, 140, 0.06); }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 80px 100px;
+      gap: 60px;
+    }
+
+    .content {
+      flex: 1;
+      z-index: 10;
+    }
+
+    .content h1 {
+      font-size: 48px;
+      color: #FF6B6B;
+      margin-bottom: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .content p {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .visual-section {
+      flex: 1;
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Phone mockup */
+    .phone-mockup {
+      position: relative;
+      width: 320px;
+      height: 600px;
+      background: white;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      transform: perspective(1000px) rotateY(-15deg) rotateX(2deg);
+      border: 8px solid #000;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 35px;
+      overflow: hidden;
+      background: #F0F0F0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Detail card - floating */
+    .detail-card {
+      position: absolute;
+      bottom: 40px;
+      right: -80px;
+      width: 280px;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+      border: 2px solid #FFE8E8;
+      z-index: 5;
+      transform: rotate(8deg);
+    }
+
+    .detail-card h4 {
+      font-size: 14px;
+      color: #FF6B6B;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-card p {
+      font-size: 13px;
+      color: #666;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Decorative tape */
+    .tape {
+      position: absolute;
+      width: 60px;
+      height: 8px;
+      background: repeating-linear-gradient(
+        90deg,
+        #FFD700 0px,
+        #FFD700 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      top: 20px;
+      left: 80px;
+      transform: rotate(-3deg);
+      opacity: 0.6;
+    }
+
+    .tape-2 {
+      top: auto;
+      bottom: 30px;
+      right: 100px;
+      width: 80px;
+      transform: rotate(5deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="composition">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="tape"></div>
+    <div class="tape tape-2"></div>
+
+    <div class="container">
+      <div class="content">
+        <h1>Mi Vaquita</h1>
+        <p>Para cuando salimos en grupo y al final nadie se acuerda de quién puso qué.</p>
+        <p>Uno arma el grupo, va anotando los gastos y la app saca la cuenta: cuánto puso cada quien y quién le debe a quién.</p>
+      </div>
+
+      <div class="visual-section">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <svg viewBox="0 0 375 812" class="screen-img">
+              <rect fill="#FFF8F0" width="375" height="812"/>
+              <circle cx="187" cy="320" r="80" fill="#6BB48C" opacity="0.1"/>
+              <circle cx="187" cy="320" r="50" fill="#6BB48C" opacity="0.15"/>
+              <!-- Emoji vaquita -->
+              <circle cx="187" cy="280" r="35" fill="#F5DEB3"/>
+              <circle cx="172" cy="265" r="12" fill="#8B6F47"/>
+              <circle cx="202" cy="265" r="12" fill="#8B6F47"/>
+              <circle cx="187" cy="295" r="8" fill="#000"/>
+              <!-- Text -->
+              <text x="187" y="360" font-size="28" font-weight="bold" text-anchor="middle" fill="#FF6B6B" font-family="Arial">Mi vaquita</text>
+              <text x="187" y="390" font-size="14" text-anchor="middle" fill="#666" font-family="Arial">Inicia sesión para armar</text>
+              <text x="187" y="408" font-size="14" text-anchor="middle" fill="#666" font-family="Arial">tus paseos</text>
+              <!-- Input fields -->
+              <rect x="40" y="450" width="295" height="50" rx="25" fill="none" stroke="#DDD" stroke-width="2"/>
+              <text x="60" y="485" font-size="14" fill="#999" font-family="Arial">Correo</text>
+              <rect x="40" y="520" width="295" height="50" rx="25" fill="none" stroke="#DDD" stroke-width="2"/>
+              <text x="60" y="555" font-size="14" fill="#999" font-family="Arial">Contraseña</text>
+              <!-- Button -->
+              <rect x="40" y="600" width="295" height="50" rx="25" fill="#FF6B6B"/>
+              <text x="187" y="635" font-size="16" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Ingresar</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h4>Cuentas claras</h4>
+          <p>La app calcula automáticamente quién le debe a quién después de cada gasto registrado.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

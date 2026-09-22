@@ -3,15 +3,22 @@ export interface Project {
   title: string;
   desc: string;
   stack: string;
+  role: 'design-development' | 'figma-development' | 'webmaster' | 'development';
   links: { label: string; url: string }[];
-  // Captura del sitio en vivo, mostrada en un marco tipo navegador.
-  // `url` es solo el texto que aparece en la barra de direcciones del
-  // marco (no crea un link si el proyecto no tiene uno en `links`).
-  // Opcional: solo los proyectos con demo pública tienen una.
-  preview?: { image: string; alt: string; url?: string };
+  // Recursos reales del proyecto. Los montajes editoriales y las referencias
+  // compartidas se identifican explícitamente; no simulan capturas nuevas.
+  preview: {
+    image?: string;
+    alt: string;
+    url?: string;
+    layout?: 'screens' | 'editorial' | 'catalogue' | 'identity' | 'typographic';
+    detailImage?: string;
+    detailAlt?: string;
+    note?: string;
+  };
   // Caso de estudio en Behance, cuando existe uno para este proyecto.
   behanceUrl?: string;
-  // Año en que arrancó el proyecto (fecha de creación del repo en
-  // GitHub). Opcional: Venux no tiene repo verificable todavía.
+  // Año de inicio: confirmado por Tatiana (GYG y Venux) o fecha del
+  // repositorio. En GYG corresponde a su trabajo de administración.
   year?: number;
 }

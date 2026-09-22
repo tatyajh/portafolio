@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Versé - Composición</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #1a0a0f 0%, #2d1218 100%);
+      font-family: 'Georgia', serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .composition {
+      width: 1400px;
+      height: 1050px;
+      position: relative;
+      overflow: hidden;
+      background: #1a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 80px 100px;
+      gap: 80px;
+    }
+
+    .content {
+      flex: 1;
+      color: #E8C5C5;
+    }
+
+    .content h1 {
+      font-size: 64px;
+      color: #D4A5A5;
+      margin-bottom: 30px;
+      font-weight: normal;
+      letter-spacing: 3px;
+      line-height: 1.1;
+    }
+
+    .content p {
+      font-size: 16px;
+      color: #A89999;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .visual-section {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    /* Ornament */
+    .ornament {
+      position: absolute;
+      width: 300px;
+      height: 400px;
+      opacity: 0.3;
+      color: #D4A5A5;
+      font-size: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Phone mockup dark */
+    .phone-mockup {
+      position: relative;
+      width: 340px;
+      height: 620px;
+      background: #1a0a0f;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      transform: perspective(1000px) rotateY(12deg);
+      border: 8px solid #000;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 35px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #2d1218 0%, #1a0a0f 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #D4A5A5;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .phone-screen h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .phone-screen p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #A89999;
+    }
+
+    /* Key ornament */
+    .key {
+      width: 60px;
+      height: 80px;
+      background: #D4A5A5;
+      border-radius: 8px;
+      position: absolute;
+      top: 40px;
+      right: 60px;
+      opacity: 0.4;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="composition">
+    <div class="ornament">♦</div>
+    <div class="key">🔑</div>
+
+    <div class="container">
+      <div class="content">
+        <h1>Versé</h1>
+        <p>La tienda de mi marca de ropa íntima. La experiencia empieza como una caja cerrada que se abre y conecta catálogo, detalle de producto, carrito y pedido.</p>
+        <p>Construí el sistema visual de dos mundos — noche y seda —, un catálogo centralizado e integración segura con Wompi para pagos.</p>
+      </div>
+
+      <div class="visual-section">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <h2>VERSÉ</h2>
+            <p>Intimates</p>
+            <div style="margin-top: 40px; opacity: 0.6;">
+              <p>🌙 Noche</p>
+              <p style="margin-top: 20px;">& Seda</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
