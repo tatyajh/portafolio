@@ -30,6 +30,10 @@ export default function ProjectCover({ project }: { project: Project }) {
         className={styles.cleanImage}
       />
       <span className={styles.coverIndex} aria-hidden="true">{id === 'gyg' ? 'WEBMASTER' : 'SELECTED WORK'}</span>
+      <div className={styles.projectOverlay} aria-hidden="true">
+        <span>Proyecto</span>
+        <strong>{title}</strong>
+      </div>
     </div>
   );
 }
