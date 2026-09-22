@@ -34,7 +34,7 @@ export const PROJECTS: Project[] = [
     desc: 'Diseñé y programé el frontend para descubrir poemas al azar, buscarlos por significado y escucharlos. La interfaz toma como referencia una máquina de escribir: texto que aparece letra por letra, sonidos creados con Web Audio y un reproductor con forma de carrete. Se conecta al servicio de poemas para consultar autores, búsquedas y audio.',
     stack: 'Next.js · TypeScript · Web Audio API',
     links: [{ label: 'Código frontend', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
-    preview: { alt: 'Portada tipográfica de Tírame un Poemita, no una captura de la aplicación', layout: 'typographic', note: 'Presentación del proyecto; la interfaz se puede consultar en el repositorio frontend.' },
+    preview: { image: '/media/projects/tirame-poemita.png', alt: 'Composición visual de Tírame un Poemita: máquina de escribir, poema y carrete' },
     year: 2026,
   },
   {
