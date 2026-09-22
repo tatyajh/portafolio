@@ -19,6 +19,8 @@ export interface Project {
   };
   // Caso de estudio en Behance, cuando existe uno para este proyecto.
   behanceUrl?: string;
+  // Algunos repositorios no deben mostrarse aunque formen parte del trabajo interno.
+  showCode?: boolean;
   // Año de inicio: confirmado por Tatiana (GYG y Venux) o fecha del
   // repositorio. En GYG corresponde a su trabajo de administración.
   year?: number;

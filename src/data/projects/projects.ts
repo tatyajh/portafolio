@@ -35,6 +35,7 @@ export const PROJECTS: Project[] = [
     stack: 'Next.js · TypeScript · Web Audio API',
     links: [{ label: 'Código frontend', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
     preview: { image: '/media/projects/tirame-poemita-real.png', alt: 'Pantalla real de Tírame un Poemita', gallery: [{ image: '/media/projects/tirame-poemita-real.png', alt: 'Pantalla principal de Tírame un Poemita' }, { image: '/media/projects/tirame-poemita.png', alt: 'Composición visual de Tírame un Poemita' }] },
+    showCode: false,
     year: 2026,
   },
   {
@@ -83,6 +84,7 @@ export const PROJECTS: Project[] = [
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
     preview: { image: '/media/projects/reference/mivaquita-1.png', alt: 'Pantallas reales de Mi Vaquita', gallery: [1, 2, 3, 4, 5].map(n => ({ image: `/media/projects/reference/mivaquita-${n}.png`, alt: `Pantalla ${n} de Mi Vaquita` })), url: 'mi-vaquita-fe.vercel.app' },
+    showCode: false,
     year: 2024,
   },
   {

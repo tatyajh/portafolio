@@ -21,7 +21,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
   const [roleEs, roleEn] = ROLES[project.role];
   const role = selectCopy(locale, roleEs, roleEn);
   const website = project.links.find(link => new URL(link.url).hostname !== 'github.com');
-  const codeLinks = project.links.filter(link => new URL(link.url).hostname === 'github.com');
+  const codeLinks = project.showCode === false ? [] : project.links.filter(link => new URL(link.url).hostname === 'github.com');
 
   return (
     <motion.li
