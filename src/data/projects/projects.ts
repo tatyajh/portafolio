@@ -14,7 +14,7 @@ export const PROJECTS: Project[] = [
       { label: 'Ver en línea', url: 'https://verse-intimates.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/verse' },
     ],
-    preview: { image: '/media/projects/verse-real.png', alt: 'Pantallas reales de Versé Intimates', url: 'verse-intimates.vercel.app' },
+    preview: { image: '/media/projects/verse-real.png', alt: 'Pantallas reales de Versé Intimates', gallery: [{ image: '/media/projects/verse-real.png', alt: 'Portada y vista Aurora de Versé' }], url: 'verse-intimates.vercel.app' },
     year: 2026,
   },
   {
@@ -25,7 +25,7 @@ export const PROJECTS: Project[] = [
     desc: 'Administro y actualizo la web de GYG Empaquetaduras, creada originalmente por 20S Agencia. Me encargo de actualizar imágenes y precios, ajustar el flujo de pago y corregir detalles de adaptación y visibilidad en móvil y escritorio, según las solicitudes del cliente.',
     stack: 'WordPress · WooCommerce · CSS',
     links: [{ label: 'Ver en línea', url: 'https://gygempaquetaduras.com/' }],
-    preview: { image: '/media/projects/gyg-homepage.png', alt: 'Página de inicio real de GYG Empaquetaduras', note: 'Sitio creado por 20S Agencia; administro y actualizo su contenido.' },
+    preview: { image: '/media/projects/gyg-homepage.png', alt: 'Página de inicio real de GYG Empaquetaduras', gallery: [{ image: '/media/projects/gyg-homepage.png', alt: 'Página de inicio y catálogo de GYG Empaquetaduras' }], note: 'Sitio creado por 20S Agencia; administro y actualizo su contenido.' },
   },
   {
     id: 'tirame-un-poemita',
@@ -34,7 +34,7 @@ export const PROJECTS: Project[] = [
     desc: 'Diseñé y programé el frontend para descubrir poemas al azar, buscarlos por significado y escucharlos. La interfaz toma como referencia una máquina de escribir: texto que aparece letra por letra, sonidos creados con Web Audio y un reproductor con forma de carrete. Se conecta al servicio de poemas para consultar autores, búsquedas y audio.',
     stack: 'Next.js · TypeScript · Web Audio API',
     links: [{ label: 'Código frontend', url: 'https://github.com/tatyajh/tirame-un-poemita-frontend' }],
-    preview: { image: '/media/projects/tirame-poemita.png', alt: 'Interfaz de Tírame un Poemita' },
+    preview: { image: '/media/projects/tirame-poemita-real.png', alt: 'Pantalla real de Tírame un Poemita', gallery: [{ image: '/media/projects/tirame-poemita-real.png', alt: 'Pantalla principal de Tírame un Poemita' }, { image: '/media/projects/tirame-poemita.png', alt: 'Composición visual de Tírame un Poemita' }] },
     year: 2026,
   },
   {
@@ -47,7 +47,7 @@ export const PROJECTS: Project[] = [
       { label: 'Ver en línea', url: 'https://portafolio-tatiana-jaramillo.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/portafolio' },
     ],
-    preview: { image: '/media/projects/hilos-invisibles-real.png', alt: 'Pantallas reales de Hilos Invisibles' },
+    preview: { image: '/media/projects/hilos-invisibles-real.png', alt: 'Pantallas reales de Hilos Invisibles', gallery: [{ image: '/media/projects/hilos-invisibles-real.png', alt: 'Portada y navegación de Hilos Invisibles' }] },
     year: 2026,
   },
   // Venux: diseño recibido en Figma; código fuente excluido del portafolio.
@@ -82,7 +82,7 @@ export const PROJECTS: Project[] = [
       { label: 'Frontend', url: 'https://github.com/tatyajh/Mi-Vaquita-FE' },
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
-    preview: { image: '/media/projects/mivaquita-real.png', alt: 'Pantallas reales de Mi Vaquita', url: 'mi-vaquita-fe.vercel.app' },
+    preview: { image: '/media/projects/mivaquita-real.png', alt: 'Pantallas reales de Mi Vaquita', gallery: [{ image: '/media/projects/mivaquita-real.png', alt: 'Login, inicio, grupos y natilleras de Mi Vaquita' }], url: 'mi-vaquita-fe.vercel.app' },
     year: 2024,
   },
   {
@@ -108,7 +108,7 @@ export const PROJECTS: Project[] = [
       { label: 'Ver en línea', url: 'https://tatyajh.github.io/posticks/' },
       { label: 'Código', url: 'https://github.com/tatyajh/posticks' },
     ],
-    preview: { image: '/media/projects/posticks-real.png', alt: 'Interfaz real de Posticks', url: 'tatyajh.github.io/posticks' },
+    preview: { image: '/media/projects/posticks-real.png', alt: 'Interfaz real de Posticks', gallery: [{ image: '/media/projects/posticks-real.png', alt: 'Notas y estados de Posticks' }], url: 'tatyajh.github.io/posticks' },
     year: 2022,
   },
 ];

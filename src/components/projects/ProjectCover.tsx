@@ -17,18 +17,16 @@ export default function ProjectCover({ project }: { project: Project }) {
     );
   }
 
-  // Las imágenes ya son composiciones terminadas. No las volvemos a montar
-  // con tres copias superpuestas: eso hacía que las tarjetas parecieran
-  // capturas repetidas y recortadas.
+  const gallery = preview.gallery ?? [{ image: preview.image, alt: preview.alt }];
   return (
     <div className={`${styles.cover} ${styles.cleanCover}`} data-project={id}>
-      <Image
-        src={preview.image}
-        alt={preview.alt}
-        fill
-        sizes="(max-width: 639px) 92vw, (max-width: 1099px) 45vw, 30vw"
-        className={styles.cleanImage}
-      />
+      <div className={styles.screenCollage}>
+        {gallery.map((screen, index) => (
+          <div className={`${styles.collageScreen} ${styles[`collageScreen${Math.min(index + 1, 4)}`]}`} key={screen.image}>
+            <Image src={screen.image} alt={screen.alt} fill sizes="(max-width: 639px) 75vw, 22vw" />
+          </div>
+        ))}
+      </div>
       <span className={styles.coverIndex} aria-hidden="true">{id === 'gyg' ? 'WEBMASTER' : 'SELECTED WORK'}</span>
       <div className={styles.projectOverlay} aria-hidden="true">
         <span>Proyecto</span>

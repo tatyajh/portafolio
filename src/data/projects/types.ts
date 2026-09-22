@@ -10,6 +10,7 @@ export interface Project {
   preview: {
     image?: string;
     alt: string;
+    gallery?: { image: string; alt: string }[];
     url?: string;
     layout?: 'screens' | 'editorial' | 'catalogue' | 'identity' | 'typographic';
     detailImage?: string;
