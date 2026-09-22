@@ -35,7 +35,7 @@
 .cleanCover { background: #f5f0e6; }
 .cleanCover .coverIndex { color: #fff; text-shadow: 0 1px 10px #0008; opacity: .75; }
 .screenCollage { position: absolute; inset: 12% 7%; }
-.collageScreen { position: absolute; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: .65rem; background: #fff; box-shadow: 0 .85rem 1.4rem #0003; }
+.collageScreen { position: absolute; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: .65rem; background: transparent; box-shadow: 0 .85rem 1.4rem #0003; }
 .collageScreen img { object-fit: contain; padding: .12rem; }
 .collageScreen1 { inset: 5% 10% 18% 5%; transform: rotate(-3deg); }
 .collageScreen2 { inset: 22% 3% 5% 22%; transform: rotate(4deg); }
@@ -43,6 +43,18 @@
 .collageScreen4 { inset: 48% 0 0 35%; transform: rotate(-4deg); }
 .collageScreen5 { inset: 38% 8% 4% 18%; transform: rotate(2deg); }
 .collageScreen:only-child { inset: 5%; transform: rotate(-1deg); }
+.cleanCover[data-project='mivaquita'] { background: linear-gradient(135deg, #eff8d7 0%, #f9c6bb 52%, #f30e58 140%); }
+.cleanCover[data-project='mivaquita'] .collageScreen { border-color: rgba(73,111,34,.28); box-shadow: 0 .85rem 1.4rem rgba(80,91,35,.2); }
+.cleanCover[data-project='verse'] { background: radial-gradient(circle at 75% 25%, #54302f 0, #1a0e12 48%, #0d090b 100%); }
+.cleanCover[data-project='verse'] .collageScreen { border-color: rgba(226,166,151,.5); box-shadow: 0 .85rem 1.4rem rgba(0,0,0,.5); }
+.cleanCover[data-project='portafolio'] { background: radial-gradient(circle at 30% 20%, #1c423d 0, #0f1618 52%, #080a0c 100%); }
+.cleanCover[data-project='portafolio'] .collageScreen { border-color: rgba(210,220,198,.36); }
+.cleanCover[data-project='tirame-un-poemita'] { background: radial-gradient(circle at 50% 20%, #f5e8cd 0, #d9c8aa 100%); }
+.cleanCover[data-project='tirame-un-poemita'] .collageScreen { border-color: rgba(101,76,52,.35); }
+.cleanCover[data-project='gyg'] { background: linear-gradient(135deg, #fffdf8, #f3e7d2); }
+.cleanCover[data-project='gyg'] .collageScreen { border-color: rgba(220,169,43,.45); }
+.cleanCover[data-project='hotel'] { background: linear-gradient(135deg, #dce9df, #567c75); }
+.cleanCover[data-project='hotel'] .collageScreen { border-color: rgba(255,255,255,.6); }
 .cleanCover[data-project='venux'] .screenCollage { inset: 5% 18%; }
 .cleanCover[data-project='venux'] .collageScreen { border-radius: 1.8rem; background: #120d2b; border: 5px solid #28203f; box-shadow: 0 1.5rem 2.5rem #0005; }
 .cleanCover[data-project='venux'] .collageScreen1 { inset: 2% 0; transform: rotate(-3deg); }
