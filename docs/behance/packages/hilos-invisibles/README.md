@@ -2,11 +2,16 @@
 
 ## Orden de imágenes
 
-1. `assets/01-hilos-collage.png` — portada, mapa y recorrido visual.
-2. `assets/02-hilos-estructura.jpeg` — estructura y navegación.
-3. `assets/03-hilos-esencia.png` — lenguaje visual del portafolio.
+1. `assets/00-cover-pintada.png` — portada ilustrada.
+2. `assets/01-hilos-intencion.png` — intención y concepto.
+3. `assets/02-hilos-sistema.png` — sistema visual y recorrido.
+4. `assets/03-hilos-desarrollo.png` — programación e interacción.
+5. `assets/04-hilos-resultado.png` — resultado y evolución.
+6. `assets/01-hilos-collage.png` — pantallas reales del portafolio.
+7. `assets/02-hilos-estructura.jpeg` — estructura y navegación real.
+8. `assets/03-hilos-esencia.png` — lenguaje visual real del portafolio.
 
-Usa primero `assets/00-cover-pintada.png` como portada ilustrada y después las tres capturas reales.
+La secuencia empieza con la portada y las láminas editoriales; las tres capturas reales van al final como evidencia del resultado.
 
 ## Texto para Behance
 
