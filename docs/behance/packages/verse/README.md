@@ -6,6 +6,8 @@
 2. `assets/verse-2.png` — colección Aurora e historia.
 3. `assets/verse-3.png` — identidad y concepto de la marca.
 
+Usa primero `assets/00-cover-pintada.png` como portada ilustrada y después las tres capturas reales.
+
 ## Texto para Behance
 
 **Título:** Versé Intimates — diseño de interfaz y desarrollo web

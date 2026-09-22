@@ -8,6 +8,8 @@
 4. `assets/mivaquita-4.png` — amigos.
 5. `assets/mivaquita-5.png` — grupos.
 
+Usa primero `assets/00-cover-pintada.png` como portada ilustrada y después las cinco capturas reales.
+
 ## Texto para Behance
 
 **Título:** Mi Vaquita — app para organizar gastos compartidos

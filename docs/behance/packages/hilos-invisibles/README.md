@@ -6,6 +6,8 @@
 2. `assets/02-hilos-estructura.jpeg` — estructura y navegación.
 3. `assets/03-hilos-esencia.png` — lenguaje visual del portafolio.
 
+Usa primero `assets/00-cover-pintada.png` como portada ilustrada y después las tres capturas reales.
+
 ## Texto para Behance
 
 **Título:** Hilos Invisibles — diseño y desarrollo de un portafolio interactivo
