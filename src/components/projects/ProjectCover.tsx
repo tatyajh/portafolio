@@ -28,6 +28,16 @@ export default function ProjectCover({ project }: { project: Project }) {
         ))}
       </div>
       <span className={styles.coverIndex} aria-hidden="true">{id === 'gyg' ? 'WEBMASTER' : 'SELECTED WORK'}</span>
+      {gallery.length > 1 && (
+        <details className={styles.screenGallery}>
+          <summary>Ver todas las pantallas <span aria-hidden="true">＋</span></summary>
+          <div className={styles.screenGalleryGrid}>
+            {gallery.map(screen => (
+              <Image key={`full-${screen.image}`} src={screen.image} alt={screen.alt} width={1200} height={700} />
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   );
 }
