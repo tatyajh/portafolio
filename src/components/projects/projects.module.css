@@ -41,6 +41,7 @@
 .collageScreen2 { inset: 22% 3% 5% 22%; transform: rotate(4deg); }
 .collageScreen3 { inset: 3% 35% 45% 0; transform: rotate(5deg); }
 .collageScreen4 { inset: 48% 0 0 35%; transform: rotate(-4deg); }
+.collageScreen5 { inset: 38% 8% 4% 18%; transform: rotate(2deg); }
 .collageScreen:only-child { inset: 5%; transform: rotate(-1deg); }
 .cleanCover[data-project='venux'] .screenCollage { inset: 5% 18%; }
 .cleanCover[data-project='venux'] .collageScreen { border-radius: 1.8rem; background: #120d2b; border: 5px solid #28203f; box-shadow: 0 1.5rem 2.5rem #0005; }

@@ -14,7 +14,7 @@ export const PROJECTS: Project[] = [
       { label: 'Ver en línea', url: 'https://verse-intimates.vercel.app' },
       { label: 'Código', url: 'https://github.com/tatyajh/verse' },
     ],
-    preview: { image: '/media/projects/verse-real.png', alt: 'Pantallas reales de Versé Intimates', gallery: [{ image: '/media/projects/verse-real.png', alt: 'Portada y vista Aurora de Versé' }], url: 'verse-intimates.vercel.app' },
+    preview: { image: '/media/projects/reference/verse-1.png', alt: 'Pantallas reales de Versé Intimates', gallery: [1, 2, 3].map(n => ({ image: `/media/projects/reference/verse-${n}.png`, alt: `Pantalla ${n} de Versé Intimates` })), url: 'verse-intimates.vercel.app' },
     year: 2026,
   },
   {
@@ -69,7 +69,7 @@ export const PROJECTS: Project[] = [
     desc: 'Desarrollé la versión para navegador a partir del Figma entregado. Comparte las cuentas y la base de datos con la app móvil e integra el inicio de sesión y los flujos de la aplicación en una interfaz web.',
     stack: 'React · Vite · JavaScript · Supabase (PostgreSQL)',
     links: [{ label: 'Ver en línea', url: 'https://venux-web.vercel.app' }],
-    preview: { image: '/media/projects/venux.png', alt: 'Pantalla de inicio de sesión de Venux', url: 'venux-web.vercel.app' },
+    preview: { image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux', gallery: [{ image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux' }, { image: '/media/projects/reference/venux-2.png', alt: 'Segunda vista de la aplicación web Venux' }, { image: '/media/projects/reference/venux-3.png', alt: 'Tercera vista de la aplicación web Venux' }], url: 'venux-web.vercel.app' },
   },
   {
     id: 'mivaquita',
@@ -82,7 +82,7 @@ export const PROJECTS: Project[] = [
       { label: 'Frontend', url: 'https://github.com/tatyajh/Mi-Vaquita-FE' },
       { label: 'Backend', url: 'https://github.com/tatyajh/Mi-Vaquita-BE' },
     ],
-    preview: { image: '/media/projects/mivaquita-real.png', alt: 'Pantallas reales de Mi Vaquita', gallery: [{ image: '/media/projects/mivaquita-real.png', alt: 'Login, inicio, grupos y natilleras de Mi Vaquita' }], url: 'mi-vaquita-fe.vercel.app' },
+    preview: { image: '/media/projects/reference/mivaquita-1.png', alt: 'Pantallas reales de Mi Vaquita', gallery: [1, 2, 3, 4, 5].map(n => ({ image: `/media/projects/reference/mivaquita-${n}.png`, alt: `Pantalla ${n} de Mi Vaquita` })), url: 'mi-vaquita-fe.vercel.app' },
     year: 2024,
   },
   {
