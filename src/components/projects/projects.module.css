@@ -27,6 +27,15 @@
   color: var(--accent);
   container-type: inline-size;
 }
+.cleanCover { background: #f5f0e6; }
+.cleanImage { object-fit: cover; }
+.cleanCover[data-project='verse'] .cleanImage,
+.cleanCover[data-project='mivaquita'] .cleanImage,
+.cleanCover[data-project='posticks'] .cleanImage,
+.cleanCover[data-project='tirame-un-poemita'] .cleanImage { object-fit: contain; }
+.cleanCover[data-project='gyg'] .cleanImage { object-fit: cover; }
+.cleanCover[data-project='portafolio'] .cleanImage { object-fit: cover; object-position: center; }
+.cleanCover .coverIndex { text-shadow: 0 1px 10px #0008; color: #fff; }
 .cover[data-project='verse'] { background: linear-gradient(145deg, #1f1014, #704143); --accent: #f0c5b7; aspect-ratio: 4 / 5; }
 .cover[data-project='mivaquita'] { background: linear-gradient(140deg, #174448, #73a497); --accent: #fff0c2; aspect-ratio: 4 / 5; }
 .cover[data-project='hotel'] { background: linear-gradient(145deg, #153e45, #b3c3ae); --accent: #f2e9d8; }
