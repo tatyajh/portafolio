@@ -2,11 +2,13 @@
 
 ## Orden de imágenes
 
-1. `assets/verse-1.png` — portada y entrada a la tienda.
-2. `assets/verse-2.png` — colección Aurora e historia.
-3. `assets/verse-3.png` — identidad y concepto de la marca.
+1. `assets/01-verse-atmosfera.png` — portada, entrada y lenguaje de marca.
+2. `assets/02-verse-aurora.png` — colección Aurora e historia.
+3. `assets/verse-1.png` — captura real de la tienda.
+4. `assets/verse-2.png` — captura real de Aurora.
+5. `assets/verse-3.png` — captura real de identidad y concepto.
 
-Usa primero `assets/00-cover-pintada.png` como portada ilustrada y después las tres capturas reales.
+Usa primero `assets/00-cover-pintada.png` como portada ilustrada. Las dos láminas editoriales combinan las capturas reales con una atmósfera oscura, líneas finas y acentos rosados y turquesa; las capturas originales quedan después para conservar el detalle de la interfaz.
 
 ## Texto para Behance
 
