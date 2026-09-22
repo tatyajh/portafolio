@@ -35,7 +35,7 @@
 .cleanCover { background: #f5f0e6; }
 .cleanCover .coverIndex { color: #fff; text-shadow: 0 1px 10px #0008; opacity: .75; }
 .screenCollage { position: absolute; inset: 12% 7%; }
-.collageScreen { position: absolute; overflow: hidden; border: 1px solid #fff9; border-radius: .65rem; background: #fff; box-shadow: 0 .85rem 1.4rem #0003; }
+.collageScreen { position: absolute; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: .65rem; background: #fff; box-shadow: 0 .85rem 1.4rem #0003; }
 .collageScreen img { object-fit: contain; padding: .12rem; }
 .collageScreen1 { inset: 5% 10% 18% 5%; transform: rotate(-3deg); }
 .collageScreen2 { inset: 22% 3% 5% 22%; transform: rotate(4deg); }

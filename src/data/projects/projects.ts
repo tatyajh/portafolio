@@ -70,7 +70,7 @@ export const PROJECTS: Project[] = [
     desc: 'Desarrollé la versión para navegador a partir del Figma entregado. Comparte las cuentas y la base de datos con la app móvil e integra el inicio de sesión y los flujos de la aplicación en una interfaz web.',
     stack: 'React · Vite · JavaScript · Supabase (PostgreSQL)',
     links: [{ label: 'Ver en línea', url: 'https://venux-web.vercel.app' }],
-    preview: { image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux', gallery: [{ image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux' }, { image: '/media/projects/reference/venux-2.png', alt: 'Segunda vista de la aplicación web Venux' }, { image: '/media/projects/reference/venux-3.png', alt: 'Tercera vista de la aplicación web Venux' }], url: 'venux-web.vercel.app' },
+    preview: { image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux', gallery: [{ image: '/media/projects/reference/venux-1.png', alt: 'Panel de perfiles de Venux' }, { image: '/media/projects/reference/venux-2.png', alt: 'Pantalla de acceso de Venux' }], url: 'venux-web.vercel.app' },
   },
   {
     id: 'mivaquita',
