@@ -3,15 +3,15 @@
 ## Orden de imágenes
 
 1. `assets/00-cover-pintada.png` — portada ilustrada.
-2. `assets/01-hilos-intencion.png` — intención y concepto.
-3. `assets/02-hilos-sistema.png` — sistema visual y recorrido.
-4. `assets/03-hilos-desarrollo.png` — programación e interacción.
+2. `assets/01-hilos-intencion.png` — intención y concepto, con la portada real integrada en una lámina pintada.
+3. `assets/02-hilos-sistema.png` — sistema visual, índice y recorrido real.
+4. `assets/03-hilos-desarrollo.png` — programación e interacción, con una captura real del portafolio.
 5. `assets/04-hilos-resultado.png` — resultado y evolución.
-6. `assets/01-hilos-collage.png` — pantallas reales del portafolio.
-7. `assets/02-hilos-estructura.jpeg` — estructura y navegación real.
-8. `assets/03-hilos-esencia.png` — lenguaje visual real del portafolio.
+6. `assets/05-hilos-portada-real.png` — captura original de la portada.
+7. `assets/06-hilos-banner-real.png` — captura original del encabezado.
+8. `assets/07-hilos-indice-real.png` — captura original del índice.
 
-La secuencia empieza con la portada y las láminas editoriales; las tres capturas reales van al final como evidencia del resultado.
+Las láminas combinan arte pintado con capturas reales del sitio. El arte funciona como marco y atmósfera; las interfaces se mantienen reconocibles como evidencia del trabajo de diseño y programación. No se usan fotos personales ni texto generado para sustituir las pantallas.
 
 ## Texto para Behance
 
