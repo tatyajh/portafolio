@@ -59,7 +59,7 @@ export const PROJECTS: Project[] = [
     desc: 'Programé la aplicación móvil a partir del diseño que me entregaron en Figma. Implementé el registro, los perfiles, los gestos para conectar con otras personas, los matches y el chat, con autenticación y datos en Supabase.',
     stack: 'React Native · Expo · JavaScript · Supabase (PostgreSQL)',
     links: [{ label: 'Ver versión web', url: 'https://venux-web.vercel.app' }],
-    preview: { image: '/media/projects/venux.png', alt: 'Identidad de Venux en la pantalla de acceso de su versión web', layout: 'identity', note: 'Referencia visual de la versión web; no es una captura de la app móvil.' },
+    preview: { image: '/media/projects/venux-mobile-real.png', alt: 'Logo y lado de marca de Venux en la pantalla de acceso', layout: 'identity', note: 'Referencia visual de la identidad; el código fuente de la app móvil no es público.' },
   },
   {
     id: 'venux-web',

@@ -45,7 +45,9 @@
 .cleanCover[data-project='venux'] .screenCollage { inset: 5% 18%; }
 .cleanCover[data-project='venux'] .collageScreen { border-radius: 1.8rem; background: #120d2b; border: 5px solid #28203f; box-shadow: 0 1.5rem 2.5rem #0005; }
 .cleanCover[data-project='venux'] .collageScreen1 { inset: 2% 0; transform: rotate(-3deg); }
+.cleanCover[data-project='venux'] .collageScreen1 img { object-position: left center; }
 .cleanCover[data-project='venux-web'] .screenCollage { inset: 16% 4% 18%; }
+.cleanCover[data-project='venux-web'] { background: #0c0824 url('/media/projects/venux-glow.png') center / cover no-repeat; }
 .cleanCover[data-project='venux-web'] .collageScreen { border-radius: .65rem; background: #18122f; border: 1px solid #cda6ff88; box-shadow: 0 1.5rem 2.5rem #0006; }
 .cleanCover[data-project='venux-web'] .collageScreen1 { inset: 4% 0; transform: perspective(900px) rotateY(-6deg) rotateZ(-2deg); }
 .cover[data-project='verse'] { background: linear-gradient(145deg, #1f1014, #704143); --accent: #f0c5b7; aspect-ratio: 4 / 5; }
