@@ -6,15 +6,21 @@ import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 // Lía habla como Navi: un llamado corto y la pista en una línea.
+// Guía los dos pasos que abren la portada: cortar y coser.
 const LOCKED_MESSAGES = [
   '¡Hey! ¡Escucha! ¿Ves esas tijeras? Pásalas por encima de PORTAFOLIO.',
-  '¡Oye! Si cortas algo, la aguja lo cose. Tranqui.',
-  '¡Mira! También puedes darle a Press start y entrar de una.',
+  '¡Mira! Primero corta y después cose con la aguja. Así se abren los botones.',
+  '¡Oye! Toca el saxofón si quieres música.',
+];
+
+const STITCH_MESSAGES = [
+  '¡Hey! ¡Primer corte! Ahora toma la aguja y cóselo.',
+  '¡Escucha! Pasa la aguja por encima de la letra cortada.',
 ];
 
 const UNLOCKED_MESSAGES = [
-  '¡Hey! ¡Primer corte!',
-  '¡Escucha! Prueba la aguja, a ver si la dejas como nueva.',
+  '¡Listo! Quedó cosido. Ya puedes entrar.',
+  '¡Mira! El carrete también se desenrolla.',
   '¡Vamos! Press start cuando quieras.',
 ];
 
@@ -27,12 +33,16 @@ const EXPLORING_MESSAGES = [
 const ENGLISH_MESSAGES = {
   locked: [
     'Hey! Listen! See those scissors? Drag them across PORTFOLIO.',
-    "Hey! If you cut something, the needle stitches it back. Don't worry.",
-    'Look! You can also hit Press start and jump right in.',
+    'Look! First cut, then stitch it with the needle. That opens the buttons.',
+    'Hey! Tap the saxophone if you want music.',
+  ],
+  stitch: [
+    'Hey! First cut! Now grab the needle and stitch it.',
+    'Listen! Move the needle over the cut letter.',
   ],
   unlocked: [
-    'Hey! First cut!',
-    "Listen! Try the needle. Let's see if you can fix it.",
+    "Done! It's stitched. You can go in now.",
+    'Look! The spool unwinds too.',
     "Come on! Press start whenever you're ready.",
   ],
   exploring: [
@@ -59,17 +69,22 @@ interface LiaDragState {
 
 interface PixelCompanionProps {
   unlocked: boolean;
+  /** En la portada: ya hubo un corte y falta coser. */
+  cut?: boolean;
   exploring?: boolean;
   fallbackAvailable?: boolean;
   onFallbackCut?: () => void;
+  onFallbackStitch?: () => void;
 }
 
 /** Lía acompaña la entrada y da pequeñas pistas al conversar. */
 export default function PixelCompanion({
   unlocked,
+  cut = false,
   exploring = false,
   fallbackAvailable = false,
   onFallbackCut,
+  onFallbackStitch,
 }: PixelCompanionProps) {
   const { locale } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
@@ -80,6 +95,7 @@ export default function PixelCompanion({
   const boundsRef = useRef<HTMLDivElement>(null);
   const guideRef = useRef<HTMLDivElement>(null);
   const previousUnlocked = useRef(unlocked);
+  const previousCut = useRef(cut);
   const previousExploring = useRef(exploring);
   const wasDraggingRef = useRef(false);
   const dragStateRef = useRef<LiaDragState | null>(null);
@@ -94,6 +110,15 @@ export default function PixelCompanion({
     }
     previousUnlocked.current = unlocked;
   }, [unlocked]);
+
+  useEffect(() => {
+    if (!previousCut.current && cut) {
+      setMessageIndex(0);
+      setPoseIndex(2);
+      setShowMessage(true);
+    }
+    previousCut.current = cut;
+  }, [cut]);
 
   useEffect(() => {
     if (!previousExploring.current && exploring) {
@@ -144,12 +169,12 @@ export default function PixelCompanion({
       ? ENGLISH_MESSAGES.exploring
       : unlocked
         ? ENGLISH_MESSAGES.unlocked
-        : ENGLISH_MESSAGES.locked
+        : cut ? ENGLISH_MESSAGES.stitch : ENGLISH_MESSAGES.locked
     : exploring
       ? EXPLORING_MESSAGES
       : unlocked
         ? UNLOCKED_MESSAGES
-        : LOCKED_MESSAGES;
+        : cut ? STITCH_MESSAGES : LOCKED_MESSAGES;
 
   const talk = () => {
     if (!showMessage) {
@@ -234,7 +259,7 @@ export default function PixelCompanion({
       <AnimatePresence mode="wait">
         {showMessage && (
           <motion.div
-            key={`${unlocked}-${messageIndex}`}
+            key={`${unlocked}-${cut}-${messageIndex}`}
             initial={{ opacity: 0, y: 8, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.96 }}
@@ -251,10 +276,12 @@ export default function PixelCompanion({
               ×
             </button>
             <span>LÍA</span>
-            <p>{messages[messageIndex]}</p>
+            <p>{messages[messageIndex % messages.length]}</p>
             {fallbackAvailable && !unlocked && (
-              <button type="button" onClick={onFallbackCut} className="pixel-cut-action">
-                {locale === 'en' ? '✂ You cut it' : '✂ Córtala tú'}
+              <button type="button" onClick={cut ? onFallbackStitch : onFallbackCut} className="pixel-cut-action">
+                {cut
+                  ? locale === 'en' ? 'You stitch it' : 'Cósela tú'
+                  : locale === 'en' ? '✂ You cut it' : '✂ Córtala tú'}
               </button>
             )}
           </motion.div>

@@ -8,9 +8,9 @@ import { awardThread } from '@/lib/threadProgress';
 import type { CollageTool } from '@/lib/collageAssets';
 
 interface ToolMoveDetail { x: number; y: number; category: CollageTool; axis: CutAxis }
-interface SplashTitleProps { onFirstCut?: () => void; title?: string }
+interface SplashTitleProps { onFirstCut?: () => void; onFirstStitch?: () => void; title?: string }
 
-export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: SplashTitleProps) {
+export default function SplashTitle({ onFirstCut, onFirstStitch, title = 'Portafolio' }: SplashTitleProps) {
   const { locale } = useLanguage();
   const reducedMotion = useReducedMotion();
   const letters = Array.from(title);
@@ -20,6 +20,7 @@ export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: Splash
   const [announcement, setAnnouncement] = useState('');
   const letterRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const firstCutReported = useRef(false);
+  const firstStitchReported = useRef(false);
   const applyTool = useCallback((i: number, category: CollageTool, axis: CutAxis, x: number, y: number) => {
     const before = cutsRef.current[i];
     const after = category === 'tijeras' ? cutPaper(before, axis, axis === 'h' ? y : x) : stitchPaper(before, x, y);
@@ -43,17 +44,24 @@ export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: Splash
     };
     const select = (event: Event) => setSelected((event as CustomEvent<CollageTool | null>).detail);
     const fallback = () => applyTool(0, 'tijeras', 'h', 50, 50);
+    // Coser sin arrastrar: cose la primera letra que tenga un corte abierto.
+    const stitchFallback = () => {
+      const i = cutsRef.current.findIndex(hasOpenCut);
+      if (i >= 0) applyTool(i, 'aguja', 'h', 50, 50);
+    };
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') window.dispatchEvent(new CustomEvent('splash-tool-select', { detail: null }));
     };
     window.addEventListener('splash-tool-move', move);
     window.addEventListener('splash-tool-select', select);
     window.addEventListener('splash-cut-action', fallback);
+    window.addEventListener('splash-stitch-action', stitchFallback);
     window.addEventListener('keydown', escape);
     return () => {
       window.removeEventListener('splash-tool-move', move);
       window.removeEventListener('splash-tool-select', select);
       window.removeEventListener('splash-cut-action', fallback);
+      window.removeEventListener('splash-stitch-action', stitchFallback);
       window.removeEventListener('keydown', escape);
     };
   }, [applyTool]);
@@ -63,8 +71,11 @@ export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: Splash
       firstCutReported.current = true;
       onFirstCut?.(); awardThread('first-cut');
     }
-    if (cuts.some(c => c.some(seam => seam.stitched))) awardThread('first-repair');
-  }, [cuts, onFirstCut]);
+    if (!firstStitchReported.current && cuts.some(c => c.some(seam => seam.stitched))) {
+      firstStitchReported.current = true;
+      onFirstStitch?.(); awardThread('first-repair');
+    }
+  }, [cuts, onFirstCut, onFirstStitch]);
 
   return (
     <>

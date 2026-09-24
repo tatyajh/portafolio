@@ -7,7 +7,7 @@ export const THREAD_LABELS = {
 };
 export type ThreadAchievement = keyof typeof THREAD_LABELS;
 let memory = '';
-export function getThreadSnapshot() {
+function getThreadSnapshot() {
   try { memory = window.sessionStorage.getItem(KEY) ?? memory; } catch { /* Storage is optional. */ }
   return memory;
 }
@@ -18,8 +18,3 @@ export function awardThread(id: ThreadAchievement) {
   try { window.sessionStorage.setItem(KEY, memory); } catch { /* Keep working in memory. */ }
   window.dispatchEvent(new CustomEvent(THREAD_EVENT, { detail: id }));
 }
-export function subscribeThreads(listener: () => void) {
-  window.addEventListener(THREAD_EVENT, listener);
-  return () => window.removeEventListener(THREAD_EVENT, listener);
-}
-export const getServerThreads = () => '';

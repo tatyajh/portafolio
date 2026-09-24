@@ -52,10 +52,14 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
   // así que esto solo afecta la primera carga.
   const [hasInteracted, setHasInteracted] = useState(initialNode !== 'inicio');
   const [hasCutTitle, setHasCutTitle] = useState(false);
+  const [hasStitched, setHasStitched] = useState(false);
+  // Las rutas se abren cuando se corta y se cose el título.
+  const unlocked = hasCutTitle && hasStitched;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const audioRef = useRef<HTMLAudioElement>(null);
   const unlockAfterCut = useCallback(() => setHasCutTitle(true), []);
+  const unlockAfterStitch = useCallback(() => setHasStitched(true), []);
 
   // Cambiar a la siguiente canción
   const nextTrack = useCallback(() => {
@@ -154,6 +158,47 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     };
   }, []);
 
+  // El saxofón de la portada enciende la música: tocarlo la alterna y
+  // arrastrarlo la arranca. Cuenta como interacción, así que el
+  // navegador permite reproducir.
+  useEffect(() => {
+    const onSax = (event: Event) => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      const action = (event as CustomEvent<'toggle' | 'start'>).detail;
+      if (audio.paused) {
+        audio.volume = MUSIC_VOLUME;
+        audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      } else if (action === 'toggle') {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    };
+    window.addEventListener('splash-music', onSax);
+    return () => window.removeEventListener('splash-music', onSax);
+  }, []);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('splash-music-state', { detail: isPlaying }));
+  }, [isPlaying]);
+
+  // Tocar el control de la portada es como darle a Press start, pero
+  // solo cuando ya se cortó y se cosió el título.
+  useEffect(() => {
+    if (!unlocked) return;
+    const onPress = () => {
+      setHasInteracted(true);
+      const audio = audioRef.current;
+      if (audio?.paused) {
+        audio.volume = MUSIC_VOLUME;
+        audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+      window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+    };
+    window.addEventListener('splash-press-start', onPress);
+    return () => window.removeEventListener('splash-press-start', onPress);
+  }, [unlocked]);
+
   // Volver a mostrar el splash cuando la navegación pide "Home"
   // (hasInteracted no tiene otra forma de resetearse una vez es true).
   // El audio de fondo sigue sonando igual, solo vuelve el overlay.
@@ -188,7 +233,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
               <p className="splash-name">Tatiana Alejandra Jaramillo Hoyos</p>
 
               {/* El corte y la costura funcionan con arrastre, toque y teclado. */}
-              <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} />
+              <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} onFirstStitch={unlockAfterStitch} />
 
               <p className="splash-script font-script">{selectCopy(locale, 'hilos invisibles', 'invisible threads')}</p>
               <p className="splash-roles">
@@ -197,10 +242,11 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
                   : <>Programo, <b>diseño</b> y hago <b>videojuegos</b>.</>}
               </p>
 
-              {/* Las rutas siempre están disponibles: cortar es opcional. */}
+              {/* Las rutas se abren al cortar y coser el título. */}
               <div className="splash-routes">
                 <button
                   type="button"
+                  disabled={!unlocked}
                   className="pixel-button"
                   onClick={() => {
                     handleFirstInteraction();
@@ -212,6 +258,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
                 </button>
                 <button
                   type="button"
+                  disabled={!unlocked}
                   className="pixel-button pixel-button--paper"
                   onClick={() => {
                     handleFirstInteraction();
@@ -227,16 +274,18 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
           </div>
 
           <PixelCompanion
-            unlocked={hasCutTitle}
+            unlocked={unlocked}
+            cut={hasCutTitle}
             fallbackAvailable
             onFallbackCut={() => window.dispatchEvent(new CustomEvent('splash-cut-action'))}
+            onFallbackStitch={() => window.dispatchEvent(new CustomEvent('splash-stitch-action'))}
           />
         </div>
       )}
 
       <ThreadProgress />
 
-      {hasInteracted && <PixelCompanion unlocked={hasCutTitle} exploring />}
+      {hasInteracted && <PixelCompanion unlocked exploring />}
 
       {/* Botón de control de audio */}
       {hasInteracted && (
