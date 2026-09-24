@@ -11,8 +11,8 @@ const NODE_EN: Record<string, NodeCopy> = {
   tecnico: { title: 'The technical route', text: 'The short route: profile, code and games.' },
   esencia: {
     title: 'Essence', subtitle: 'Chapter 1',
-    text: 'Before I knew I wanted to design, I was already designing.',
-    content: 'I was never satisfied with what I found. I looked for pieces that stores did not carry - vintage, dark, and able to tell a story. When I could not find them, I went to my grandmother. She helped me bring them to life, or told me who could make them. Without realizing it, I was already creating.',
+    text: 'I always wanted clothes nobody sold.',
+    content: 'I was never happy with what stores had. I wanted vintage, dark things, pieces that told a story. And they were almost never there.\n\nSo I went to my grandmother. She helped me make them, or told me who to have them made by.\n\nBack then I didn\'t call it design. I just wanted to wear something I liked.',
   },
   identidad: {
     title: 'Tatiana Alejandra', subtitle: 'Chapter 2',
@@ -31,8 +31,8 @@ const NODE_EN: Record<string, NodeCopy> = {
   },
   sonido: {
     title: 'Sound', subtitle: 'Chapter 5',
-    text: 'Before I knew how to explain myself, I was already playing.',
-    content: 'I have had the privilege of playing with the Metropolitan Philharmonic.\n\nThe saxophone taught me to breathe, keep time and, above all, stay quiet when the moment calls for it. In an orchestra, you cannot go your own way: you have to listen to what everyone else is doing and enter exactly where you belong. That has helped me in everything else I do.',
+    text: 'Music taught me that art has structure too.',
+    content: 'I play the saxophone, and I\'ve had the chance to play with the Metropolitan Philharmonic.\n\nA score is a lot like a program: it has structure, repetition, exact timing and rules you have to follow. But if you only follow the rules, it sounds flat. What makes it work is the intention you bring to it.\n\nI apply that same thing to what I do. In design, rhythm decides whether something feels right. In logic, structure is what holds everything together. And in a video game, music and the timing of every action are a big part of how playing it feels.\n\nThe orchestra also taught me to listen: to come in exactly when it\'s my turn and not go my own way. That\'s how teamwork works too.',
   },
   estructura: {
     title: 'Structure', subtitle: 'Chapter 6 · Systems engineering',
@@ -47,7 +47,7 @@ const NODE_EN: Record<string, NodeCopy> = {
   quiebre: {
     title: 'Turning Point', subtitle: 'Chapter 8',
     text: 'For a long time, I believed I was not a creative person.',
-    content: 'I always thought I was bad at art. At school I didn\'t even try. And if I didn\'t show interest, nobody noticed I couldn\'t do it.\n\nI stuck with what I knew I could do: logic, right answers, things that add up. Funny, since I grew up surrounded by art and sewing.\n\nThen a few things happened almost at once. My dad had a stroke. I was living far from home, speaking a language that still didn\'t come easy. Some days you just can\'t find the words, in Spanish or in the other language.\n\nThat\'s when I went back to making things with my hands. It wasn\'t a plan. It was how I said what I couldn\'t say out loud. And it turns out I wasn\'t as bad as I thought.',
+    content: 'At school, in the record teachers filled out for every student, they always wrote the same thing about me: little interest in art and in PE. And I believed it. I thought I just wasn\'t good at those things.\n\nNow I see it differently. Everything there was very rigid. Art meant filling pages with colors, and PE meant repeating whatever the teacher said. There wasn\'t much room to discover anything.\n\nThen life changed all at once. My dad had a stroke. I was living far from home, speaking a language that still didn\'t come easy. Some days you just can\'t find the words, in Spanish or in the other language.\n\nThat\'s when I went back to making things with my hands, with nobody grading me. And it turns out art was for me after all. I even fell in love with a sport, pole, which is pure art.',
   },
   diseno: {
     title: 'Fashion Design', subtitle: 'Chapter 9',
@@ -57,7 +57,7 @@ const NODE_EN: Record<string, NodeCopy> = {
   mixto: {
     title: 'Guava paste & cheese', subtitle: 'Chapter 10',
     text: 'Nothing alike, but better together.',
-    content: 'I\'ve done performances where I bring both together. I do part of the choreography on the pole, then I stand up, grab the sax and play. And the whole thing tells a story.\n\nThe idea is that it doesn\'t feel like two separate acts: the movement leads me to the music, and the music takes me back to the pole.\n\nThese videos are from those moments.',
+    content: 'Almost everything I do comes from combining things that, in theory, have nothing to do with each other: engineering and fashion, code and drawing.\n\nWhere it shows the most is on stage. I\'ve put together performances where part of the choreography happens on the pole and, in the middle of the piece, I step down, pick up the sax and keep telling the story through music. Movement and sound don\'t run separately: one leads into the other.\n\nIt\'s the same thing I look for when I make video games, which is what comes in the next chapter: for programming and art to work as one.',
   },
   juego: {
     title: 'Video Games', subtitle: 'Chapter 11',
@@ -65,8 +65,8 @@ const NODE_EN: Record<string, NodeCopy> = {
     content: 'Small worlds made with Unity and C#, playable right here in the browser with no download required.\n\nMaking games forces me to think about the person on the other side: if they do not understand what to do in the first few seconds, they leave. More code does not fix that; testing with people does.',
   },
   fin: {
-    title: 'Thank You', text: 'Thanks for making it this far.',
-    content: 'If you want to talk about a project, a game or anything else, reach out wherever is easiest for you.',
+    title: 'Thank You', text: 'Glad you made it this far.',
+    content: 'If you want to talk about a project or a game, reach out wherever is easiest for you.',
   },
 };
 

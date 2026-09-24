@@ -1,6 +1,8 @@
 // Pistas de Lía en cada lugar del portafolio. Habla como Navi: un
 // llamado corto y una pista concreta sobre algo que sí hay en la página.
-export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
+// Los capítulos con `video` abren con un mensaje que ofrece pausar la
+// música de fondo y darle play al video con sonido.
+export const LIA_TIPS: Record<string, { es: string[]; en: string[]; video?: boolean }> = {
   mapa: {
     es: ['¡Hey! Elige cualquier capítulo. No hay un orden correcto.', '¡Mira! El carrete, el papel y el control de arriba te llevan directo a su capítulo.'],
     en: ["Hey! Pick any chapter. There's no right order.", 'Look! The spool, the paper and the controller up top take you straight to their chapter.'],
@@ -14,6 +16,7 @@ export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
     en: ['Look! You can drag the photos around.', 'Hey! The arrows up top take you to the next chapter.'],
   },
   identidad: {
+    video: true,
     es: ['¡Hey! Dale play a los videos.', '¡Mira! Más abajo está lo que hace Tatiana cuando no está trabajando.'],
     en: ['Hey! Press play on the videos.', 'Look! Further down is what Tatiana does when she is not working.'],
   },
@@ -26,6 +29,7 @@ export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
     en: ['Look! You can move the photos.', "Hey! The last image is about the family's sculptor."],
   },
   sonido: {
+    video: true,
     es: ['¡Escucha! Dale play al video y la oyes tocar.', '¡Mira! Mientras suena el video, la música de fondo baja sola.'],
     en: ['Listen! Press play on the video to hear her play.', 'Look! While the video plays, the background music turns down by itself.'],
   },
@@ -34,10 +38,12 @@ export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
     en: ['Hey! Every project has a link to see it live.', 'Look! Tap "See all screens" to see more of each project.'],
   },
   cuerpo: {
-    es: ['¡Mira! Las fotos están agrupadas por figura.', '¡Hey! Dale play a los videos de pole.'],
-    en: ['Look! The photos are grouped by move.', 'Hey! Press play on the pole videos.'],
+    video: true,
+    es: ['¡Mira! Aquí el deporte también es arte: fuerza, pero con coreografía y expresión.', '¡Hey! Dale play a los videos de pole.'],
+    en: ['Look! Here sport is art too: strength, but with choreography and expression.', 'Hey! Press play on the pole videos.'],
   },
   mixto: {
+    video: true,
     es: ['¡Hey! En estos videos el pole y el saxofón van en la misma coreografía.'],
     en: ['Hey! In these videos, pole and sax share the same choreography.'],
   },
@@ -46,6 +52,7 @@ export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
     en: ['This is one of the most personal chapters. Take your time.'],
   },
   diseno: {
+    video: true,
     es: ['¡Mira! Aquí están sus desfiles y bocetos.', '¡Hey! Dale play a los videos de las pasarelas.'],
     en: ['Look! Here are her runway shows and sketches.', 'Hey! Press play on the runway videos.'],
   },
@@ -57,4 +64,9 @@ export const LIA_TIPS: Record<string, { es: string[]; en: string[] }> = {
     es: ['¡Hey! Aquí están todas las formas de escribirle a Tatiana.', '¡Oye! Si le escribes, te responde ella, no yo.'],
     en: ['Hey! Here are all the ways to reach Tatiana.', "Hey! If you write to her, she answers, not me."],
   },
+};
+
+export const LIA_VIDEO_TIP = {
+  es: { text: '¡Hey! Aquí hay videos con sonido. ¿Pauso la música de fondo y le damos play?', button: '▶ Sí, ver el video' },
+  en: { text: 'Hey! There are videos with sound here. Want me to pause the music and play one?', button: '▶ Yes, play the video' },
 };

@@ -9,11 +9,11 @@ import type { CollageObject, CollageTool } from '@/lib/collageAssets';
 // sobre los bordes verdes alrededor del papel. En celular la ilustración se
 // recorta al centro, así que mx es un desplazamiento en vw desde el centro.
 const PLACEMENT: { object: CollageObject; x: number; y: number; mx: number; my: number; r: number }[] = [
-  { object: 'tijeras', x: 79, y: 1.5, mx: 22, my: 6, r: -28 },
-  { object: 'aguja', x: 36, y: 3, mx: -36, my: 7, r: 8 },
+  { object: 'tijeras', x: 79, y: 1.5, mx: 24, my: 11, r: -28 },
+  { object: 'aguja', x: 36, y: 3, mx: -38, my: 12, r: 8 },
   { object: 'carrete', x: 29, y: 80, mx: -40, my: 62, r: -6 },
   { object: 'gamepad', x: 52, y: 81, mx: -34, my: 86, r: 5 },
-  { object: 'saxofon', x: 91.5, y: 26, mx: -7, my: 5, r: 12 },
+  { object: 'saxofon', x: 91.5, y: 26, mx: -7, my: 10, r: 12 },
 ];
 
 export default function SplashPlayground() {

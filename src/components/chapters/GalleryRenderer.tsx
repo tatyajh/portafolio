@@ -18,7 +18,6 @@ import { getImageCaptions } from '@/data/translations';
 // diseño es la excepción deliberada: ahí se prefiere un grid estático
 // y ordenado en vez del collage arrastrable/superpuesto.
 const NODE_TEMPLATE: Record<string, { template: 'hero' | 'cluster' | 'spread' | 'grid'; mode: CollageMode }> = {
-  identidad: { template: 'hero', mode: 'journal' },
   quiebre: { template: 'hero', mode: 'journal' },
   mixto: { template: 'hero', mode: 'journal' },
   sonido: { template: 'spread', mode: 'documentary' },

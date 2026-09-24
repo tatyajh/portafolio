@@ -155,8 +155,11 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     const onSax = (event: Event) => {
       const audio = audioRef.current;
       if (!audio) return;
-      const action = (event as CustomEvent<'toggle' | 'start'>).detail;
-      if (audio.paused) {
+      const action = (event as CustomEvent<'toggle' | 'start' | 'pause'>).detail;
+      if (action === 'pause') {
+        audio.pause();
+        setIsPlaying(false);
+      } else if (audio.paused) {
         audio.volume = MUSIC_VOLUME;
         audio.play().then(() => setIsPlaying(true)).catch(() => {});
       } else if (action === 'toggle') {
@@ -192,6 +195,17 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     window.addEventListener('splash-press-start', onPress);
     return () => window.removeEventListener('splash-press-start', onPress);
   }, [unlocked]);
+
+  // En la portada Lía corre a señalar la herramienta del paso actual:
+  // primero las tijeras y, después del primer corte, la aguja.
+  useEffect(() => {
+    if (hasInteracted || hasStitched) return;
+    const target = hasCutTitle ? '.splash-stage .collage-piece--aguja' : '.splash-stage .collage-piece--tijeras';
+    const timer = window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('lia-point', { detail: { selector: target } }));
+    }, hasCutTitle ? 900 : 1800);
+    return () => window.clearTimeout(timer);
+  }, [hasInteracted, hasCutTitle, hasStitched]);
 
   // Volver a mostrar el splash cuando la navegación pide "Home"
   // (hasInteracted no tiene otra forma de resetearse una vez es true).

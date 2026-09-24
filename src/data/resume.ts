@@ -16,3 +16,6 @@ export const RESUME_LINKS: ResumeLink[] = [
 // juntaba las partes si estaban al derecho).
 const REVERSED_EMAIL = 'moc.liamg@ollimaraj.ardnajelat';
 export const getContactEmail = () => REVERSED_EMAIL.split('').reverse().join('');
+// WhatsApp con indicativo, guardado al revés por la misma razón.
+const REVERSED_WHATSAPP = '374564231375';
+export const getContactWhatsapp = () => REVERSED_WHATSAPP.split('').reverse().join('');

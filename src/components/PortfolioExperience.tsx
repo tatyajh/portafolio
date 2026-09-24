@@ -451,16 +451,21 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
               )}
 
               {node.content && node.id !== 'esencia' && node.id !== 'estructura' && (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className={`text-center leading-relaxed mb-8 text-lg whitespace-pre-line ${
-                    node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
-                  }`}
+                // Con ilustración de fondo: va como marca de agua y el texto sube de contraste.
+                <div
+                  className={node.backdrop ? `chapter-backdrop chapter-backdrop--${node.theme === 'light' ? 'light' : 'dark'}` : undefined}
+                  style={node.backdrop ? { '--backdrop': `url("${node.backdrop}")` } as React.CSSProperties : undefined}
                 >
-                  {node.content}
-                </motion.p>
+                  <p
+                    className={`text-center leading-relaxed mb-8 text-lg whitespace-pre-line ${
+                      node.backdrop
+                        ? node.theme === 'light' ? 'text-black-warm' : 'text-ivory'
+                        : node.theme === 'light' ? 'text-black-warm/70' : 'text-ivory/80'
+                    }`}
+                  >
+                    {node.content}
+                  </p>
+                </div>
               )}
 
               {/* Estructura: debajo del bloque de arriba van las otras

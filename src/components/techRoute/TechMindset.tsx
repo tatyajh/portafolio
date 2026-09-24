@@ -7,7 +7,6 @@ import { useLanguage } from '@/context/LanguageContext';
 const TECH_MINDSET_EN = [
   { label: "Don't let it break", quote: 'Before calling something done I test it, with automated tests in Jest, Cypress or Playwright.' },
   { label: 'What design gave me', quote: "Fashion taught me to think about who will use it. I apply that to characters and interfaces." },
-  { label: 'AI as a tool', quote: 'I use it to prototype and test ideas fast, but first I write down clearly what I want to build.' },
   { label: 'Security from the start', quote: 'I know cybersecurity, so I think about risks while designing, not at the end.' },
 ];
 

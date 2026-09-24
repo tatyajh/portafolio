@@ -42,6 +42,5 @@ export const TECH_IDENTITY_ROLES: string[] = [
 export const TECH_MINDSET_POINTS: TechMindsetPoint[] = [
   { label: 'Que no se rompa', quote: 'Antes de dar algo por terminado lo pruebo, con pruebas automáticas en Jest, Cypress o Playwright.' },
   { label: 'Lo que traje del diseño', quote: 'La moda me enseñó a pensar en quién lo va a usar. Lo aplico al diseñar personajes e interfaces.' },
-  { label: 'La IA como herramienta', quote: 'La uso para prototipar y probar ideas rápido, pero primero escribo bien qué quiero construir.' },
   { label: 'Seguridad desde el principio', quote: 'Sé de ciberseguridad, así que pienso en los riesgos desde el diseño y no al final.' },
 ];

@@ -42,3 +42,31 @@ export function playFairyChime() {
     // Sin audio disponible: Lía igual muestra su mensaje.
   }
 }
+
+// "Chac" de tijeras: un golpe corto de ruido filtrado más un clic metálico.
+// Suena cada vez que las tijeras se cierran sobre las letras.
+export function playSnip() {
+  if (!unlocked || typeof window === 'undefined') return;
+  try {
+    ctx ??= new AudioContext();
+    if (ctx.state === 'suspended') void ctx.resume();
+    const t = ctx.currentTime;
+    const length = 0.07;
+    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * length), ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 3;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 3800;
+    filter.Q.value = 0.9;
+    const gain = ctx.createGain();
+    gain.gain.value = 0.35;
+    noise.connect(filter).connect(gain).connect(ctx.destination);
+    noise.start(t);
+    note(ctx, 5200, t, 0.04, 0.03);
+  } catch {
+    // Sin audio disponible: el corte se ve igual.
+  }
+}

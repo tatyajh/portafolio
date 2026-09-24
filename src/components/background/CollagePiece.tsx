@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { collageAssets, type CollageObject, type CollageTool } from '@/lib/collageAssets';
+import { playSnip } from '@/lib/fairyChime';
 
 // Cada cuánto abren y cierran las tijeras mientras cortan.
 const SNIP_MS = 110;
@@ -27,11 +28,10 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
   const [dragging, setDragging] = useState(false);
   const [closed, setClosed] = useState(false);
   const lastSnip = useRef(0);
+  const closedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
   const gesture = useRef<{ id: number; x: number; y: number; lastX: number; lastY: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
-  const sound = useRef<HTMLAudioElement | null>(null);
-  useEffect(() => () => { sound.current?.pause(); }, []);
 
   useEffect(() => {
     if (object !== 'saxofon') return;
@@ -67,14 +67,13 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
         const now = performance.now();
         if (now - lastSnip.current >= SNIP_MS) {
           lastSnip.current = now;
-          setClosed(c => !c);
+          closedRef.current = !closedRef.current;
+          if (closedRef.current) playSnip();
+          setClosed(closedRef.current);
         }
-        // Suena en bucle mientras las tijeras pasan por las letras.
-        if (!sound.current) { sound.current = new Audio('/media/audio/tijeras.mp3'); sound.current.loop = true; sound.current.volume = 0.4; }
-        if (sound.current.paused) void sound.current.play().catch(() => {});
       } else {
+        closedRef.current = false;
         setClosed(false);
-        sound.current?.pause();
       }
     }
     g.lastX = event.clientX; g.lastY = event.clientY;
@@ -86,8 +85,8 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
     suppressClick.current = g.moved;
     gesture.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    closedRef.current = false;
     setDragging(false); setClosed(false);
-    sound.current?.pause();
     // Arrastrar el saxofón arranca la música; tocarlo la alterna (ver onClick).
     if (object === 'saxofon' && g.moved) {
       window.dispatchEvent(new CustomEvent('splash-music', { detail: 'start' }));
@@ -136,6 +135,10 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
       >
         <Image src={asset.image} alt="" width={110} height={110} loading="eager" draggable={false}
           className={closed ? 'is-hidden' : undefined} />
+        {/* Mientras suena la música, el saxofón suelta notas */}
+        {object === 'saxofon' && playing && (
+          <span className="sax-notes" aria-hidden="true"><i>♪</i><i>♫</i><i>♩</i><i>♬</i></span>
+        )}
         {/* Las dos poses de las tijeras se cargan desde el inicio para que el cambio sea instantáneo */}
         {'activeImage' in asset && (
           <Image src={asset.activeImage} alt="" width={110} height={110} loading="eager" draggable={false}

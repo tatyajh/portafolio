@@ -137,8 +137,8 @@ export default function ResumeCVPanel() {
   const gameResumes = CV_VARIANTS.filter(variant => variant.group === 'videojuegos');
   const completeResumes = CV_VARIANTS.filter(variant => variant.group === 'completo');
   const profileAreas = locale === 'es'
-    ? ['Unity + C#', 'React + TypeScript', 'UX y diseño creativo', 'IA para prototipar']
-    : ['Unity + C#', 'React + TypeScript', 'UX and creative design', 'AI-assisted prototyping'];
+    ? ['Unity + C#', 'React + TypeScript', 'UX y diseño creativo']
+    : ['Unity + C#', 'React + TypeScript', 'UX and creative design'];
   const step = SECURITY_STEPS[locale][securityStep];
 
   const answerChallenge = (correct: boolean) => {
@@ -179,14 +179,6 @@ export default function ResumeCVPanel() {
           </div>
         </div>
 
-        <div className="cv-presentation-note" aria-label={selectCopy(locale, 'Cómo elegir mi hoja de vida', 'How to choose my résumé')}>
-          <span>{selectCopy(locale, 'Antes de descargar', 'Before downloading')}</span>
-          <p>{selectCopy(
-            locale,
-            'La historia visual está aquí. Los PDF están preparados para los procesos de selección.',
-            'The visual story lives here. The PDF résumés are prepared for selection processes.',
-          )}</p>
-        </div>
       </div>
 
       <div className="cv-downloads">

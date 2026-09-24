@@ -4,7 +4,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
-import { LIA_TIPS } from '@/data/liaTips';
+import { LIA_TIPS, LIA_VIDEO_TIP } from '@/data/liaTips';
 import { playFairyChime } from '@/lib/fairyChime';
 
 // Lía habla como Navi: un llamado corto y la pista en una línea.
@@ -114,7 +114,7 @@ export default function PixelCompanion({
       setShowMessage(true);
       // La pista aparece al llegar y se va sola para no tapar el contenido.
       window.clearTimeout(hide);
-      hide = window.setTimeout(() => { if (!pointingRef.current) setShowMessage(false); }, 7000);
+      hide = window.setTimeout(() => { if (!pointingRef.current) setShowMessage(false); }, LIA_TIPS[id]?.video ? 12000 : 7000);
     };
     const initial = document.documentElement.dataset.node;
     if (initial) onNode(initial);
@@ -128,13 +128,15 @@ export default function PixelCompanion({
   // Cuando Lía corre a señalar algo: su mensaje, hacia dónde mira y si va corriendo.
   const [pointMessage, setPointMessage] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
+  // Si Lía se para en la mitad izquierda, su globo se abre hacia la derecha para no cortarse.
+  const [bubbleStart, setBubbleStart] = useState(false);
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
-    if (!exploring) return;
     let back: number | undefined;
     const onPoint = (event: Event) => {
-      const { selector, es, en } = (event as CustomEvent<{ selector: string; es: string; en: string }>).detail;
+      // Sin texto propio, Lía muestra el mensaje que ya tenía (ej. en la portada).
+      const { selector, es, en } = (event as CustomEvent<{ selector: string; es?: string; en?: string }>).detail;
       const target = document.querySelector(selector);
       const avatar = guideRef.current?.querySelector('.pixel-companion-avatar');
       if (!target || !avatar) return;
@@ -143,23 +145,26 @@ export default function PixelCompanion({
       // Se para al lado del objeto y lo señala con la mano levantada.
       const toTheLeft = t.left + t.width / 2 > window.innerWidth * 0.6;
       const destLeft = Math.min(Math.max(toTheLeft ? t.left - a.width * 0.85 : t.right - a.width * 0.15, 8), window.innerWidth - a.width - 8);
-      const destTop = Math.min(Math.max(t.top + t.height * 0.25, 90), window.innerHeight - a.height - 8);
+      // Deja espacio arriba para el globo, que va encima de Lía.
+      const destTop = Math.min(Math.max(t.top + t.height * 0.25, 170), window.innerHeight - a.height - 8);
       const options = { duration: prefersReducedMotion ? 0 : 1.1, ease: 'easeInOut' as const };
       pointingRef.current = true;
       setShowMessage(false);
       setFlipped(toTheLeft);
+      setBubbleStart(destLeft < window.innerWidth / 2);
       setPoseIndex(0);
       setRunning(true);
       animate(liaX, liaX.get() + destLeft - a.left, options);
       animate(liaY, liaY.get() + destTop - a.top, { ...options, onComplete: () => {
         setRunning(false);
-        setPointMessage(locale === 'en' ? en : es);
+        setPointMessage((locale === 'en' ? en : es) ?? null);
         setShowMessage(true);
         // Después vuelve a su esquina para no tapar el Índice.
         back = window.setTimeout(() => {
           pointingRef.current = false;
           setPointMessage(null);
           setFlipped(false);
+          setBubbleStart(false);
           animate(liaX, 0, options);
           animate(liaY, 0, options);
         }, 9000);
@@ -231,9 +236,12 @@ export default function PixelCompanion({
     return () => window.clearInterval(poseTimer);
   }, [exploring, isDragging, prefersReducedMotion]);
 
-  const tips = nodeId ? LIA_TIPS[nodeId]?.[locale === 'en' ? 'en' : 'es'] : undefined;
+  const lang = locale === 'en' ? 'en' : 'es';
+  const nodeTips = nodeId ? LIA_TIPS[nodeId] : undefined;
+  const tips = nodeTips?.[lang];
+  const hasVideo = exploring && !!nodeTips?.video;
   const messages = exploring && tips
-    ? [...tips, locale === 'en' ? ENGLISH_MESSAGES.exploring[0] : EXPLORING_MESSAGES[0]]
+    ? [...(hasVideo ? [LIA_VIDEO_TIP[lang].text] : []), ...tips, locale === 'en' ? ENGLISH_MESSAGES.exploring[0] : EXPLORING_MESSAGES[0]]
     : locale === 'en'
     ? exploring
       ? ENGLISH_MESSAGES.exploring
@@ -251,6 +259,17 @@ export default function PixelCompanion({
   useEffect(() => {
     if (showMessage) playFairyChime();
   }, [showMessage, messageText]);
+
+  // Pausa la música de fondo, lleva al primer video y le activa el sonido.
+  const playChapterVideo = () => {
+    window.dispatchEvent(new CustomEvent('splash-music', { detail: 'pause' }));
+    const video = document.querySelector<HTMLVideoElement>('main video');
+    if (!video) return;
+    video.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    video.muted = false;
+    void video.play().catch(() => {});
+    setShowMessage(false);
+  };
 
   const talk = () => {
     setPointMessage(null);
@@ -330,7 +349,7 @@ export default function PixelCompanion({
       <motion.div
         ref={guideRef}
         style={{ x: liaX, y: liaY }}
-        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''} ${running ? 'is-running' : ''} ${flipped ? 'is-flipped' : ''}`}
+        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''} ${running ? 'is-running' : ''} ${flipped ? 'is-flipped' : ''} ${bubbleStart ? 'is-bubble-start' : ''}`}
         data-lia-companion
       >
       <AnimatePresence mode="wait">
@@ -354,6 +373,11 @@ export default function PixelCompanion({
             </button>
             <span>LÍA</span>
             <p>{messageText}</p>
+            {hasVideo && messageIndex % messages.length === 0 && !pointMessage && (
+              <button type="button" onClick={playChapterVideo} className="pixel-cut-action">
+                {LIA_VIDEO_TIP[lang].button}
+              </button>
+            )}
             {fallbackAvailable && !unlocked && (
               <button type="button" onClick={cut ? onFallbackStitch : onFallbackCut} className="pixel-cut-action">
                 {cut
