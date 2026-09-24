@@ -17,7 +17,7 @@ const NODE_EN: Record<string, NodeCopy> = {
   identidad: {
     title: 'Tatiana Alejandra', subtitle: 'Chapter 2',
     text: 'Beyond work and projects.',
-    content: 'This chapter has no projects or deliverables.\n\nIt holds memories, places and people: the moments that do not belong in a portfolio, but still explain why I make what I make.\n\nAnd the times when I\'m not producing anything. I read a lot and watch plenty of anime, which gives me more than I admit: framing, color, ways of telling a story. I listen to jazz, metal or classical, depending on the day. And I love sitting down with a glass of wine or a beer without doing anything productive.\n\nMuch of what ends up in my work comes from there.',
+    content: 'This chapter has no projects or deliverables.\n\nIt holds memories, places and people: the moments that do not belong in a portfolio, but still explain why I make what I make.\n\nAnd the times when I\'m not producing anything. I read a lot and watch plenty of anime, which gives me more than I admit: framing, color, ways of telling a story. I listen to jazz, metal or classical, depending on the day, almost always with a coffee next to me, because I drink a lot of it. And I love sitting down with a glass of wine or a beer without doing anything productive.\n\nMuch of what ends up in my work comes from there.',
   },
   perfil: {
     title: 'Profile', subtitle: 'Chapter 3',

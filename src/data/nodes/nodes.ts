@@ -119,7 +119,7 @@ export const NODES: Record<string, Node> = {
     category: 'esencia',
     subtitle: 'Capítulo 2',
     text: 'Más allá del trabajo y los proyectos.',
-    content: 'Este capítulo no tiene proyectos ni entregas.\n\nSon recuerdos, lugares y personas: los momentos que no van en un portafolio pero que también explican por qué hago lo que hago.\n\nY los ratos en que no estoy produciendo nada. Leo bastante y veo mucho anime, del que me llevo más de lo que admito: encuadres, colores, manera de contar. Escucho jazz, metal o clásica, según el día. Y me encanta sentarme con un vino o una cerveza sin hacer nada productivo.\n\nDe ahí sale buena parte de lo que después termina en lo que hago.',
+    content: 'Este capítulo no tiene proyectos ni entregas.\n\nSon recuerdos, lugares y personas: los momentos que no van en un portafolio pero que también explican por qué hago lo que hago.\n\nY los ratos en que no estoy produciendo nada. Leo bastante y veo mucho anime, del que me llevo más de lo que admito: encuadres, colores, manera de contar. Escucho jazz, metal o clásica, según el día, casi siempre con un café al lado, porque tomo muchísimo. Y me encanta sentarme con un vino o una cerveza sin hacer nada productivo.\n\nDe ahí sale buena parte de lo que después termina en lo que hago.',
     videos: [MEDIA.video.me, MEDIA.video.me2],
     backdrop: MEDIA.images.anexo[0],
     connections: ['perfil', 'fin', 'mapa', 'mixto'],

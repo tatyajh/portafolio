@@ -987,13 +987,13 @@ body {
 .chapter-backdrop::before {
   content: ''; position: absolute; inset: -1rem -2rem; z-index: -1;
   background: var(--backdrop) center / cover no-repeat;
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
-  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 55%, transparent 85%);
+  mask-image: radial-gradient(ellipse at center, #000 55%, transparent 85%);
 }
-.chapter-backdrop--dark::before { opacity: .2; filter: saturate(.8); }
-.chapter-backdrop--light::before { opacity: .28; }
-.chapter-backdrop--dark p { text-shadow: 0 1px 14px rgba(10, 8, 8, .85), 0 0 2px rgba(10, 8, 8, .6); }
-.chapter-backdrop--light p { text-shadow: 0 1px 12px rgba(250, 245, 240, .95); }
+.chapter-backdrop--dark::before { opacity: .38; }
+.chapter-backdrop--light::before { opacity: .5; }
+.chapter-backdrop--dark p { font-weight: 500; text-shadow: 0 0 3px rgba(10, 8, 8, .95), 0 1px 16px rgba(10, 8, 8, .95); }
+.chapter-backdrop--light p { color: #1f1712; font-weight: 500; text-shadow: 0 0 3px rgba(250, 245, 240, 1), 0 0 14px rgba(250, 245, 240, 1), 0 0 26px rgba(250, 245, 240, .9); }
 
 /* Guiño a Zelda: tres triángulos dorados junto al nombre de Lía y como
    piquito del globo que apunta hacia ella. */
