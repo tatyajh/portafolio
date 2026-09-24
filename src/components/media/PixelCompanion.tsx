@@ -219,7 +219,11 @@ export default function PixelCompanion({
           setBubbleStart(false);
           setRunning(true);
           animate(liaX, 0, options);
-          animate(liaY, 0, { ...options, onComplete: () => setRunning(false) });
+          animate(liaY, 0, { ...options, onComplete: () => {
+            setRunning(false);
+            // En la portada la misión sigue a la vista; en los capítulos, no.
+            if (!exploring) setShowMessage(true);
+          } });
         }, 9000);
       } });
     };

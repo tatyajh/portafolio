@@ -249,6 +249,11 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
                   ? <>I code, <b>design</b> and make <b>video games</b>.</>
                   : <>Programo, <b>diseño</b> y hago <b>videojuegos</b>.</>}
               </p>
+              <p className="splash-aside font-script">
+                {selectCopy(locale,
+                  'también toco saxofón y subo videos de pole, aunque no los hago bien',
+                  "I also play the sax and post pole videos, even though I'm not good at them")}
+              </p>
 
               {/* Las rutas se abren al cortar y coser el título. */}
               <div className="splash-routes">

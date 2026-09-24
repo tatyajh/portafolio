@@ -870,6 +870,7 @@ body {
 .splash-script { font-size: 2.6cqw; color: #7a1e1e; transform: rotate(-2deg); }
 .splash-roles { margin-top: 1.4cqw; font-family: var(--font-playfair), serif; font-style: italic; font-size: 1.25cqw; color: #5b4a3a; }
 .splash-roles b { font-style: normal; font-weight: 600; color: var(--color-ink); }
+.splash-aside { margin-top: .3cqw; font-size: 1.45cqw; line-height: 1.15; color: #7a1e1e; max-width: 34cqw; transform: rotate(-1deg); }
 .splash-routes { display: flex; gap: 1.4cqw; margin-top: 2.3cqw; }
 
 .paper-letter { position: relative; display: inline-block; font: inherit; letter-spacing: inherit; padding: 0; border: 0; background: none; color: inherit; }
@@ -955,10 +956,21 @@ body {
    pantalla y los recortes se ubican respecto al centro visible. */
 @media (max-aspect-ratio: 1/1) {
   .splash-content { left: 50%; width: 92vw; transform: translateX(-50%); top: 23%; height: auto; }
-  .splash-name { font-size: 2.6vw; letter-spacing: .25em; }
-  .splash-paper-title { font-size: 15vw; }
-  .splash-script { font-size: 7vw; }
-  .splash-roles { font-size: 4vw; margin-top: 3vw; }
+  /* En pantallas verticales el tamaño depende del ancho, pero con tope por
+     la altura, para que en tablets el texto no empuje los botones. */
+  .splash-name { font-size: min(2.6vw, 1.5vh); letter-spacing: .25em; }
+  .splash-paper-title { font-size: min(15vw, 8vh); }
+  .splash-script { font-size: min(7vw, 3.8vh); }
+  .splash-roles { font-size: min(4vw, 2.2vh); margin-top: min(3vw, 1.6vh); }
+  .splash-routes { flex-direction: column; gap: min(5vw, 2.6vh); margin-top: min(7vw, 3.6vh); }
+  .pixel-button { font-size: min(4vw, 2.1vh); padding: min(3.2vw, 1.7vh) min(5vw, 2.6vh); box-shadow: 0 -1vw 0 0 var(--edge), 0 1vw 0 0 var(--edge), -1vw 0 0 0 var(--edge), 1vw 0 0 0 var(--edge), inset 0 -1vw 0 0 rgba(0,0,0,.28); }
+  .pixel-button-arrow { margin-right: 2vw; }
+  .collage-spot { left: calc(50% + var(--mx)); top: var(--my); width: 15vw; }
+  .paper-fragment-shadow { filter: drop-shadow(0 .4vw .5vw rgba(40, 25, 15, .32)); }
+  .splash-aside { font-size: min(4.4vw, 2.4vh); max-width: 80vw; margin-top: 1vw; }
+  .splash-screen .pixel-companion-avatar { width: 88px; height: 106px; }
+  .splash-screen .pixel-companion-message { width: min(60vw, 230px); padding: .6rem 1.8rem .6rem .8rem; }
+  .splash-screen .pixel-companion-message p { font-size: .85rem; }
   .splash-routes { flex-direction: column; gap: 5vw; margin-top: 7vw; }
   .pixel-button { font-size: 4vw; padding: 3.2vw 5vw; box-shadow: 0 -1vw 0 0 var(--edge), 0 1vw 0 0 var(--edge), -1vw 0 0 0 var(--edge), 1vw 0 0 0 var(--edge), inset 0 -1vw 0 0 rgba(0,0,0,.28); }
   .pixel-button-arrow { margin-right: 2vw; }
