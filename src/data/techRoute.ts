@@ -40,8 +40,8 @@ export const TECH_IDENTITY_ROLES: string[] = [
 // como si fuera ingeniera de calidad (no lo es) y la segunda sonaba a
 // folleto corporativo.
 export const TECH_MINDSET_POINTS: TechMindsetPoint[] = [
-  { label: 'Que no se rompa', quote: 'rigor de ingeniería, pruebas automatizadas y arquitecturas escalables' },
-  { label: 'Lo que traje del diseño', quote: 'una mirada creativa que traigo del diseño de modas, aplicada al diseño de personajes y a las decisiones de UI/UX' },
-  { label: 'La IA como herramienta', quote: 'trabajo con Spec-Driven Development y uso la IA de forma estratégica para prototipar y validar ideas más rápido' },
-  { label: 'Pensar la seguridad desde el principio', quote: 'mis conocimientos de ciberseguridad refuerzan la calidad y la seguridad desde la etapa de diseño' },
+  { label: 'Que no se rompa', quote: 'Antes de dar algo por terminado lo pruebo, con pruebas automáticas en Jest, Cypress o Playwright.' },
+  { label: 'Lo que traje del diseño', quote: 'La moda me enseñó a pensar en quién lo va a usar. Lo aplico al diseñar personajes e interfaces.' },
+  { label: 'La IA como herramienta', quote: 'La uso para prototipar y probar ideas rápido, pero primero escribo bien qué quiero construir.' },
+  { label: 'Seguridad desde el principio', quote: 'Sé de ciberseguridad, así que pienso en los riesgos desde el diseño y no al final.' },
 ];

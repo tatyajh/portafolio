@@ -132,8 +132,8 @@ export function useNodeNavigation(initialNode: string = 'inicio') {
       const detail = (e as CustomEvent).detail;
       if (detail?.target === 'explore') {
         navigateTo('mapa');
-      } else if (detail?.target === 'tecnico') {
-        navigateTo('tecnico');
+      } else if (typeof detail?.target === 'string') {
+        navigateTo(detail.target);
       }
     };
     window.addEventListener('navigateTo', handleNavigate);

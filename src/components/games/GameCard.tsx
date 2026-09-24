@@ -29,7 +29,7 @@ export default function GameCard({ game, index }: { game: Game; index: number })
       <h3 className="font-serif text-3xl sm:text-4xl text-ink mb-5">{game.title}</h3>
 
       {game.statusLabel && (
-        <p className="mb-5 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-burgundy">
+        <p className="mb-5 inline-flex items-center gap-2 font-script text-xl text-burgundy -rotate-1">
           <span aria-hidden="true">✦</span>
           {game.statusLabel}
         </p>

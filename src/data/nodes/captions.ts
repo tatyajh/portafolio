@@ -24,5 +24,5 @@ export const IMAGE_CAPTIONS: Record<string, string[]> = {
     '',                                                  // Diseño 3 (index 8) - sin leyenda
     'Retazos de ropa de mi familia que quería transformar' // Diseño 4 (index 9)
   ],
-  // Sin captions: arte, sonido, cuerpo, mixto, proceso, quiebre, identidad, perfil, esencia
+  // Sin captions: sonido, cuerpo, mixto, quiebre, identidad, perfil, esencia
 };

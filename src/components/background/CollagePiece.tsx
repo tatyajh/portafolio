@@ -9,11 +9,15 @@ import { collageAssets, type CollageObject, type CollageTool } from '@/lib/colla
 const SNIP_MS = 110;
 
 /** Un recorte que se levanta y se queda donde lo sueltan. */
-export default function CollagePiece({ object, selected, onSelect, interactive = false }: {
+export default function CollagePiece({ object, selected, onSelect, interactive = false, goTo, hint }: {
   object: CollageObject;
   selected?: boolean;
   onSelect?: (tool: CollageTool | null) => void;
+  /** En la portada: tijeras y aguja cortan, el control es Press start. */
   interactive?: boolean;
+  /** Capítulo al que lleva un clic. */
+  goTo?: string;
+  hint?: string;
 }) {
   const { locale } = useLanguage();
   const asset = collageAssets[object];
@@ -33,6 +37,7 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
     if (object !== 'saxofon') return;
     const onState = (event: Event) => setPlaying((event as CustomEvent<boolean>).detail);
     window.addEventListener('splash-music-state', onState);
+    window.dispatchEvent(new CustomEvent('splash-music-query'));
     return () => window.removeEventListener('splash-music-state', onState);
   }, [object]);
 
@@ -83,15 +88,18 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
     setDragging(false); setClosed(false);
     sound.current?.pause();
     // Arrastrar el saxofón arranca la música; tocarlo la alterna (ver onClick).
-    if (interactive && object === 'saxofon' && g.moved) {
+    if (object === 'saxofon' && g.moved) {
       window.dispatchEvent(new CustomEvent('splash-music', { detail: 'start' }));
     }
   };
 
   const click = () => {
-    if (suppressClick.current || !interactive) return;
-    if (tool) onSelect?.(selected ? null : object);
-    else if (object === 'saxofon') window.dispatchEvent(new CustomEvent('splash-music', { detail: 'toggle' }));
+    if (suppressClick.current) return;
+    // El saxofón prende y apaga la música donde esté.
+    if (object === 'saxofon') window.dispatchEvent(new CustomEvent('splash-music', { detail: 'toggle' }));
+    else if (goTo) window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: goTo } }));
+    else if (!interactive) return;
+    else if (tool) onSelect?.(selected ? null : object);
     else if (object === 'gamepad') window.dispatchEvent(new CustomEvent('splash-press-start'));
   };
 
@@ -109,9 +117,9 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
       )}
       <button type="button"
         className={`collage-piece collage-piece--${object} ${dragging ? 'is-lifted' : ''} ${playing ? 'is-playing' : ''}`}
-        aria-label={asset[locale]}
-        aria-pressed={tool && interactive ? !!selected : object === 'saxofon' && interactive ? playing : undefined}
-        title={locale === 'en' ? 'Drag me' : 'Arrástrame'}
+        aria-label={hint ? `${asset[locale]}: ${hint}` : asset[locale]}
+        aria-pressed={tool && interactive ? !!selected : object === 'saxofon' ? playing : undefined}
+        title={hint ?? (locale === 'en' ? 'Drag me' : 'Arrástrame')}
         style={{ translate: `${offset.x}px ${offset.y}px`, '--spin': object === 'carrete' ? `${distance * 1.2}deg` : '0deg' } as CSSProperties}
         onPointerDown={event => {
           if (event.button !== 0) return;
@@ -132,7 +140,6 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
           <Image src={asset.activeImage} alt="" width={110} height={110} loading="eager" draggable={false}
             className={`collage-piece-alt ${closed ? '' : 'is-hidden'}`} />
         )}
-        {tool && interactive && <span className="collage-piece-label">{asset[locale]}</span>}
       </button>
     </>
   );

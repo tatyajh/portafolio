@@ -9,7 +9,6 @@ export default function ProjectCover({ project }: { project: Project }) {
   if (!preview.image) {
     return (
       <div className={`${styles.cover} ${styles.typographic}`} data-project={id} role="img" aria-label={preview.alt}>
-        <span className={styles.coverIndex} aria-hidden="true">FRONTEND</span>
         <span className={styles.typewriterQuote} aria-hidden="true">“</span>
         <span className={styles.typewriterTitle} aria-hidden="true">{title}</span>
         <span className={styles.typewriterRule} aria-hidden="true" />
@@ -27,7 +26,6 @@ export default function ProjectCover({ project }: { project: Project }) {
           </div>
         ))}
       </div>
-      <span className={styles.coverIndex} aria-hidden="true">{id === 'gyg' ? 'WEBMASTER' : 'SELECTED WORK'}</span>
       {gallery.length > 1 && (
         <details className={styles.screenGallery}>
           <summary>Ver todas las pantallas <span aria-hidden="true">＋</span></summary>

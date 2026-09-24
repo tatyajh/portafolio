@@ -168,12 +168,11 @@ export default function ResumeCVPanel() {
     >
       <div className="cv-presentation-card">
         <div className="cv-presentation-copy">
-          <span className="cv-kicker">{selectCopy(locale, 'Perfil de presentación', 'Profile introduction')}</span>
-          <h3 id="cv-presentation-title">{selectCopy(locale, 'Ingeniería que construye mundos.', 'Engineering that builds worlds.')}</h3>
+          <h3 id="cv-presentation-title">{selectCopy(locale, 'Hola, soy Tatiana.', "Hi, I'm Tatiana.")}</h3>
           <p>{selectCopy(
             locale,
-            'Soy ingeniera de sistemas y desarrolladora de videojuegos en Unity. Combino código, experiencia de usuario y una mirada creativa formada entre el diseño y la música para convertir ideas en experiencias que se pueden explorar.',
-            'I am a systems engineer and Unity game developer. I combine code, user experience and a creative perspective shaped by design and music to turn ideas into experiences people can explore.',
+            'Soy ingeniera de sistemas y hago videojuegos en Unity. También estudié diseño de modas y toco saxofón. Todo eso se cuela en lo que programo.',
+            "I'm a systems engineer and I make games in Unity. I also studied fashion design and I play the sax. All of that sneaks into what I code.",
           )}</p>
           <div className="cv-profile-areas" aria-label={selectCopy(locale, 'Áreas principales', 'Main areas')}>
             {profileAreas.map(area => <span key={area}>{area}</span>)}

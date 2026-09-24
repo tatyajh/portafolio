@@ -5,10 +5,10 @@ import { TECH_MINDSET_POINTS } from '@/data/techRoute';
 import { useLanguage } from '@/context/LanguageContext';
 
 const TECH_MINDSET_EN = [
-  { label: 'Make it reliable', quote: 'engineering rigor, automated testing and scalable architectures' },
-  { label: 'What design gave me', quote: 'a creative perspective from fashion design, applied to character design and UI/UX decisions' },
-  { label: 'AI as a tool', quote: 'I use Spec-Driven Development and AI strategically to prototype and validate ideas faster' },
-  { label: 'Security from the start', quote: 'my cybersecurity knowledge strengthens quality and security from the design stage' },
+  { label: "Don't let it break", quote: 'Before calling something done I test it, with automated tests in Jest, Cypress or Playwright.' },
+  { label: 'What design gave me', quote: "Fashion taught me to think about who will use it. I apply that to characters and interfaces." },
+  { label: 'AI as a tool', quote: 'I use it to prototype and test ideas fast, but first I write down clearly what I want to build.' },
+  { label: 'Security from the start', quote: 'I know cybersecurity, so I think about risks while designing, not at the end.' },
 ];
 
 export default function TechMindset() {
@@ -24,18 +24,15 @@ export default function TechMindset() {
       <p className="font-script text-2xl text-center text-gold-mid -rotate-1 mb-6">
         {locale === 'en' ? 'how I think' : 'cómo pienso'}
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Una sola hoja con una lista: cada punto mide lo que tiene que medir */}
+      <ul className="paper-card stitch-border px-6 py-5 sm:px-8 divide-y divide-dashed divide-ink-light/30">
         {points.map(point => (
-          <div key={point.label} className="paper-card stitch-border p-4">
-            <p className="text-xs tracking-widest uppercase text-burgundy/80 mb-2">
-              {point.label}
-            </p>
-            <p className="font-script text-lg leading-tight text-ink-light">
-              &quot;{point.quote}&quot;
-            </p>
-          </div>
+          <li key={point.label} className="py-3 sm:flex sm:gap-6">
+            <p className="font-serif text-lg text-burgundy sm:w-56 sm:flex-none">{point.label}</p>
+            <p className="text-ink-light leading-relaxed">{point.quote}</p>
+          </li>
         ))}
-      </div>
+      </ul>
     </motion.div>
   );
 }

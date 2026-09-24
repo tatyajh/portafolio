@@ -1,6 +1,6 @@
 import type { Game } from './types';
 
-// Galería de videojuegos del Capítulo 12.
+// Galería de videojuegos del capítulo Videojuegos.
 //
 // ORDEN: del más nuevo al más viejo, igual que PROJECTS. Un juego
 // nuevo va ARRIBA de la lista.

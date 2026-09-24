@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -101,6 +101,47 @@ export default function PixelCompanion({
   const dragStateRef = useRef<LiaDragState | null>(null);
   const liaX = useMotionValue(0);
   const liaY = useMotionValue(0);
+  // Cuando Lía corre a señalar algo: su mensaje, hacia dónde mira y si va corriendo.
+  const [pointMessage, setPointMessage] = useState<string | null>(null);
+  const [flipped, setFlipped] = useState(false);
+  const [running, setRunning] = useState(false);
+
+  useEffect(() => {
+    if (!exploring) return;
+    let back: number | undefined;
+    const onPoint = (event: Event) => {
+      const { selector, es, en } = (event as CustomEvent<{ selector: string; es: string; en: string }>).detail;
+      const target = document.querySelector(selector);
+      const avatar = guideRef.current?.querySelector('.pixel-companion-avatar');
+      if (!target || !avatar) return;
+      const t = target.getBoundingClientRect();
+      const a = avatar.getBoundingClientRect();
+      // Se para al lado del objeto y lo señala con la mano levantada.
+      const toTheLeft = t.left + t.width / 2 > window.innerWidth * 0.6;
+      const destLeft = Math.min(Math.max(toTheLeft ? t.left - a.width * 0.85 : t.right - a.width * 0.15, 8), window.innerWidth - a.width - 8);
+      const destTop = Math.min(Math.max(t.top + t.height * 0.25, 90), window.innerHeight - a.height - 8);
+      const options = { duration: prefersReducedMotion ? 0 : 1.1, ease: 'easeInOut' as const };
+      setShowMessage(false);
+      setFlipped(toTheLeft);
+      setPoseIndex(0);
+      setRunning(true);
+      animate(liaX, liaX.get() + destLeft - a.left, options);
+      animate(liaY, liaY.get() + destTop - a.top, { ...options, onComplete: () => {
+        setRunning(false);
+        setPointMessage(locale === 'en' ? en : es);
+        setShowMessage(true);
+        // Después vuelve a su esquina para no tapar el Índice.
+        back = window.setTimeout(() => {
+          setPointMessage(null);
+          setFlipped(false);
+          animate(liaX, 0, options);
+          animate(liaY, 0, options);
+        }, 9000);
+      } });
+    };
+    window.addEventListener('lia-point', onPoint);
+    return () => { window.removeEventListener('lia-point', onPoint); window.clearTimeout(back); };
+  }, [exploring, locale, liaX, liaY, prefersReducedMotion]);
 
   useEffect(() => {
     if (!previousUnlocked.current && unlocked) {
@@ -177,6 +218,7 @@ export default function PixelCompanion({
         : cut ? STITCH_MESSAGES : LOCKED_MESSAGES;
 
   const talk = () => {
+    setPointMessage(null);
     if (!showMessage) {
       setShowMessage(true);
       return;
@@ -253,13 +295,13 @@ export default function PixelCompanion({
       <motion.div
         ref={guideRef}
         style={{ x: liaX, y: liaY }}
-        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''}`}
+        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''} ${running ? 'is-running' : ''} ${flipped ? 'is-flipped' : ''}`}
         data-lia-companion
       >
       <AnimatePresence mode="wait">
         {showMessage && (
           <motion.div
-            key={`${unlocked}-${cut}-${messageIndex}`}
+            key={`${unlocked}-${cut}-${messageIndex}-${pointMessage ?? ''}`}
             initial={{ opacity: 0, y: 8, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.96 }}
@@ -269,14 +311,14 @@ export default function PixelCompanion({
           >
             <button
               type="button"
-              onClick={() => setShowMessage(false)}
+              onClick={() => { setShowMessage(false); setPointMessage(null); }}
               aria-label={locale === 'en' ? 'Close Lía message' : 'Cerrar mensaje de Lía'}
               className="pixel-companion-close"
             >
               ×
             </button>
             <span>LÍA</span>
-            <p>{messages[messageIndex % messages.length]}</p>
+            <p>{pointMessage ?? messages[messageIndex % messages.length]}</p>
             {fallbackAvailable && !unlocked && (
               <button type="button" onClick={cut ? onFallbackStitch : onFallbackCut} className="pixel-cut-action">
                 {cut

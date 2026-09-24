@@ -33,11 +33,11 @@ export interface BackgroundAssetGroup {
 // de tijereteo real al cortar el título. nota bajó de 24 a 9, hilo de
 // 8 a 3, saxofon de 5 a 4 (se redujeron las fuentes de esas carpetas).
 const CATEGORY_CONFIG: { category: BackgroundAssetGroup['category']; count: number; sections: string[] }[] = [
-  { category: 'aguja', count: 4, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'hilo', count: 3, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'carrete', count: 5, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'tijeras', count: 10, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
-  { category: 'patron', count: 5, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'arte', 'diseno', 'quiebre'] },
+  { category: 'aguja', count: 4, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'diseno', 'quiebre'] },
+  { category: 'hilo', count: 3, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'diseno', 'quiebre'] },
+  { category: 'carrete', count: 5, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'diseno', 'quiebre'] },
+  { category: 'tijeras', count: 10, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'diseno', 'quiebre'] },
+  { category: 'patron', count: 5, sections: ['mapa', 'mixto', 'inicio', 'esencia', 'herencia', 'diseno', 'quiebre'] },
   { category: 'codigo', count: 12, sections: ['mapa', 'mixto', 'inicio', 'estructura', 'tecnico', 'perfil'] },
   { category: 'saxofon', count: 4, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },
   { category: 'nota', count: 9, sections: ['mapa', 'mixto', 'inicio', 'sonido'] },

@@ -7,7 +7,7 @@ import AudioEngine from '@/components/media/AudioEngine';
 import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
-import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
+import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, IMAGE_CAPTIONS } from '@/data/nodes';
 import { awardThread } from '@/lib/threadProgress';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
@@ -17,7 +17,7 @@ import { LanguageToggle, PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo, CollageGrid } from '@/components/chapters';
 import { useLanguage } from '@/context/LanguageContext';
-import { getCategoryLabel, getImageCaptions, getSeasonName, localizeNode, selectCopy } from '@/data/translations';
+import { getCategoryLabel, getImageCaptions, localizeNode, selectCopy } from '@/data/translations';
 
 // La leyenda original de la foto del vestido (estructura-1) — la
 // misma que ya vivía en IMAGE_CAPTIONS, ahora con "Dato curioso"
@@ -74,6 +74,23 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
     if (chapters.size >= 3) awardThread('explorer');
   }, [history]);
 
+  // La primera vez que se entra a un capítulo, Lía vuelve a señalar el
+  // saxofón de la esquina: es lo único que controla la música.
+  useEffect(() => {
+    if (['inicio', 'mapa'].includes(currentNode)) return;
+    const key = 'lia-sax-chapter-hint';
+    try { if (window.sessionStorage.getItem(key)) return; } catch { /* sin storage igual se muestra */ }
+    const timer = window.setTimeout(() => {
+      try { window.sessionStorage.setItem(key, '1'); } catch { /* opcional */ }
+      window.dispatchEvent(new CustomEvent('lia-point', { detail: {
+        selector: '.music-sax .collage-piece',
+        es: '¡Oye! Si quieres música, o quieres silencio, toca este saxofón.',
+        en: 'Hey! If you want music, or silence, tap this sax.',
+      } }));
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [currentNode]);
+
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-black-warm'; // Gris con tinte dorado
     if (node.theme === 'light') return 'bg-ivory-pale'; // Crema muy claro
@@ -115,10 +132,10 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
       <AnimatePresence mode="wait">
         <motion.main
           key={currentNode}
-          initial={{ opacity: 0, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, filter: 'blur(10px)' }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           // Antes forzaba min-h-screen + justify-center: en nodos con
           // poco contenido (ej. esencia, sin PROJECTS/tools/videos)
           // eso dejaba un tramo enorme de scroll vacío al final. El
@@ -227,14 +244,9 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
                 >
                   {selectCopy(locale, 'sin rodeos…', 'straight to the point…')}
                 </motion.p>
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="font-serif text-5xl sm:text-6xl mb-4 text-ivory"
-                >
+                <h2 className="font-serif text-5xl sm:text-6xl mb-4 text-ivory">
                   {selectCopy(locale, 'Lo técnico', 'The technical route')}
-                </motion.h2>
+                </h2>
                 <div className="stitch-line w-40 mx-auto mb-4" />
                 <p className="text-gold/70">{selectCopy(locale, 'Perfil, código y juego. La historia completa te espera en el mapa.', 'Profile, code and games. The complete story is waiting on the map.')}</p>
               </div>
@@ -306,39 +318,14 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
             <div className="w-full max-w-3xl">
               {/* Cabecera */}
               <div className="text-center mb-8">
-                <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-gold-mid/70">{selectCopy(locale, 'Nueva misión desbloqueada', 'New mission unlocked')}</p>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-[10px] tracking-[0.4em] uppercase mb-2 text-gold/50"
-                >
-                  {selectCopy(locale, 'Temporada 5: Conexiones', 'Season 5: Connections')}
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-xs tracking-[0.3em] uppercase mb-4 text-gold-mid"
-                >
-                  {node.subtitle}
-                </motion.p>
-                <motion.h2
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-ivory"
+                <p className={`font-script text-2xl sm:text-3xl -rotate-1 mb-2 ${node.theme === 'light' ? 'text-burgundy/70' : 'text-gold-mid'}`}>{node.subtitle}</p>
+                <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl mb-5 text-ivory"
                 >
                   {node.title}
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.5 }}
-                  className="font-script text-3xl text-gold-mid -rotate-1 inline-block"
-                >
+                </h2>
+                <p className="font-script text-3xl text-gold-mid -rotate-1 inline-block">
                   {node.text}
-                </motion.p>
+                </p>
               </div>
 
               {/* Intro del capítulo */}
@@ -376,91 +363,35 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
                     className="order-2 mx-auto h-auto w-[46%] max-w-[190px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:order-1 sm:w-full sm:max-w-none"
                   />
                   <div className="order-1 text-center sm:order-2 sm:text-left">
-                    {SEASONS[node.id] && (
-                      <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="mb-2 text-[10px] uppercase tracking-[0.4em] text-gold/40"
-                      >
-                        {getSeasonName(node.id, SEASONS[node.id].name, locale)}
-                      </motion.p>
-                    )}
                     {node.subtitle && (
-                      <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="mb-4 text-xs uppercase tracking-[0.3em] text-gold-mid"
-                      >
-                        {node.subtitle}
-                      </motion.p>
+                      <p className={`font-script text-2xl sm:text-3xl -rotate-1 mb-2 ${node.theme === 'light' ? 'text-burgundy/70' : 'text-gold-mid'}`}>{node.subtitle}</p>
                     )}
-                    <motion.h2
-                      initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ delay: 0.3, duration: 0.6 }}
-                      className="mb-6 font-serif text-4xl text-ivory sm:text-5xl md:text-6xl"
+                    <h2 className="mb-6 font-serif text-4xl text-ivory sm:text-5xl md:text-6xl"
                     >
                       {node.title}
-                    </motion.h2>
-                    <motion.p
-                      initial={{ opacity: 0, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, filter: 'blur(0px)' }}
-                      transition={{ delay: 0.5 }}
-                      className="font-serif text-xl italic text-gold sm:text-2xl"
-                    >
+                    </h2>
+                    <p className="font-serif text-xl italic text-gold sm:text-2xl">
                       {node.text}
-                    </motion.p>
+                    </p>
                   </div>
                 </div>
               ) : (
               <div className="text-center mb-8">
                 {/* Indicador de temporada */}
-                {SEASONS[node.id] && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className={`text-[10px] tracking-[0.4em] uppercase mb-2 ${
-                      node.theme === 'light' ? 'text-burgundy/50' : 'text-gold/40'
-                    }`}
-                  >
-                    {getSeasonName(node.id, SEASONS[node.id].name, locale)}
-                  </motion.p>
-                )}
                 {node.subtitle && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className={`text-xs tracking-[0.3em] uppercase mb-4 ${
-                      node.theme === 'light' ? 'text-black-warm/50' : 'text-gold-mid'
-                    }`}
-                  >
-                    {node.subtitle}
-                  </motion.p>
+                  <p className={`font-script text-2xl sm:text-3xl -rotate-1 mb-2 ${node.theme === 'light' ? 'text-burgundy/70' : 'text-gold-mid'}`}>{node.subtitle}</p>
                 )}
-                <motion.h2 
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className={`font-serif text-4xl sm:text-5xl md:text-6xl mb-6 ${
+                <h2 className={`font-serif text-4xl sm:text-5xl md:text-6xl mb-6 ${
                     node.theme === 'light' ? 'text-black-warm' : 'text-ivory'
                   }`}
                 >
                   {node.title}
-                </motion.h2>
-                <motion.p 
-                  initial={{ opacity: 0, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.5 }}
-                  className={`font-serif text-xl sm:text-2xl italic ${
+                </h2>
+                <p className={`font-serif text-xl sm:text-2xl italic ${
                     node.theme === 'light' ? 'text-gold-mid/70' : 'text-gold'
-                  }`}
-                >
+                  }`}>
                   {node.text}
-                </motion.p>
+                </p>
               </div>
               )}
 

@@ -17,7 +17,7 @@ const NODE_EN: Record<string, NodeCopy> = {
   identidad: {
     title: 'Tatiana Alejandra', subtitle: 'Chapter 2',
     text: 'Beyond work and projects.',
-    content: 'This chapter has no projects or deliverables.\n\nIt holds memories, places and people: the moments that do not belong in a portfolio, but still explain why I make what I make.',
+    content: 'This chapter has no projects or deliverables.\n\nIt holds memories, places and people: the moments that do not belong in a portfolio, but still explain why I make what I make.\n\nAnd the times when I\'m not producing anything. I read a lot and watch plenty of anime, which gives me more than I admit: framing, color, ways of telling a story. I listen to jazz, metal or classical, depending on the day. And I love sitting down with a glass of wine or a beer without doing anything productive.\n\nMuch of what ends up in my work comes from there.',
   },
   perfil: {
     title: 'Profile', subtitle: 'Chapter 3',
@@ -26,29 +26,28 @@ const NODE_EN: Record<string, NodeCopy> = {
   },
   herencia: {
     title: 'Legacy', subtitle: 'Chapter 4',
-    text: 'Before me, there were already hands sewing to support others.',
-    content: 'My maternal grandmother supported her family with a basic sewing machine. My paternal grandmother made blankets to give to anyone who needed one.\n\nNeither of them called it design. To them, it was solving a problem or caring for someone. I think that is where I learned that making things by hand is always for someone.',
+    text: 'My grandmothers sewed. A relative of mine made monuments.',
+    content: 'My maternal grandmother supported her family with a basic sewing machine. My paternal grandmother made blankets to give to anyone who needed one.\n\nNeither of them called it design. To them, it was solving a problem or caring for someone. I think that is where I learned that making things by hand is always for someone.\n\nAnd they weren\'t the only ones. There are a lot of artists in my family. The best known is Rodrigo Arenas Betancourt, my maternal great-grandfather\'s cousin. A sculptor, one of Colombia\'s most important, the kind who made monuments. He lived from 1919 to 1995.\n\nI grew up hearing those names like you hear other people\'s stories. Art was their thing. Not mine.',
   },
-  arte: { title: 'Family Art', subtitle: 'Connection', text: 'I grew up surrounded by art, but never thought it was for me.' },
   sonido: {
-    title: 'Sound', subtitle: 'Chapter 6',
+    title: 'Sound', subtitle: 'Chapter 5',
     text: 'Before I knew how to explain myself, I was already playing.',
     content: 'I have had the privilege of playing with the Metropolitan Philharmonic.\n\nThe saxophone taught me to breathe, keep time and, above all, stay quiet when the moment calls for it. In an orchestra, you cannot go your own way: you have to listen to what everyone else is doing and enter exactly where you belong. That has helped me in everything else I do.',
   },
   estructura: {
-    title: 'Structure', subtitle: 'Chapter 7 · Systems engineering',
+    title: 'Structure', subtitle: 'Chapter 6 · Systems engineering',
     text: 'Then I decided to build things that worked.',
     content: 'Engineering gave me a way of thinking that I use all the time: break something large into manageable pieces and understand how they fit together.\n\nThese are projects I built from beginning to end, each with open source code for anyone who wants to take a closer look.',
   },
   cuerpo: {
-    title: 'Body', subtitle: 'Chapter 8',
+    title: 'Body', subtitle: 'Chapter 7',
     text: 'At some point, the body became part of the story too.',
     content: 'I started pole dance as a sport and it became something else. I competed and won a silver medal, but that is not what stayed with me most: it is the effort of repeating a movement until it works, and what it feels like when it finally does.\n\nMaking something with the body and making something with the hands are more alike than they seem.',
   },
   quiebre: {
     title: 'Turning Point', subtitle: 'Chapter 9',
     text: 'For a long time, I believed I was not a creative person.',
-    content: 'I learned to find value in logic, structure and correct answers.\n\nEven though I grew up surrounded by art, sewing and stories of creation, I never thought that world could belong to me too.\n\nLife eventually challenged that idea.\n\nMy father\'s stroke, living far from home and the difficulty of communicating in another language forced me to look at things from a different place.\n\nThat is when I understood something I had overlooked for years:\n\nthings made by hand are also a form of language.\n\nPerhaps creativity was never absent.\n\nPerhaps I had simply learned not to see it.',
+    content: 'I always thought I was bad at art. At school I didn\'t even try. And if I didn\'t show interest, nobody noticed I couldn\'t do it.\n\nI stuck with what I knew I could do: logic, right answers, things that add up. Funny, since I grew up surrounded by art and sewing.\n\nThen a few things happened almost at once. My dad had a stroke. I was living far from home, speaking a language that still didn\'t come easy. Some days you just can\'t find the words, in Spanish or in the other language.\n\nThat\'s when I went back to making things with my hands. It wasn\'t a plan. It was how I said what I couldn\'t say out loud. And it turns out I wasn\'t as bad as I thought.',
   },
   diseno: {
     title: 'Fashion Design', subtitle: 'Chapter 10',
@@ -56,19 +55,14 @@ const NODE_EN: Record<string, NodeCopy> = {
     content: 'Moodboards, sketches, fabrics, patterns, runway shows. Studying fashion design meant giving myself permission to do something that had been circling me for years.\n\nI was surprised by how much it resembles programming: you start with a vague idea, make it concrete, test, make mistakes, undo the seams and begin again.',
   },
   mixto: {
-    title: 'Connections', subtitle: 'Chapter 11',
-    text: 'Sometimes everything happens at once.',
-    content: 'There are moments when I am not playing music, training or designing separately: I am simply making something, and all of those parts are there together.\n\nThese are those moments.',
+    title: 'Connections', subtitle: 'Chapter 8',
+    text: 'Pole and sax, in the same choreography.',
+    content: 'I\'ve done performances where I bring both together. I do part of the choreography on the pole, then I stand up, grab the sax and play. And the whole thing tells a story.\n\nThe idea is that it doesn\'t feel like two separate acts: the movement leads me to the music, and the music takes me back to the pole.\n\nThese videos are from those moments.',
   },
   juego: {
-    title: 'Video Games', subtitle: 'Chapter 12',
+    title: 'Video Games', subtitle: 'Chapter 11',
     text: 'Writing code that can also be played.',
     content: 'Small worlds made with Unity and C#, playable right here in the browser with no download required.\n\nMaking games forces me to think about the person on the other side: if they do not understand what to do in the first few seconds, they leave. More code does not fix that; testing with people does.',
-  },
-  proceso: {
-    title: 'Outside the Process', subtitle: 'Chapter 13',
-    text: 'There are also times when I am not producing anything.',
-    content: 'I read a lot and watch plenty of anime, which gives me more than I admit: framing, color and ways of telling a story.\n\nI listen to jazz, metal and classical music depending on the day. And I enjoy sitting down with a glass of wine or a beer without doing anything productive.\n\nMuch of what eventually appears in my work comes from there.',
   },
   fin: {
     title: 'Thank You', text: 'Thank you for exploring my story.',
@@ -78,15 +72,15 @@ const NODE_EN: Record<string, NodeCopy> = {
 
 const CATEGORY_EN: Record<string, string> = {
   esencia: 'Essence', herencia: 'Roots', expresion: 'Expression',
-  transformacion: 'Transformation', mixto: 'Connections',
+  transformacion: 'Transformation', mixto: "What's next",
 };
 
 const SEASON_EN: Record<string, string> = {
   esencia: 'Season 1: Essence', identidad: 'Season 1: Essence', perfil: 'Season 1: Essence',
-  herencia: 'Season 2: Roots', arte: 'Season 2: Roots',
+  herencia: 'Season 2: Roots',
   sonido: 'Season 3: Expression', estructura: 'Season 3: Expression', cuerpo: 'Season 3: Expression',
   quiebre: 'Season 4: Transformation', diseno: 'Season 4: Transformation',
-  mixto: 'Season 5: Connections', juego: 'Season 5: Connections', proceso: 'Season 5: Connections', fin: 'Season 5: Connections',
+  mixto: 'Season 3: Expression', juego: "Season 5: What's next", fin: "Season 5: What's next",
 };
 
 const CAPTIONS_EN: Record<string, string[]> = {

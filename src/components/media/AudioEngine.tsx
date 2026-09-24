@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import PixelCompanion from './PixelCompanion';
 import ThreadProgress from './ThreadProgress';
+import CollagePiece from '@/components/background/CollagePiece';
 import { useLanguage } from '@/context/LanguageContext';
 import { selectCopy } from '@/data/translations';
 
@@ -120,17 +121,6 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     startMusic();
   };
 
-  const toggleAudio = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
 
   // Exponer funciones para controlar el audio desde otros componentes
   useEffect(() => {
@@ -180,6 +170,10 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('splash-music-state', { detail: isPlaying }));
+    // Un saxofón que aparece después (ej. en el Índice) pregunta el estado actual.
+    const answer = () => window.dispatchEvent(new CustomEvent('splash-music-state', { detail: isPlaying }));
+    window.addEventListener('splash-music-query', answer);
+    return () => window.removeEventListener('splash-music-query', answer);
   }, [isPlaying]);
 
   // Tocar el control de la portada es como darle a Press start, pero
@@ -287,30 +281,11 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
 
       {hasInteracted && <PixelCompanion unlocked exploring />}
 
-      {/* Botón de control de audio */}
+      {/* La música se maneja con el saxofón, como en la portada */}
       {hasInteracted && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={toggleAudio}
-          className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-40 w-12 h-12 rounded-full border border-gold/50 bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all hover:border-gold"
-          aria-label={isPlaying
-            ? selectCopy(locale, 'Pausar música', 'Pause music')
-            : selectCopy(locale, 'Reproducir música', 'Play music')}
-        >
-          {isPlaying ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="2">
-              <rect x="6" y="4" width="4" height="16" />
-              <rect x="14" y="4" width="4" height="16" />
-            </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="2">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </motion.button>
+        <div className="music-sax">
+          <CollagePiece object="saxofon" hint={selectCopy(locale, 'Prender o apagar la música', 'Turn the music on or off')} />
+        </div>
       )}
     </>
   );

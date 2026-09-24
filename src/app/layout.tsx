@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display, Caveat, Inter, Pixelify_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Caveat, Newsreader, Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from '@/context/LanguageContext';
 
@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Las tres tipografías del diseño (Inter para el cuerpo, Playfair
+// Las tres tipografías del diseño (Newsreader para el cuerpo, Playfair
 // Display para títulos, Caveat para las notas manuscritas) se cargaban
 // con un @import de Google Fonts dentro del CSS. Eso funciona, pero es
 // una petición externa que bloquea el render: si tarda o el navegador
@@ -24,8 +24,10 @@ const geistMono = Geist_Mono({
 // Con next/font quedan autohospedadas junto al sitio: mismo resultado
 // en todos los dispositivos, sin petición a terceros y sin salto de
 // fuente al cargar.
-const inter = Inter({
-  variable: "--font-inter",
+// Cuerpo de texto: una serif editorial en vez de Inter, que es la
+// fuente "por defecto" de casi todo lo generado con IA.
+const newsreader = Newsreader({
+  variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
 });
@@ -63,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${caveat.variable} ${pixelify.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} ${playfair.variable} ${caveat.variable} ${pixelify.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col"><LanguageProvider>{children}</LanguageProvider></body>
     </html>
