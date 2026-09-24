@@ -73,6 +73,8 @@ interface PixelCompanionProps {
   unlocked: boolean;
   /** En la portada: ya hubo un corte y falta coser. */
   cut?: boolean;
+  /** Arranca sin globo (ej. al volver a la portada después de haber entrado). */
+  quiet?: boolean;
   exploring?: boolean;
   fallbackAvailable?: boolean;
   onFallbackCut?: () => void;
@@ -142,6 +144,7 @@ function pickSpot(t: DOMRect, a: DOMRect, bubbleSize = BUBBLE) {
 export default function PixelCompanion({
   unlocked,
   cut = false,
+  quiet = false,
   exploring = false,
   fallbackAvailable = false,
   onFallbackCut,
@@ -151,7 +154,7 @@ export default function PixelCompanion({
   const prefersReducedMotion = useReducedMotion();
   const [messageIndex, setMessageIndex] = useState(0);
   const [poseIndex, setPoseIndex] = useState(0);
-  const [showMessage, setShowMessage] = useState(true);
+  const [showMessage, setShowMessage] = useState(!quiet);
   const [isDragging, setIsDragging] = useState(false);
   const boundsRef = useRef<HTMLDivElement>(null);
   const guideRef = useRef<HTMLDivElement>(null);

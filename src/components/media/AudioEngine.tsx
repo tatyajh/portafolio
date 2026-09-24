@@ -54,8 +54,11 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
   const [hasInteracted, setHasInteracted] = useState(initialNode !== 'inicio');
   const [hasCutTitle, setHasCutTitle] = useState(false);
   const [hasStitched, setHasStitched] = useState(false);
+  // Quien ya entró una vez (o llegó directo a un capítulo) no repite la
+  // misión al volver a la portada: los botones quedan abiertos y Lía callada.
+  const [enteredBefore, setEnteredBefore] = useState(initialNode !== 'inicio');
   // Las rutas se abren cuando se corta y se cose el título.
-  const unlocked = hasCutTitle && hasStitched;
+  const unlocked = (hasCutTitle && hasStitched) || enteredBefore;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -118,6 +121,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
 
   const handleFirstInteraction = () => {
     setHasInteracted(true);
+    setEnteredBefore(true);
     startMusic();
   };
 
@@ -185,6 +189,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     if (!unlocked) return;
     const onPress = () => {
       setHasInteracted(true);
+      setEnteredBefore(true);
       const audio = audioRef.current;
       if (audio?.paused) {
         audio.volume = MUSIC_VOLUME;
@@ -199,13 +204,13 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
   // En la portada Lía corre a señalar la herramienta del paso actual:
   // primero las tijeras y, después del primer corte, la aguja.
   useEffect(() => {
-    if (hasInteracted || hasStitched) return;
+    if (hasInteracted || unlocked) return;
     const target = hasCutTitle ? '.splash-stage .collage-piece--aguja' : '.splash-stage .collage-piece--tijeras';
     const timer = window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('lia-point', { detail: { selector: target, compact: true } }));
     }, hasCutTitle ? 900 : 1800);
     return () => window.clearTimeout(timer);
-  }, [hasInteracted, hasCutTitle, hasStitched]);
+  }, [hasInteracted, hasCutTitle, unlocked]);
 
   // Volver a mostrar el splash cuando la navegación pide "Home"
   // (hasInteracted no tiene otra forma de resetearse una vez es true).
@@ -289,6 +294,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
           <PixelCompanion
             unlocked={unlocked}
             cut={hasCutTitle}
+            quiet={enteredBefore}
             fallbackAvailable
             onFallbackCut={() => window.dispatchEvent(new CustomEvent('splash-cut-action'))}
             onFallbackStitch={() => window.dispatchEvent(new CustomEvent('splash-stitch-action'))}
