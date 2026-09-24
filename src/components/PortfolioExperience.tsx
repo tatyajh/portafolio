@@ -450,6 +450,11 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
                 </motion.div>
               )}
 
+              {/* En Quiebre la imagen va antes del texto largo */}
+              {node.id === 'quiebre' && node.gallery && node.gallery.length > 0 && (
+                <GalleryRenderer nodeId={node.id} gallery={node.gallery} />
+              )}
+
               {node.content && node.id !== 'esencia' && node.id !== 'estructura' && (
                 // Con ilustración de fondo: va como marca de agua y el texto sube de contraste.
                 <div
@@ -534,7 +539,7 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
               {/* Galería de imágenes - Layouts específicos por nodo.
                   estructura ya renderizó su galería arriba, junto al
                   texto y antes del desarrollo. */}
-              {node.gallery && node.gallery.length > 0 && node.id !== 'estructura' && (
+              {node.gallery && node.gallery.length > 0 && node.id !== 'estructura' && node.id !== 'quiebre' && (
                 <GalleryRenderer nodeId={node.id} gallery={node.gallery} />
               )}
 

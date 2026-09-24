@@ -158,6 +158,8 @@ export default function PixelCompanion({
     let hide: number | undefined;
     const onNode = (id: string) => {
       setNodeId(id);
+      // Un mensaje de otro lugar no debe quedarse pegado al cambiar de capítulo.
+      setPointMessage(null);
       setMessageIndex(0);
       setPoseIndex(1);
       setShowMessage(true);
@@ -208,13 +210,16 @@ export default function PixelCompanion({
         setPointMessage((locale === 'en' ? en : es) ?? null);
         setShowMessage(true);
         // Después vuelve a su esquina para no tapar el Índice.
+        // De regreso también va sin globo, para que no se vea cortado en el camino.
         back = window.setTimeout(() => {
           pointingRef.current = false;
+          setShowMessage(false);
           setPointMessage(null);
           setFlipped(false);
           setBubbleStart(false);
+          setRunning(true);
           animate(liaX, 0, options);
-          animate(liaY, 0, options);
+          animate(liaY, 0, { ...options, onComplete: () => setRunning(false) });
         }, 9000);
       } });
     };
