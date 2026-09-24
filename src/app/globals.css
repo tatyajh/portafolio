@@ -866,3 +866,113 @@ body {
 /* Rotaciones suaves de recorte pegado */
 .tilt-l { transform: rotate(-1.5deg); }
 .tilt-r { transform: rotate(1.5deg); }
+
+/* Portada: la ilustración es el mundo, los recortes se mueven sobre ella
+   y la capa de juego (botones, Lía, hilos) va en pixel. */
+.splash-screen { overflow: hidden; background: #1f3527; }
+/* El escenario cubre la pantalla con la proporción de la ilustración, así
+   el texto y los recortes quedan anclados al dibujo en cualquier tamaño. */
+.splash-stage {
+  position: absolute; left: 50%; top: 50%;
+  width: max(100vw, calc(100vh * 1672 / 941));
+  aspect-ratio: 1672 / 941;
+  transform: translate(-50%, -50%);
+  background: url('/media/illustrations/hilos-portada.webp') center / 100% 100% no-repeat;
+  container-type: inline-size;
+}
+.splash-content {
+  position: absolute; left: 25%; top: 17%; width: 63%; height: 52%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; color: var(--color-ink);
+}
+.splash-name { font-family: var(--font-playfair), serif; font-size: 1.05cqw; letter-spacing: .42em; text-transform: uppercase; color: #7a1e1e; }
+.splash-paper-title { user-select: none; -webkit-user-select: none; font-size: 8.4cqw; line-height: 1; letter-spacing: .01em; white-space: nowrap; margin: .9cqw 0 .5cqw; color: var(--color-ink); }
+.splash-script { font-size: 2.6cqw; color: #7a1e1e; transform: rotate(-2deg); }
+.splash-roles { margin-top: 1.4cqw; font-family: var(--font-playfair), serif; font-style: italic; font-size: 1.25cqw; color: #5b4a3a; }
+.splash-roles b { font-style: normal; font-weight: 600; color: var(--color-ink); }
+.splash-routes { display: flex; gap: 1.4cqw; margin-top: 2.3cqw; }
+
+.paper-letter { position: relative; display: inline-block; font: inherit; letter-spacing: inherit; padding: 0; border: 0; background: none; color: inherit; }
+.paper-letter[aria-disabled="false"] { cursor: crosshair; }
+.paper-letter-size { visibility: hidden; }
+.paper-fragment-shadow { position: absolute; inset: 0; filter: drop-shadow(0 .12cqw .18cqw rgba(40, 25, 15, .32)); pointer-events: none; }
+/* Cada pedazo es un trozo del mismo papel del dibujo: la sombra delata el corte */
+.paper-fragment { display: block; position: absolute; inset: 0; background: linear-gradient(160deg, rgb(229, 215, 195), rgb(219, 203, 182)); color: var(--color-ink); }
+/* Una letra que nunca se ha cortado es solo tinta: sin trozo de papel ni sombra */
+.paper-letter:not([data-cut]):not([data-stitched]) .paper-fragment { background: none; }
+.paper-letter:not([data-cut]):not([data-stitched]) .paper-fragment-shadow { filter: none; }
+.paper-stitches { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.paper-seam path { fill: none; stroke: #a8232b; stroke-width: 2px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.paper-seam .paper-scar { stroke: var(--color-ink-light); stroke-width: .65px; opacity: .45; stroke-dasharray: 2 3; }
+
+/* Botones de juego: borde escalonado de 8 bits */
+.pixel-button {
+  --face: #7a1e1e; --edge: #4e1111; --text: #fbefd9;
+  padding: .9cqw 1.5cqw; font-family: var(--font-pixel), monospace; font-size: 1.1cqw; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text); background: var(--face); border: 0; cursor: pointer;
+  box-shadow: 0 -.25cqw 0 0 var(--edge), 0 .25cqw 0 0 var(--edge), -.25cqw 0 0 0 var(--edge), .25cqw 0 0 0 var(--edge), inset 0 -.3cqw 0 0 rgba(0,0,0,.28);
+}
+.pixel-button:hover { transform: translateY(-.2cqw); filter: brightness(1.12); }
+.pixel-button:active { transform: translateY(.1cqw); }
+.pixel-button--paper { --face: #efe4cf; --edge: var(--color-ink); --text: var(--color-ink); }
+.pixel-button-arrow { display: inline-block; margin-right: .6cqw; animation: pixel-blink 1s steps(1) infinite; }
+@keyframes pixel-blink { 50% { opacity: 0; } }
+
+/* Recortes: pegados sobre el verde, con borde de papel; se quedan donde los sueltan */
+.collage-workbench { position: absolute; inset: 0; pointer-events: none; }
+/* El giro va en la imagen: si girara el contenedor, el arrastre se desviaría del cursor */
+.collage-spot { position: absolute; left: var(--x); top: var(--y); width: 6.4cqw; pointer-events: auto; }
+/* Los dibujos ya traen su borde de papel: aquí solo va la sombra */
+.collage-piece { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; cursor: grab; touch-action: none; user-select: none; border: 0; background: transparent;
+  filter: drop-shadow(0 .4cqw .45cqw rgba(0,0,0,.4));
+  transition: transform 160ms ease-out; }
+.collage-piece img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transform: rotate(var(--r, 0deg)); }
+.collage-piece-label { position: absolute; bottom: -1.4cqw; left: 50%; translate: -50% 0; font-family: var(--font-caveat), cursive; font-size: 1.3cqw; color: #f3e6cc; text-shadow: 0 1px 3px #000a; white-space: nowrap; }
+@media (hover: hover) { .collage-piece:hover { transform: translateY(-.3cqw); } }
+.collage-piece.is-lifted { z-index: 5; cursor: grabbing; transform: rotate(4deg) scale(1.08); transition: none; }
+.collage-piece[aria-pressed="true"] { outline: 2px dashed #f3e6cc; outline-offset: .4cqw; }
+.collage-index-objects { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin: 0 12px 36px; }
+.collage-index-objects .collage-piece { width: 76px; height: 76px; }
+.thread-progress { position: fixed; z-index: 65; top: 18px; right: 18px; padding: 7px 11px; color: #f3e6cc; background: rgba(20, 26, 21, .9); font: 600 13px/1.4 var(--font-pixel), monospace; letter-spacing: .08em; pointer-events: none;
+  box-shadow: 0 -3px 0 0 #0d120e, 0 3px 0 0 #0d120e, -3px 0 0 0 #0d120e, 3px 0 0 0 #0d120e, inset 0 0 0 2px #3b5140; }
+.thread-progress-stitches { display: flex; gap: 3px; margin-top: 4px; }
+.thread-progress-stitches i { display: block; width: 9px; height: 11px; background: #3b5140; }
+.thread-progress-stitches i.on { background: #d0413a; box-shadow: inset 0 -3px 0 #7a1e1e; }
+.thread-achievement { position: absolute; right: 0; top: calc(100% + 12px); width: max-content; min-width: 200px; padding: 9px 14px 10px; background: #141a15; text-align: center; display: grid; gap: 2px;
+  box-shadow: 0 -3px 0 0 #c9a45c, 0 3px 0 0 #c9a45c, -3px 0 0 0 #c9a45c, 3px 0 0 0 #c9a45c, 6px 6px 0 0 rgba(0,0,0,.4); }
+.thread-achievement > span { font-size: 11px; letter-spacing: .2em; color: #c9a45c; }
+.thread-achievement > strong { font-size: 16px; color: #f3e6cc; }
+.pixel-companion-message { border-radius: 0; border: 0; background: #fbf4e4; color: var(--color-ink); font-family: var(--font-pixel), monospace;
+  box-shadow: 0 -3px 0 0 var(--color-ink), 0 3px 0 0 var(--color-ink), -3px 0 0 0 var(--color-ink), 3px 0 0 0 var(--color-ink), 6px 6px 0 0 rgba(0,0,0,.35); }
+.pixel-companion-message > span { color: #7a1e1e; font-size: .7rem; font-weight: 600; }
+.pixel-companion-message p { white-space: pre-line; font-size: .95rem; line-height: 1.3; }
+.pixel-companion-close { color: #7d6a55; }
+.pixel-cut-action { border-color: var(--color-ink); color: var(--color-ink); font-family: var(--font-pixel), monospace; font-size: .8rem; }
+:where(button, a, [tabindex]):focus-visible { outline: 2px dashed var(--color-gold-mid); outline-offset: 5px; }
+/* Celular: la ilustración se recorta al centro, el texto va al ancho de la
+   pantalla y los recortes se ubican respecto al centro visible. */
+@media (max-aspect-ratio: 1/1) {
+  .splash-content { left: 50%; width: 92vw; transform: translateX(-50%); top: 19%; height: auto; }
+  .splash-name { font-size: 2.6vw; letter-spacing: .25em; }
+  .splash-paper-title { font-size: 15vw; }
+  .splash-script { font-size: 7vw; }
+  .splash-roles { font-size: 4vw; margin-top: 3vw; }
+  .splash-routes { flex-direction: column; gap: 5vw; margin-top: 7vw; }
+  .pixel-button { font-size: 4vw; padding: 3.2vw 5vw; box-shadow: 0 -1vw 0 0 var(--edge), 0 1vw 0 0 var(--edge), -1vw 0 0 0 var(--edge), 1vw 0 0 0 var(--edge), inset 0 -1vw 0 0 rgba(0,0,0,.28); }
+  .pixel-button-arrow { margin-right: 2vw; }
+  .collage-spot { left: calc(50% + var(--mx)); top: var(--my); width: 15vw; }
+  .collage-piece-label { font-size: 4vw; bottom: -4vw; }
+  .paper-fragment-shadow { filter: drop-shadow(0 .4vw .5vw rgba(40, 25, 15, .32)); }
+}
+@media (max-width: 639px) {
+  .collage-index-objects { justify-content: center; margin-bottom: 24px; }
+  .collage-index-objects .collage-piece--gamepad { display: none; }
+  .pixel-companion.is-exploring { bottom: 80px; }
+  .thread-progress { right: 12px; font-size: 11px; }
+  .pixel-cut-action { min-height: 40px; }
+  .pixel-companion-close { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collage-piece:hover, .collage-piece.is-lifted { transform: none; }
+  .pixel-companion-art { transform: none; }
+}

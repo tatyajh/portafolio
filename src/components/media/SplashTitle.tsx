@@ -1,268 +1,104 @@
 "use client";
 
-import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import { buildFragments, cutPaper, stitchPaper, hasOpenCut, type CutAxis, type LetterCuts } from '@/lib/paperCuts';
+import { awardThread } from '@/lib/threadProgress';
+import type { CollageTool } from '@/lib/collageAssets';
 
-// Se corta como máximo cerca de los bordes, nunca justo en el borde:
-// un corte al 2% no se leería como corte, solo como letra movida.
-const MIN_CUT_PCT = 18;
-const MAX_CUT_PCT = 82;
-// Dos cortes por eje: hasta 3x3 = 9 pedazos por letra. Más que eso son
-// astillas ilegibles y muchos nodos animándose por letra.
-const MAX_CUTS_PER_AXIS = 2;
-// Dos cortes muy juntos dejan una tira invisible; se exige separación.
-const MIN_CUT_GAP = 16;
-const REPAIR_FLASH_MS = 700;
-// Cuánto se separan los pedazos. Suficiente para que se lea "roto",
-// no tanto como para que el título deje de leerse.
-const SPREAD_PX = 13;
-
-interface ToolMoveDetail {
-  x: number;
-  y: number;
-  category: string;
-  /** Eje del movimiento de la herramienta en ese instante. */
-  axis: 'h' | 'v';
-}
-
-// Los cortes de una letra: posiciones (en %) de las líneas de corte
-// horizontales y verticales. Las líneas forman una rejilla y cada
-// celda de esa rejilla es un pedazo. Una letra sin cortes tiene las
-// dos listas vacías.
-interface LetterCuts {
-  h: number[];
-  v: number[];
-}
-
-const emptyCuts = (): LetterCuts => ({ h: [], v: [] });
-
-function hasAnyCut(c: LetterCuts) {
-  return c.h.length > 0 || c.v.length > 0;
-}
-
-// Un corte nuevo solo entra si queda espacio y no pisa a otro.
-function canAddCut(existing: number[], pct: number) {
-  if (existing.length >= MAX_CUTS_PER_AXIS) return false;
-  return existing.every(p => Math.abs(p - pct) >= MIN_CUT_GAP);
-}
-
-// La aguja cose la costura que tenga más cerca, en cualquiera de los
-// dos ejes — no borra todos los cortes de golpe.
-function removeNearestCut(c: LetterCuts, xPct: number, yPct: number): LetterCuts {
-  let bestAxis: 'h' | 'v' | null = null;
-  let bestIndex = -1;
-  let bestDist = Infinity;
-
-  c.h.forEach((p, i) => {
-    const d = Math.abs(p - yPct);
-    if (d < bestDist) { bestDist = d; bestAxis = 'h'; bestIndex = i; }
-  });
-  c.v.forEach((p, i) => {
-    const d = Math.abs(p - xPct);
-    if (d < bestDist) { bestDist = d; bestAxis = 'v'; bestIndex = i; }
-  });
-
-  if (bestAxis === null) return c;
-  if (bestAxis === 'h') return { h: c.h.filter((_, i) => i !== bestIndex), v: c.v };
-  return { h: c.h, v: c.v.filter((_, i) => i !== bestIndex) };
-}
-
-// Convierte las líneas de corte en los pedazos que hay que dibujar.
-function buildFragments(c: LetterCuts) {
-  const hEdges = [0, ...[...c.h].sort((a, b) => a - b), 100];
-  const vEdges = [0, ...[...c.v].sort((a, b) => a - b), 100];
-  const fragments: { top: number; bottom: number; left: number; right: number }[] = [];
-
-  for (let r = 0; r < hEdges.length - 1; r++) {
-    for (let col = 0; col < vEdges.length - 1; col++) {
-      fragments.push({
-        top: hEdges[r],
-        bottom: hEdges[r + 1],
-        left: vEdges[col],
-        right: vEdges[col + 1],
-      });
-    }
-  }
-  return fragments;
-}
-
-// Título del splash, letra por letra: las tijeras lo cortan y la aguja
-// lo vuelve a coser. El texto sigue siendo texto real (el h1 conserva
-// su aria-label, así que lectores de pantalla y buscadores leen
-// "Portafolio" completo aunque en pantalla esté partido).
-//
-// La comunicación con la capa Pixi es por eventos de window y solo
-// mientras se arrastra una herramienta, no cada frame — mover un
-// ícono cualquiera no dispara ni un render de React aquí.
-interface SplashTitleProps {
-  onFirstCut?: () => void;
-  title?: string;
-}
+interface ToolMoveDetail { x: number; y: number; category: CollageTool; axis: CutAxis }
+interface SplashTitleProps { onFirstCut?: () => void; title?: string }
 
 export default function SplashTitle({ onFirstCut, title = 'Portafolio' }: SplashTitleProps) {
-  const letters = title.split('');
-  const [cuts, setCuts] = useState<LetterCuts[]>(() => letters.map(emptyCuts));
-  const [repaired, setRepaired] = useState<Set<number>>(() => new Set());
-  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const firstCutReportedRef = useRef(false);
+  const { locale } = useLanguage();
+  const reducedMotion = useReducedMotion();
+  const letters = Array.from(title);
+  const [cuts, setCuts] = useState<LetterCuts[]>(() => letters.map(() => []));
+  const cutsRef = useRef(cuts);
+  const [selected, setSelected] = useState<CollageTool | null>(null);
+  const [announcement, setAnnouncement] = useState('');
+  const letterRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const firstCutReported = useRef(false);
+  const applyTool = useCallback((i: number, category: CollageTool, axis: CutAxis, x: number, y: number) => {
+    const before = cutsRef.current[i];
+    const after = category === 'tijeras' ? cutPaper(before, axis, axis === 'h' ? y : x) : stitchPaper(before, x, y);
+    if (before === after) return;
+    const next = cutsRef.current.slice(); next[i] = after;
+    cutsRef.current = next; setCuts(next);
+    setAnnouncement(locale === 'en'
+      ? category === 'tijeras' ? 'Cut. The needle can stitch it back.' : 'Stitched.'
+      : category === 'tijeras' ? 'Cortada. Con la aguja la puedes coser.' : 'Cosida.');
+  }, [locale]);
 
   useEffect(() => {
-    const onToolMove = (evt: Event) => {
-      const { x, y, category, axis } = (evt as CustomEvent<ToolMoveDetail>).detail;
+    const move = (event: Event) => {
+      const { x, y, category, axis } = (event as CustomEvent<ToolMoveDetail>).detail;
       if (category !== 'tijeras' && category !== 'aguja') return;
-
-      const repairedNow: number[] = [];
-      setCuts(prev => {
-        let changed = false;
-        const next = prev.slice();
-
-        letterRefs.current.forEach((el, i) => {
-          if (!el) return;
-          const r = el.getBoundingClientRect();
-          if (r.width === 0) return;
-          if (x < r.left || x > r.right || y < r.top || y > r.bottom) return;
-
-          const xPct = ((x - r.left) / r.width) * 100;
-          const yPct = ((y - r.top) / r.height) * 100;
-
-          if (category === 'tijeras') {
-            // El corte va por donde pasó el filo, en el eje en que se
-            // movían las tijeras: de lado corta a lo ancho, hacia
-            // arriba o abajo corta a lo largo.
-            const raw = axis === 'h' ? yPct : xPct;
-            const pct = Math.min(Math.max(raw, MIN_CUT_PCT), MAX_CUT_PCT);
-            const current = next[i];
-            const existing = axis === 'h' ? current.h : current.v;
-            if (!canAddCut(existing, pct)) return;
-
-            next[i] = axis === 'h'
-              ? { h: [...current.h, pct], v: current.v }
-              : { h: current.h, v: [...current.v, pct] };
-            changed = true;
-
-          } else if (hasAnyCut(next[i])) {
-            const after = removeNearestCut(next[i], xPct, yPct);
-            next[i] = after;
-            if (!hasAnyCut(after)) repairedNow.push(i);
-            changed = true;
-          }
-        });
-
-        return changed ? next : prev;
+      letterRefs.current.forEach((el, i) => {
+        const r = el?.getBoundingClientRect();
+        if (!r || !r.width || x < r.left || x > r.right || y < r.top || y > r.bottom) return;
+        applyTool(i, category, axis, 100 * (x - r.left) / r.width, 100 * (y - r.top) / r.height);
       });
-
-      // Destello dorado breve en la letra que quedó entera otra vez.
-      if (repairedNow.length > 0) {
-        setRepaired(prev => {
-          const next = new Set(prev);
-          repairedNow.forEach(i => next.add(i));
-          return next;
-        });
-        const t = setTimeout(() => {
-          setRepaired(prev => {
-            const next = new Set(prev);
-            repairedNow.forEach(i => next.delete(i));
-            return next;
-          });
-        }, REPAIR_FLASH_MS);
-        timeoutsRef.current.push(t);
-      }
     };
-
-    window.addEventListener('splash-tool-move', onToolMove);
+    const select = (event: Event) => setSelected((event as CustomEvent<CollageTool | null>).detail);
+    const fallback = () => applyTool(0, 'tijeras', 'h', 50, 50);
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') window.dispatchEvent(new CustomEvent('splash-tool-select', { detail: null }));
+    };
+    window.addEventListener('splash-tool-move', move);
+    window.addEventListener('splash-tool-select', select);
+    window.addEventListener('splash-cut-action', fallback);
+    window.addEventListener('keydown', escape);
     return () => {
-      window.removeEventListener('splash-tool-move', onToolMove);
-      timeoutsRef.current.forEach(clearTimeout);
-      timeoutsRef.current = [];
+      window.removeEventListener('splash-tool-move', move);
+      window.removeEventListener('splash-tool-select', select);
+      window.removeEventListener('splash-cut-action', fallback);
+      window.removeEventListener('keydown', escape);
     };
-  }, []);
+  }, [applyTool]);
 
-  // El desbloqueo ocurre después de que React confirma el primer corte.
-  // El callback directo evita la carrera que tenía la versión basada
-  // en eventos globales durante el montaje del splash.
   useEffect(() => {
-    if (firstCutReportedRef.current || !cuts.some(hasAnyCut)) return;
-    firstCutReportedRef.current = true;
-    onFirstCut?.();
+    if (!firstCutReported.current && cuts.some(c => c.length > 0)) {
+      firstCutReported.current = true;
+      onFirstCut?.(); awardThread('first-cut');
+    }
+    if (cuts.some(c => c.some(seam => seam.stitched))) awardThread('first-repair');
   }, [cuts, onFirstCut]);
 
   return (
-    <motion.h1
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-      aria-label={title}
-      data-splash-title
-      // whitespace-nowrap es obligatorio: al partir el título en un
-      // span por letra, cada uno es un inline-block y el navegador
-      // puede cortar la palabra entre letras. En móvil el título va
-      // justo al ancho de la pantalla, así que la "o" final se caía a
-      // la línea de abajo. Como palabra suelta nunca se partía.
-      className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase whitespace-nowrap"
-    >
-      {letters.map((letter, i) => {
-        const letterCuts = cuts[i];
-        const broken = hasAnyCut(letterCuts);
-        const justRepaired = repaired.has(i);
-
-        return (
-          <span
-            key={i}
-            ref={el => {
-              letterRefs.current[i] = el;
-            }}
-            aria-hidden="true"
-            className="relative inline-block"
-          >
-            {!broken ? (
-              <motion.span
-                className="inline-block"
-                // Al volver de un corte: destello dorado que se apaga,
-                // como el brillo del hilo recién pasado.
-                animate={
-                  justRepaired
-                    ? { color: ['#E8C9A0', '#f5f0e6'], scale: [1.12, 1] }
-                    : { color: '#f5f0e6', scale: 1 }
-                }
-                transition={{ duration: justRepaired ? 0.7 : 0 }}
-              >
-                {letter}
+    <>
+      <h1 aria-label={title} data-splash-title className="splash-paper-title font-serif">
+        {letters.map((letter, i) => (
+          <button type="button" key={i} ref={el => { letterRefs.current[i] = el; }}
+            className="paper-letter" data-cut={hasOpenCut(cuts[i]) || undefined} data-stitched={cuts[i].some(c => c.stitched) || undefined}
+            aria-label={`${locale === 'en' ? selected === 'aguja' ? 'Stitch' : 'Cut' : selected === 'aguja' ? 'Coser' : 'Cortar'} ${letter}, ${i + 1}`}
+            aria-disabled={!selected}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => { if (selected) applyTool(i, selected, 'h', 50, 50); }}>
+            <span className="paper-letter-size" aria-hidden="true">{letter}</span>
+            {buildFragments(cuts[i]).map(fragment => (
+              <motion.span key={fragment.key} className="paper-fragment-shadow" aria-hidden="true"
+                initial={false} animate={{ x: fragment.x, y: fragment.y, rotate: fragment.rotate }}
+                transition={{ duration: reducedMotion ? 0 : 0.24, ease: 'easeOut' }}>
+                <span className="paper-fragment" style={{ clipPath: fragment.clipPath }}>{letter}</span>
               </motion.span>
-            ) : (
-              <>
-                {/* Mantiene el ancho de la letra para que el título no
-                    se reacomode al cortarse. */}
-                <span className="invisible">{letter}</span>
-                {buildFragments(letterCuts).map((f, fi) => {
-                  // Cada pedazo se aparta del centro de la letra en la
-                  // dirección en la que quedó, así el corte se abre
-                  // como una grieta en vez de deslizarse todo hacia un
-                  // lado. Los de las esquinas se van más lejos.
-                  const cx = (f.left + f.right) / 2 - 50;
-                  const cy = (f.top + f.bottom) / 2 - 50;
-                  const dx = (cx / 50) * SPREAD_PX;
-                  const dy = (cy / 50) * SPREAD_PX;
-                  return (
-                    <motion.span
-                      key={`${f.top}-${f.left}-${fi}`}
-                      className="absolute inset-0"
-                      style={{
-                        clipPath: `inset(${f.top}% ${100 - f.right}% ${100 - f.bottom}% ${f.left}%)`,
-                      }}
-                      initial={{ x: -dx * 0.25, y: -dy * 0.25, rotate: 0 }}
-                      animate={{ x: dx, y: dy, rotate: (cx + cy) * 0.06, opacity: 0.88 }}
-                      transition={{ type: 'spring', stiffness: 170, damping: 13 }}
-                    >
-                      {letter}
-                    </motion.span>
-                  );
-                })}
-              </>
-            )}
-          </span>
-        );
-      })}
-    </motion.h1>
+            ))}
+            <svg className="paper-stitches" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {cuts[i].filter(c => c.stitched).map(cut => (
+                <g key={`${cut.axis}-${cut.position}`} className="paper-seam">
+                  <path className="paper-scar" d={cut.axis === 'h' ? `M0 ${cut.position}h100` : `M${cut.position} 0v100`} />
+                  {[18, 39, 61, 82].map((p, j) => <path key={p}
+                    d={cut.axis === 'h'
+                      ? `M${p - 3} ${cut.position - 5}l${6 + j % 2} 10`
+                      : `M${cut.position - 5} ${p - 3}l10 ${6 + j % 2}`} />)}
+                </g>
+              ))}
+            </svg>
+          </button>
+        ))}
+      </h1>
+      <span className="sr-only" role="status">{announcement}</span>
+    </>
   );
 }

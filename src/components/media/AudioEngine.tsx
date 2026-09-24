@@ -4,12 +4,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import PixelCompanion from './PixelCompanion';
+import ThreadProgress from './ThreadProgress';
 import { useLanguage } from '@/context/LanguageContext';
 import { selectCopy } from '@/data/translations';
 
-// Solo se carga en el cliente y solo cuando realmente se va a mostrar
-// el splash sin reduced-motion — pixi.js/pixi-filters no deben pesar
-// en el bundle de quienes prefieren menos movimiento.
+// Las herramientas y el título se cargan con la portada; funcionan también con movimiento reducido.
 const SplashPlayground = dynamic(() => import('./SplashPlayground'), { ssr: false });
 const SplashTitle = dynamic(() => import('./SplashTitle'), { ssr: false });
 
@@ -53,12 +52,10 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
   // así que esto solo afecta la primera carga.
   const [hasInteracted, setHasInteracted] = useState(initialNode !== 'inicio');
   const [hasCutTitle, setHasCutTitle] = useState(false);
-  const [playgroundUnavailable, setPlaygroundUnavailable] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(INITIAL_TRACK);
   const audioRef = useRef<HTMLAudioElement>(null);
   const unlockAfterCut = useCallback(() => setHasCutTitle(true), []);
-  const reportPlaygroundUnavailable = useCallback(() => setPlaygroundUnavailable(true), []);
 
   // Cambiar a la siguiente canción
   const nextTrack = useCallback(() => {
@@ -175,313 +172,71 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
         style={{ display: 'none' }}
       />
 
-      {/* Pantalla de inicio - Estética oro-rosa con borgoña y formas */}
+      {/* Portada: la ilustración es el mundo; los botones y Lía son la capa de juego. */}
       {!hasInteracted && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden touch-none"
-          style={{ background: 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' }}
-          // El splash SOLO se cierra con los dos botones — tocar el
-          // fondo ya no navega ni cierra nada (antes cerraba el splash
-          // sin ir a ningún lado, lo que dejaba la pantalla en negro,
-          // y el parche de navegar al índice tampoco era lo deseado).
-          // Así el fondo queda libre para jugar con los íconos. La
-          // música tampoco arranca aquí a propósito: se queda en
-          // silencio hasta que se entra a un nodo real.
-        >
-          {/* Fondo tipo constelación/aurora boreal con hilos */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Aurora boreal - colores verdes, azules, rosas */}
-            {/* Capa verde tipo aurora */}
+        // El splash solo se cierra con los botones: el resto de la
+        // pantalla queda libre para jugar con los recortes. La música
+        // arranca al entrar a un nodo real, no aquí.
+        <div className="splash-screen fixed inset-0 z-50">
+          <div className="splash-stage">
             <motion.div
-              animate={{ 
-                x: ['-30%', '110%'],
-                opacity: [0.15, 0.35, 0.15],
-              }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-[15%] -left-[40%] w-[90vw] h-[50vh]"
-              style={{ 
-                background: 'linear-gradient(90deg, transparent, rgba(57,255,20,0.25), rgba(0,255,65,0.3), rgba(0,217,255,0.2), transparent)',
-                filter: 'blur(50px)',
-                transform: 'rotate(-8deg)'
-              }}
-            />
-            {/* Capa azul */}
-            <motion.div
-              animate={{ 
-                x: ['110%', '-30%'],
-                opacity: [0.12, 0.3, 0.12],
-              }}
-              transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-              className="absolute top-[40%] -left-[20%] w-[85vw] h-[45vh]"
-              style={{ 
-                background: 'linear-gradient(90deg, transparent, rgba(0,153,255,0.25), rgba(0,217,255,0.3), rgba(57,255,20,0.2), transparent)',
-                filter: 'blur(45px)',
-                transform: 'rotate(5deg)'
-              }}
-            />
-            {/* Capa rosa/magenta */}
-            <motion.div
-              animate={{ 
-                x: ['-20%', '120%'],
-                opacity: [0.1, 0.25, 0.1],
-              }}
-              transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 6 }}
-              className="absolute top-[60%] -left-[50%] w-[95vw] h-[40vh]"
-              style={{ 
-                background: 'linear-gradient(90deg, transparent, rgba(255,20,147,0.2), rgba(255,105,180,0.25), rgba(0,217,255,0.15), transparent)',
-                filter: 'blur(55px)',
-                transform: 'rotate(-3deg)'
-              }}
-            />
-            {/* Capa verde inferior */}
-            <motion.div
-              animate={{ 
-                y: ['120%', '-10%'],
-                opacity: [0.08, 0.2, 0.08],
-              }}
-              transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: 8 }}
-              className="absolute -bottom-[10%] left-[20%] w-[60vw] h-[55vh]"
-              style={{ 
-                background: 'radial-gradient(ellipse, rgba(0,255,65,0.2), rgba(57,255,20,0.15), transparent 70%)',
-                filter: 'blur(50px)',
-              }}
-            />
-            {/* Capa azul/rosa mezclada */}
-            <motion.div
-              animate={{ 
-                y: ['-20%', '100%'],
-                opacity: [0.1, 0.22, 0.1],
-              }}
-              transition={{ duration: 24, repeat: Infinity, ease: "easeInOut", delay: 12 }}
-              className="absolute -top-[15%] right-[10%] w-[50vw] h-[50vh]"
-              style={{ 
-                background: 'radial-gradient(ellipse, rgba(0,217,255,0.2), rgba(255,105,180,0.15), transparent 70%)',
-                filter: 'blur(45px)',
-              }}
-            />
-
-            {/* Hilos sutiles cruzando */}
-            {[...Array(12)].map((_, i) => (
-              <motion.div
-                key={`hilo-${i}`}
-                initial={{ opacity: 0, pathLength: 0 }}
-                animate={{ 
-                  opacity: [0.05, 0.12, 0.05],
-                }}
-                transition={{ 
-                  duration: 4 + i * 0.8, 
-                  repeat: Infinity, 
-                  ease: "easeInOut",
-                  delay: i * 0.4
-                }}
-                className="absolute h-[1px]"
-                style={{ 
-                  top: `${8 + i * 8}%`,
-                  left: 0,
-                  width: '100%',
-                  background: `linear-gradient(90deg, transparent, ${['#E8C9A0', '#8B0000', '#C4874A', '#D4A574'][i % 4]}40, transparent)`,
-                  transform: `rotate(${-2 + (i % 3)}deg)`,
-                }}
-              />
-            ))}
-
-            {/* Constelación de puntos luminosos */}
-            {[...Array(40)].map((_, i) => {
-              const x = 10 + (i * 37) % 80;
-              const y = 5 + (i * 23) % 90;
-              return (
-                <motion.div
-                  key={`estrella-${i}`}
-                  animate={{ 
-                    opacity: [0.2, 0.8, 0.2],
-                    scale: [1, 1.3, 1],
-                  }}
-                  transition={{ 
-                    duration: 2 + (i % 4), 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    delay: i * 0.15
-                  }}
-                  className="absolute rounded-full"
-                  style={{ 
-                    width: i % 3 === 0 ? '3px' : '2px',
-                    height: i % 3 === 0 ? '3px' : '2px',
-                    left: `${x}%`,
-                    top: `${y}%`,
-                    background: ['#E8C9A0', '#f5f0e6', '#C4874A'][i % 3],
-                    boxShadow: `0 0 ${i % 5 === 0 ? '8px' : '4px'} ${['#E8C9A0', '#C4874A', '#f5f0e6'][i % 3]}40`,
-                  }}
-                />
-              );
-            })}
-
-            {/* Hilos que conectan algunos puntos (constelación) */}
-            <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.1 }}>
-              {[...Array(8)].map((_, i) => (
-                <motion.line
-                  key={`conexion-${i}`}
-                  x1={`${15 + (i * 11) % 70}%`}
-                  y1={`${10 + (i * 13) % 80}%`}
-                  x2={`${25 + (i * 17) % 60}%`}
-                  y2={`${20 + (i * 19) % 60}%`}
-                  stroke="var(--color-gold)"
-                  strokeWidth="1"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: [0, 1, 0], opacity: [0, 0.3, 0] }}
-                  transition={{ 
-                    duration: 8 + i * 2, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    delay: i * 1.5
-                  }}
-                />
-              ))}
-            </svg>
-
-            {/* Círculos difusos de fondo */}
-            <motion.div
-              animate={{ 
-                scale: [1, 1.3, 1],
-                opacity: [0.05, 0.1, 0.05],
-              }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-[10%] left-[10%] w-[50vh] h-[50vh] rounded-full"
-              style={{ 
-                background: 'radial-gradient(circle, var(--color-burgundy) 0%, transparent 70%)',
-                filter: 'blur(80px)'
-              }}
-            />
-            <motion.div
-              animate={{ 
-                scale: [1.2, 1, 1.2],
-                opacity: [0.05, 0.1, 0.05],
-              }}
-              transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-              className="absolute bottom-[15%] right-[15%] w-[40vh] h-[40vh] rounded-full"
-              style={{ 
-                background: 'radial-gradient(circle, var(--color-gold) 0%, transparent 70%)',
-                filter: 'blur(70px)'
-              }}
-            />
-          </div>
-
-          {/* Playground de distorsión (Pixi) — íconos arrastrables con
-              rastro cromático, exclusivo de esta pantalla. No toca
-              CollageDecor, que sigue siendo el sistema del resto del sitio. */}
-          {!prefersReducedMotion && (
-            <SplashPlayground onUnavailable={reportPlaygroundUnavailable} />
-          )}
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="text-center px-6"
-          >
-            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 1 }}
-              // Antes iba en borgoña sobre casi negro, en text-xs y
-              // font-light: contraste bajísimo, prácticamente invisible.
-              // Su nombre es lo único que un reclutador debería
-              // recordar, así que va en dorado (que sí resalta sobre el
-              // fondo oscuro), más grande y con menos tracking para que
-              // se lea de corrido en vez de letra por letra.
-              className="text-gold-mid text-sm sm:text-base md:text-lg uppercase tracking-[0.25em] mb-5"
+              transition={{ duration: prefersReducedMotion ? 0 : 1 }}
+              className="splash-content"
             >
-              Tatiana Alejandra Jaramillo Hoyos
-            </motion.p>
+              <p className="splash-name">Tatiana Alejandra Jaramillo Hoyos</p>
 
-            {/* Título letra por letra: las tijeras lo cortan, la aguja
-                lo cose. Si hay reduced-motion, SplashPlayground no se
-                monta, así que nunca llegan eventos y el título se
-                comporta como texto normal. */}
-            <div className="splash-title-target">
-              {prefersReducedMotion ? (
-                <motion.h1
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-                  className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 text-ivory leading-none tracking-tight uppercase"
+              {/* El corte y la costura funcionan con arrastre, toque y teclado. */}
+              <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} />
+
+              <p className="splash-script font-script">{selectCopy(locale, 'hilos invisibles', 'invisible threads')}</p>
+              <p className="splash-roles">
+                {locale === 'en'
+                  ? <>I code, <b>design</b> and make <b>video games</b>.</>
+                  : <>Programo, <b>diseño</b> y hago <b>videojuegos</b>.</>}
+              </p>
+
+              {/* Las rutas siempre están disponibles: cortar es opcional. */}
+              <div className="splash-routes">
+                <button
+                  type="button"
+                  className="pixel-button"
+                  onClick={() => {
+                    handleFirstInteraction();
+                    window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+                  }}
                 >
-                  {selectCopy(locale, 'Portafolio', 'Portfolio')}
-                </motion.h1>
-              ) : (
-                <SplashTitle key={locale} title={selectCopy(locale, 'Portafolio', 'Portfolio')} onFirstCut={unlockAfterCut} />
-              )}
-            </div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 1 }}
-              className="font-script text-2xl sm:text-3xl text-gold-mid/90 -rotate-1 mb-6"
-            >
-              {selectCopy(locale, 'hilos invisibles', 'invisible threads')}
-            </motion.p>
-
-            {/* Línea decorativa inferior - borgoña */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
-              className="w-16 h-px bg-burgundy/60 mx-auto mb-8"
-            />
-
-            {/* Botones de navegación */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              <motion.button
-                whileHover={hasCutTitle ? { scale: 1.05 } : undefined}
-                whileTap={hasCutTitle ? { scale: 0.95 } : undefined}
-                disabled={!hasCutTitle}
-                onClick={() => {
-                  handleFirstInteraction();
-                  // Atajo directo a las secciones técnicas
-                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
-                }}
-                className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
-                  hasCutTitle
-                    ? 'border-burgundy/60 text-gold-mid hover:bg-burgundy/15 hover:border-burgundy cursor-pointer'
-                    : 'border-gold/15 text-gold/30 cursor-not-allowed'
-                }`}
-              >
-                {'</>'} {selectCopy(locale, 'Directo a lo técnico', 'Straight to the technical work')}
-              </motion.button>
-              <motion.button
-                whileHover={hasCutTitle ? { scale: 1.05 } : undefined}
-                whileTap={hasCutTitle ? { scale: 0.95 } : undefined}
-                disabled={!hasCutTitle}
-                onClick={() => {
-                  handleFirstInteraction();
-                  // Emitir evento personalizado para explorar
-                  window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
-                }}
-                className={`px-8 py-4 border text-sm sm:text-base uppercase tracking-wider font-medium transition-all min-w-[200px] rounded-lg ${
-                  hasCutTitle
-                    ? 'border-gold/50 text-gold hover:bg-gold/10 hover:border-gold cursor-pointer'
-                    : 'border-gold/15 text-gold/30 cursor-not-allowed'
-                }`}
-              >
-                {selectCopy(locale, 'Conoce más sobre mí', 'Discover more about me')}
-              </motion.button>
+                  <span className="pixel-button-arrow" aria-hidden="true">▶</span>
+                  {selectCopy(locale, 'Press start', 'Press start')}
+                </button>
+                <button
+                  type="button"
+                  className="pixel-button pixel-button--paper"
+                  onClick={() => {
+                    handleFirstInteraction();
+                    window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'tecnico' } }));
+                  }}
+                >
+                  {'</>'} {selectCopy(locale, 'Modo técnico', 'Tech mode')}
+                </button>
+              </div>
             </motion.div>
-          </motion.div>
 
+            <SplashPlayground />
+          </div>
+
+          <PixelCompanion
+            unlocked={hasCutTitle}
+            fallbackAvailable
+            onFallbackCut={() => window.dispatchEvent(new CustomEvent('splash-cut-action'))}
+          />
         </div>
       )}
 
-      <PixelCompanion
-        unlocked={hasCutTitle}
-        exploring={hasInteracted}
-        fallbackAvailable={!hasInteracted && (prefersReducedMotion || playgroundUnavailable)}
-        onFallbackCut={unlockAfterCut}
-      />
+      <ThreadProgress />
+
+      {hasInteracted && <PixelCompanion unlocked={hasCutTitle} exploring />}
 
       {/* Botón de control de audio */}
       {hasInteracted && (

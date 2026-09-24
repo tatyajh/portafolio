@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useEffect } from 'react';
 import Image from 'next/image';
 import AudioEngine from '@/components/media/AudioEngine';
@@ -8,6 +8,7 @@ import { useNodeNavigation } from '@/hooks/useNodeNavigation';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 import { NODES, CATEGORIES, STAMP_COLORS, LINEAR_ORDER, SEASONS, IMAGE_CAPTIONS } from '@/data/nodes';
+import { awardThread } from '@/lib/threadProgress';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
 import { ProjectList } from '@/components/projects';
@@ -68,6 +69,11 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [currentNode]);
 
+  useEffect(() => {
+    const chapters = new Set(history.filter(id => !['inicio', 'mapa', 'tecnico'].includes(id)));
+    if (chapters.size >= 3) awardThread('explorer');
+  }, [history]);
+
   const getBgClass = () => {
     if (node.theme === 'accent') return 'bg-black-warm'; // Gris con tinte dorado
     if (node.theme === 'light') return 'bg-ivory-pale'; // Crema muy claro
@@ -82,25 +88,11 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className={`relative z-0 min-h-screen w-screen overflow-hidden transition-colors duration-500 ${getBgClass()}`}
       style={{ background: node.theme === 'dark' ? 'radial-gradient(ellipse at center, var(--color-black-warm) 0%, var(--color-black) 100%)' : undefined }}>
-      <BackgroundLayer visible={currentNode !== 'inicio'} section={currentNode} />
       <AudioEngine initialNode={initialNode} />
       <LanguageToggle theme={node.theme} />
-
-      {currentNode !== 'inicio' && (
-        <motion.div
-          key={`achievement-${currentNode}`}
-          initial={{ opacity: 0, y: -14, scale: 0.96 }}
-          animate={{ opacity: [0, 1, 1, 0], y: [-14, 0, 0, -4], scale: [0.96, 1, 1, 1] }}
-          transition={{ duration: 3.2, times: [0, 0.12, 0.76, 1], ease: 'easeOut' }}
-          className="achievement-toast"
-          aria-live="polite"
-        >
-          <span>{selectCopy(locale, 'Logro desbloqueado', 'Achievement unlocked')}</span>
-          <strong>{node.title}</strong>
-        </motion.div>
-      )}
 
       {/* Navegación persistente flotante - oculta durante splash */}
       <PersistentNav
@@ -150,6 +142,8 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
                   {selectCopy(locale, '¿vienes por lo técnico? atajo por aquí →', 'here for the technical work? take this shortcut →')}
                 </button>
               </div>
+
+              <BackgroundLayer visible section={currentNode} />
 
               {/* Grid de categorías */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -659,5 +653,6 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
         </motion.main>
       </AnimatePresence>
     </div>
+    </MotionConfig>
   );
 }

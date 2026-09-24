@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display, Caveat, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Caveat, Inter, Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from '@/context/LanguageContext';
 
@@ -42,6 +42,14 @@ const caveat = Caveat({
   display: "swap",
 });
 
+// Tipografía de la capa de juego (HUD, Lía, logros). Pixelify incluye
+// tildes y eñes, a diferencia de otras pixeladas.
+const pixelify = Pixelify_Sans({
+  variable: "--font-pixel",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Tatiana Jaramillo — Portafolio / Portfolio",
   description: "Portafolio bilingüe de Tatiana Jaramillo: desarrollo de software, diseño creativo y videojuegos creados en Unity.",
@@ -55,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${caveat.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${caveat.variable} ${pixelify.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col"><LanguageProvider>{children}</LanguageProvider></body>
     </html>

@@ -5,39 +5,40 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
+// Lía habla como Navi: un llamado corto y la pista en una línea.
 const LOCKED_MESSAGES = [
-  'Corta el portafolio: arrastra unas tijeras sobre la palabra PORTAFOLIO del centro.',
-  'Pasa el filo por cualquiera de las letras grandes de PORTAFOLIO.',
-  'Cuando cortes PORTAFOLIO, se desbloquearán las dos rutas.',
+  '¡Hey! ¡Escucha! ¿Ves esas tijeras? Pásalas por encima de PORTAFOLIO.',
+  '¡Oye! Si cortas algo, la aguja lo cose. Tranqui.',
+  '¡Mira! También puedes darle a Press start y entrar de una.',
 ];
 
 const UNLOCKED_MESSAGES = [
-  '¡Misión cumplida! Ya puedes elegir tu ruta.',
-  'Buen corte. El portafolio ya está abierto.',
-  'Explora: cada sección es una misión diferente.',
+  '¡Hey! ¡Primer corte!',
+  '¡Escucha! Prueba la aguja, a ver si la dejas como nueva.',
+  '¡Vamos! Press start cuando quieras.',
 ];
 
 const EXPLORING_MESSAGES = [
-  'Puedes arrastrarme y dejarme donde quieras mientras exploras.',
-  'La sección Videojuegos reúne mis proyectos hechos en Unity y C#.',
-  'Si quieres cambiar de capítulo, usa las flechas o vuelve al mapa.',
+  '¡Hey! Si te estorbo, arrástrame a otro lado.',
+  '¡Mira! En Videojuegos puedes jugar aquí mismo, sin descargar nada.',
+  '¡Oye! Las flechas de arriba te llevan al siguiente capítulo.',
 ];
 
 const ENGLISH_MESSAGES = {
   locked: [
-    'Cut the portfolio: drag a pair of scissors across the word PORTFOLIO in the center.',
-    'Move the blade across any of the large letters in PORTFOLIO.',
-    'Once you cut PORTFOLIO, both routes will unlock.',
+    'Hey! Listen! See those scissors? Drag them across PORTFOLIO.',
+    "Hey! If you cut something, the needle stitches it back. Don't worry.",
+    'Look! You can also hit Press start and jump right in.',
   ],
   unlocked: [
-    'Mission complete! You can now choose your route.',
-    'Nice cut. The portfolio is now open.',
-    'Explore: every section is a different mission.',
+    'Hey! First cut!',
+    "Listen! Try the needle. Let's see if you can fix it.",
+    "Come on! Press start whenever you're ready.",
   ],
   exploring: [
-    'You can drag me and leave me anywhere while you explore.',
-    'The Video Games section brings together my projects made with Unity and C#.',
-    'To change chapters, use the arrows or return to the map.',
+    "Hey! If I'm in the way, drag me somewhere else.",
+    'Look! In Video Games you can play right here, no download needed.',
+    'Hey! The arrows up top take you to the next chapter.',
   ],
 };
 
@@ -253,7 +254,7 @@ export default function PixelCompanion({
             <p>{messages[messageIndex]}</p>
             {fallbackAvailable && !unlocked && (
               <button type="button" onClick={onFallbackCut} className="pixel-cut-action">
-                {locale === 'en' ? '✂ Cut the thread' : '✂ Cortar el hilo'}
+                {locale === 'en' ? '✂ You cut it' : '✂ Córtala tú'}
               </button>
             )}
           </motion.div>
