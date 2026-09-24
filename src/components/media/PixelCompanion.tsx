@@ -79,6 +79,55 @@ interface PixelCompanionProps {
   onFallbackStitch?: () => void;
 }
 
+// Zonas que Lía no debe tapar cuando corre a señalar algo.
+// Cada zona tiene un peso: el título y los botones nunca se deben tapar;
+// el nombre y las frases pequeñas, mejor no, pero pesan menos.
+const AVOID: [string, number][] = [
+  ['[data-splash-title]', 10], ['.splash-routes', 10], ['main h2', 10],
+  ['.splash-name', 2], ['.splash-script', 2], ['.splash-roles', 2],
+];
+const BUBBLE = { width: 250, height: 130 };
+
+type Box = { left: number; top: number; right: number; bottom: number };
+const overlap = (p: Box, q: Box) =>
+  Math.max(0, Math.min(p.right, q.right) - Math.max(p.left, q.left)) *
+  Math.max(0, Math.min(p.bottom, q.bottom) - Math.max(p.top, q.top));
+
+function pickSpot(t: DOMRect, a: DOMRect) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const bw = Math.min(BUBBLE.width, vw * 0.68);
+  const avoid = AVOID.flatMap(([sel, weight]) => Array.from(document.querySelectorAll(sel)).map(el => ({ r: el.getBoundingClientRect(), weight })));
+  const minTop = BUBBLE.height + 24, maxTop = vh - a.height - 8;
+  const clamp = (x: number, y: number) => ({
+    left: Math.min(Math.max(x, 8), vw - a.width - 8),
+    top: Math.min(Math.max(y, minTop), maxTop),
+  });
+  // Primero junto al objeto; si ahí tapa algo, prueba por los bordes.
+  const candidates = [
+    clamp(t.right + 4, t.top + t.height * 0.2),
+    clamp(t.left - a.width - 4, t.top + t.height * 0.2),
+    clamp(t.left + t.width / 2 - a.width / 2, t.bottom + 8),
+    clamp(t.right + 4, t.bottom),
+    clamp(t.left - a.width - 4, t.bottom),
+  ];
+  for (let y = minTop; y <= maxTop; y += 40) {
+    candidates.push(clamp(8, y), clamp(vw - a.width - 8, y));
+  }
+  let best = { ...candidates[0], opensRight: true }, bestScore = Infinity;
+  for (const c of candidates) {
+    // El globo se abre hacia donde quepa.
+    const opensRight = c.left + bw <= vw - 8 || c.left + a.width - bw < 8;
+    const bubbleLeft = opensRight ? c.left : c.left + a.width - bw;
+    const body = { left: c.left, top: c.top, right: c.left + a.width, bottom: c.top + a.height };
+    const bubble = { left: bubbleLeft, top: c.top - BUBBLE.height - 16, right: bubbleLeft + bw, bottom: c.top };
+    const covered = avoid.reduce((sum, { r, weight }) => sum + (overlap(body, r) + overlap(bubble, r)) * weight, 0);
+    const distance = Math.hypot(c.left + a.width / 2 - (t.left + t.width / 2), c.top - t.top);
+    const score = covered + distance;
+    if (score < bestScore) { bestScore = score; best = { ...c, opensRight }; }
+  }
+  return best;
+}
+
 /** Lía acompaña la entrada y da pequeñas pistas al conversar. */
 export default function PixelCompanion({
   unlocked,
@@ -142,16 +191,15 @@ export default function PixelCompanion({
       if (!target || !avatar) return;
       const t = target.getBoundingClientRect();
       const a = avatar.getBoundingClientRect();
-      // Se para al lado del objeto y lo señala con la mano levantada.
-      const toTheLeft = t.left + t.width / 2 > window.innerWidth * 0.6;
-      const destLeft = Math.min(Math.max(toTheLeft ? t.left - a.width * 0.85 : t.right - a.width * 0.15, 8), window.innerWidth - a.width - 8);
-      // Deja espacio arriba para el globo, que va encima de Lía.
-      const destTop = Math.min(Math.max(t.top + t.height * 0.25, 170), window.innerHeight - a.height - 8);
+      // Busca dónde pararse junto al objeto sin tapar lo importante
+      // (título, nombre, botones), contando también su globo.
+      const { left: destLeft, top: destTop, opensRight } = pickSpot(t, a);
+      const toTheLeft = t.left + t.width / 2 > destLeft + a.width / 2;
       const options = { duration: prefersReducedMotion ? 0 : 1.1, ease: 'easeInOut' as const };
       pointingRef.current = true;
       setShowMessage(false);
       setFlipped(toTheLeft);
-      setBubbleStart(destLeft < window.innerWidth / 2);
+      setBubbleStart(opensRight);
       setPoseIndex(0);
       setRunning(true);
       animate(liaX, liaX.get() + destLeft - a.left, options);

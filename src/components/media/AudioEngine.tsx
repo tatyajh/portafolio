@@ -179,7 +179,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     return () => window.removeEventListener('splash-music-query', answer);
   }, [isPlaying]);
 
-  // Tocar el control de la portada es como darle a Press start, pero
+  // Tocar el control de la portada lleva directo a Videojuegos, pero
   // solo cuando ya se cortó y se cosió el título.
   useEffect(() => {
     if (!unlocked) return;
@@ -190,7 +190,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
         audio.volume = MUSIC_VOLUME;
         audio.play().then(() => setIsPlaying(true)).catch(() => {});
       }
-      window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'explore' } }));
+      window.dispatchEvent(new CustomEvent('navigateTo', { detail: { target: 'juego' } }));
     };
     window.addEventListener('splash-press-start', onPress);
     return () => window.removeEventListener('splash-press-start', onPress);

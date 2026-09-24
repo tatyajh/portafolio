@@ -945,6 +945,8 @@ body {
 .pixel-companion-close { color: #7d6a55; }
 /* Lía corriendo hacia algo que quiere señalar, y mirando al otro lado si hace falta */
 .pixel-companion.is-running .pixel-pose-stage { animation-duration: .32s; }
+/* Mientras corre no se ve el globo: evita que aparezca cortado en el camino */
+.pixel-companion.is-running .pixel-companion-message { display: none; }
 .pixel-companion.is-flipped .pixel-companion-art { scale: -1 1; }
 .pixel-companion.is-bubble-start { justify-items: start; }
 .pixel-cut-action { border-color: var(--color-ink); color: var(--color-ink); font-family: var(--font-pixel), monospace; font-size: .8rem; }
