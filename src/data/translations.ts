@@ -45,18 +45,18 @@ const NODE_EN: Record<string, NodeCopy> = {
     content: 'I started pole dance as a sport and it became something else. I competed and won a silver medal, but that is not what stayed with me most: it is the effort of repeating a movement until it works, and what it feels like when it finally does.\n\nMaking something with the body and making something with the hands are more alike than they seem.',
   },
   quiebre: {
-    title: 'Turning Point', subtitle: 'Chapter 9',
+    title: 'Turning Point', subtitle: 'Chapter 8',
     text: 'For a long time, I believed I was not a creative person.',
     content: 'I always thought I was bad at art. At school I didn\'t even try. And if I didn\'t show interest, nobody noticed I couldn\'t do it.\n\nI stuck with what I knew I could do: logic, right answers, things that add up. Funny, since I grew up surrounded by art and sewing.\n\nThen a few things happened almost at once. My dad had a stroke. I was living far from home, speaking a language that still didn\'t come easy. Some days you just can\'t find the words, in Spanish or in the other language.\n\nThat\'s when I went back to making things with my hands. It wasn\'t a plan. It was how I said what I couldn\'t say out loud. And it turns out I wasn\'t as bad as I thought.',
   },
   diseno: {
-    title: 'Fashion Design', subtitle: 'Chapter 10',
+    title: 'Fashion Design', subtitle: 'Chapter 9',
     text: 'I returned to making things with my hands, this time seriously.',
     content: 'Moodboards, sketches, fabrics, patterns, runway shows. Studying fashion design meant giving myself permission to do something that had been circling me for years.\n\nI was surprised by how much it resembles programming: you start with a vague idea, make it concrete, test, make mistakes, undo the seams and begin again.',
   },
   mixto: {
-    title: 'Connections', subtitle: 'Chapter 8',
-    text: 'Pole and sax, in the same choreography.',
+    title: 'Guava paste & cheese', subtitle: 'Chapter 10',
+    text: 'Nothing alike, but better together.',
     content: 'I\'ve done performances where I bring both together. I do part of the choreography on the pole, then I stand up, grab the sax and play. And the whole thing tells a story.\n\nThe idea is that it doesn\'t feel like two separate acts: the movement leads me to the music, and the music takes me back to the pole.\n\nThese videos are from those moments.',
   },
   juego: {
@@ -65,14 +65,14 @@ const NODE_EN: Record<string, NodeCopy> = {
     content: 'Small worlds made with Unity and C#, playable right here in the browser with no download required.\n\nMaking games forces me to think about the person on the other side: if they do not understand what to do in the first few seconds, they leave. More code does not fix that; testing with people does.',
   },
   fin: {
-    title: 'Thank You', text: 'Thank you for exploring my story.',
-    content: 'Every game, every application, every garment and every piece I create carries all these layers. Every decision comes from a process that did not begin in a workshop, but in a life.\n\nThis is not a portfolio of destinations. It is a map of what brought me here.\n\nThank you for walking through it for a while.',
+    title: 'Thank You', text: 'Thanks for making it this far.',
+    content: 'If you want to talk about a project, a game or anything else, reach out wherever is easiest for you.',
   },
 };
 
 const CATEGORY_EN: Record<string, string> = {
   esencia: 'Essence', herencia: 'Roots', expresion: 'Expression',
-  transformacion: 'Transformation', mixto: "What's next",
+  transformacion: 'Transformation', mixto: 'Connections',
 };
 
 const SEASON_EN: Record<string, string> = {
@@ -80,7 +80,7 @@ const SEASON_EN: Record<string, string> = {
   herencia: 'Season 2: Roots',
   sonido: 'Season 3: Expression', estructura: 'Season 3: Expression', cuerpo: 'Season 3: Expression',
   quiebre: 'Season 4: Transformation', diseno: 'Season 4: Transformation',
-  mixto: 'Season 3: Expression', juego: "Season 5: What's next", fin: "Season 5: What's next",
+  mixto: 'Season 5: Connections', juego: 'Season 5: Connections', fin: 'Season 5: Connections',
 };
 
 const CAPTIONS_EN: Record<string, string[]> = {

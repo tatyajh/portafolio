@@ -12,7 +12,7 @@ import { awardThread } from '@/lib/threadProgress';
 import { BackgroundLayer } from '@/components/background';
 import { GameList } from '@/components/games';
 import { ProjectList } from '@/components/projects';
-import { ResumeTools, ResumeLinks, ResumeCVPanel } from '@/components/resume';
+import { ResumeTools, ResumeLinks, ResumeCVPanel, ContactLinks } from '@/components/resume';
 import { LanguageToggle, PersistentNav } from '@/components/navigation';
 import { TechIdentity, TechMindset } from '@/components/techRoute';
 import { VideoRenderer, GalleryRenderer, FramedVideo, CollageDuo, CollageGrid } from '@/components/chapters';
@@ -73,6 +73,12 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
     const chapters = new Set(history.filter(id => !['inicio', 'mapa', 'tecnico'].includes(id)));
     if (chapters.size >= 3) awardThread('explorer');
   }, [history]);
+
+  // Lía da una pista distinta en cada lugar: se le avisa dónde estamos.
+  useEffect(() => {
+    document.documentElement.dataset.node = currentNode;
+    window.dispatchEvent(new CustomEvent('lia-node', { detail: currentNode }));
+  }, [currentNode]);
 
   // La primera vez que se entra a un capítulo, Lía vuelve a señalar el
   // saxofón de la esquina: es lo único que controla la música.
@@ -224,7 +230,12 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
               {/* Progreso */}
               <div className="mt-12 text-center">
                 <p className="font-script text-xl text-gold-mid/70">
-                  {selectCopy(locale, 'aventura explorada', 'adventure explored')}: {new Set(history.filter(id => (LINEAR_ORDER as readonly string[]).includes(id))).size} / {LINEAR_ORDER.length} {selectCopy(locale, 'misiones', 'missions')}
+                  {(() => {
+                    // Cuenta solo capítulos: Gracias es el cierre, no un capítulo.
+                    const chapters = (LINEAR_ORDER as readonly string[]).filter(id => id !== 'fin');
+                    const seen = new Set(history.filter(id => chapters.includes(id))).size;
+                    return selectCopy(locale, `has explorado ${seen} de ${chapters.length} capítulos`, `you've explored ${seen} of ${chapters.length} chapters`);
+                  })()}
                 </p>
               </div>
 
@@ -579,6 +590,8 @@ export default function PortfolioExperience({ initialNode = 'inicio' }: Portfoli
 
               {/* Links externos - solo en perfil */}
               {node.id === 'perfil' && <ResumeLinks />}
+              {/* Cierre: formas directas de contacto y CV */}
+              {node.id === 'fin' && <ContactLinks />}
             </div>
           )}
         </motion.main>

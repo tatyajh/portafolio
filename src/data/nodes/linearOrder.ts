@@ -12,12 +12,12 @@ export const LINEAR_ORDER = [
   'sonido',     // Cap 5
   'estructura', // Cap 6
   'cuerpo',     // Cap 7
-  'mixto',      // Cap 8 (Conexiones: pole y saxofón juntos)
   // Temp 4 - Transformación
-  'quiebre',    // Cap 9
-  'diseno',     // Cap 10
-  // Temp 5 - Lo que sigue
-  'juego',      // Cap 11
+  'quiebre',    // Cap 8
+  'diseno',     // Cap 9
+  // Temp 5 - Conexiones: lo que junta dos mundos
+  'mixto',      // Cap 10 (pole + saxofón)
+  'juego',      // Cap 11 (programación + arte)
   'fin',        // Cierre
 ] as const;
 
@@ -30,9 +30,9 @@ export const LINEAR_ORDER = [
 export const SEASON_DEFS = [
   { name: 'Temporada 1: Esencia', nodes: ['esencia', 'identidad', 'perfil'] },
   { name: 'Temporada 2: Raíces', nodes: ['herencia'] },
-  { name: 'Temporada 3: Expresión', nodes: ['sonido', 'estructura', 'cuerpo', 'mixto'] },
+  { name: 'Temporada 3: Expresión', nodes: ['sonido', 'estructura', 'cuerpo'] },
   { name: 'Temporada 4: Transformación', nodes: ['quiebre', 'diseno'] },
-  { name: 'Temporada 5: Lo que sigue', nodes: ['juego', 'fin'] },
+  { name: 'Temporada 5: Conexiones', nodes: ['mixto', 'juego', 'fin'] },
 ] as const;
 
 export const SEASONS: Record<string, { name: string; total: number }> = Object.fromEntries(

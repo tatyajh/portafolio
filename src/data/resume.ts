@@ -9,3 +9,10 @@ export const RESUME_LINKS: ResumeLink[] = [
   { label: 'GitHub', url: 'https://github.com/tatyajh' },
   { label: 'itch.io', url: 'https://tarjah.itch.io/' },
 ];
+
+// Correo del cierre del portafolio, guardado al revés: la dirección solo
+// se arma cuando alguien toca el botón, así los robots que buscan correos
+// en el código de la página no la encuentran escrita (el minificador
+// juntaba las partes si estaban al derecho).
+const REVERSED_EMAIL = 'moc.liamg@ollimaraj.ardnajelat';
+export const getContactEmail = () => REVERSED_EMAIL.split('').reverse().join('');

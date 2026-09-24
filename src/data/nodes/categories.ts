@@ -2,9 +2,9 @@
 export const CATEGORIES = {
   esencia: { label: 'Esencia', color: '#8B0000', nodes: ['esencia', 'identidad', 'perfil'] },
   herencia: { label: 'Raíces', color: '#A0522D', nodes: ['herencia'] },
-  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo', 'mixto'] },
+  expresion: { label: 'Expresión', color: '#C4874A', nodes: ['sonido', 'estructura', 'cuerpo'] },
   transformacion: { label: 'Transformación', color: '#D4A574', nodes: ['quiebre', 'diseno'] },
-  mixto: { label: 'Lo que sigue', color: '#E8C9A0', nodes: ['juego', 'fin'] },
+  mixto: { label: 'Conexiones', color: '#E8C9A0', nodes: ['mixto', 'juego', 'fin'] },
 };
 
 // Versión oscurecida de los colores de categoría para que se lean

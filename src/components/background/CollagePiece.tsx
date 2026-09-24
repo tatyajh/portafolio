@@ -69,8 +69,9 @@ export default function CollagePiece({ object, selected, onSelect, interactive =
           lastSnip.current = now;
           setClosed(c => !c);
         }
-        if (!sound.current) { sound.current = new Audio('/media/audio/tijeras.mp3'); sound.current.volume = 0.15; }
-        void sound.current.play().catch(() => {});
+        // Suena en bucle mientras las tijeras pasan por las letras.
+        if (!sound.current) { sound.current = new Audio('/media/audio/tijeras.mp3'); sound.current.loop = true; sound.current.volume = 0.4; }
+        if (sound.current.paused) void sound.current.play().catch(() => {});
       } else {
         setClosed(false);
         sound.current?.pause();

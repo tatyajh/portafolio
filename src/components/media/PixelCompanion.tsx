@@ -4,6 +4,8 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { LIA_TIPS } from '@/data/liaTips';
+import { playFairyChime } from '@/lib/fairyChime';
 
 // Lía habla como Navi: un llamado corto y la pista en una línea.
 // Guía los dos pasos que abren la portada: cortar y coser.
@@ -99,6 +101,28 @@ export default function PixelCompanion({
   const previousExploring = useRef(exploring);
   const wasDraggingRef = useRef(false);
   const dragStateRef = useRef<LiaDragState | null>(null);
+  // Capítulo donde está la persona: define qué pistas da Lía.
+  const [nodeId, setNodeId] = useState<string | null>(null);
+  const pointingRef = useRef(false);
+  useEffect(() => {
+    if (!exploring) return;
+    let hide: number | undefined;
+    const onNode = (id: string) => {
+      setNodeId(id);
+      setMessageIndex(0);
+      setPoseIndex(1);
+      setShowMessage(true);
+      // La pista aparece al llegar y se va sola para no tapar el contenido.
+      window.clearTimeout(hide);
+      hide = window.setTimeout(() => { if (!pointingRef.current) setShowMessage(false); }, 7000);
+    };
+    const initial = document.documentElement.dataset.node;
+    if (initial) onNode(initial);
+    const listener = (event: Event) => onNode((event as CustomEvent<string>).detail);
+    window.addEventListener('lia-node', listener);
+    return () => { window.removeEventListener('lia-node', listener); window.clearTimeout(hide); };
+  }, [exploring]);
+
   const liaX = useMotionValue(0);
   const liaY = useMotionValue(0);
   // Cuando Lía corre a señalar algo: su mensaje, hacia dónde mira y si va corriendo.
@@ -121,6 +145,7 @@ export default function PixelCompanion({
       const destLeft = Math.min(Math.max(toTheLeft ? t.left - a.width * 0.85 : t.right - a.width * 0.15, 8), window.innerWidth - a.width - 8);
       const destTop = Math.min(Math.max(t.top + t.height * 0.25, 90), window.innerHeight - a.height - 8);
       const options = { duration: prefersReducedMotion ? 0 : 1.1, ease: 'easeInOut' as const };
+      pointingRef.current = true;
       setShowMessage(false);
       setFlipped(toTheLeft);
       setPoseIndex(0);
@@ -132,6 +157,7 @@ export default function PixelCompanion({
         setShowMessage(true);
         // Después vuelve a su esquina para no tapar el Índice.
         back = window.setTimeout(() => {
+          pointingRef.current = false;
           setPointMessage(null);
           setFlipped(false);
           animate(liaX, 0, options);
@@ -205,7 +231,10 @@ export default function PixelCompanion({
     return () => window.clearInterval(poseTimer);
   }, [exploring, isDragging, prefersReducedMotion]);
 
-  const messages = locale === 'en'
+  const tips = nodeId ? LIA_TIPS[nodeId]?.[locale === 'en' ? 'en' : 'es'] : undefined;
+  const messages = exploring && tips
+    ? [...tips, locale === 'en' ? ENGLISH_MESSAGES.exploring[0] : EXPLORING_MESSAGES[0]]
+    : locale === 'en'
     ? exploring
       ? ENGLISH_MESSAGES.exploring
       : unlocked
@@ -216,6 +245,12 @@ export default function PixelCompanion({
       : unlocked
         ? UNLOCKED_MESSAGES
         : cut ? STITCH_MESSAGES : LOCKED_MESSAGES;
+
+  // Tilín de hada cada vez que Lía muestra un mensaje nuevo.
+  const messageText = pointMessage ?? messages[messageIndex % messages.length];
+  useEffect(() => {
+    if (showMessage) playFairyChime();
+  }, [showMessage, messageText]);
 
   const talk = () => {
     setPointMessage(null);
@@ -301,7 +336,7 @@ export default function PixelCompanion({
       <AnimatePresence mode="wait">
         {showMessage && (
           <motion.div
-            key={`${unlocked}-${cut}-${messageIndex}-${pointMessage ?? ''}`}
+            key={`${unlocked}-${cut}-${nodeId}-${messageIndex}-${pointMessage ?? ''}`}
             initial={{ opacity: 0, y: 8, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.96 }}
@@ -318,7 +353,7 @@ export default function PixelCompanion({
               ×
             </button>
             <span>LÍA</span>
-            <p>{pointMessage ?? messages[messageIndex % messages.length]}</p>
+            <p>{messageText}</p>
             {fallbackAvailable && !unlocked && (
               <button type="button" onClick={cut ? onFallbackStitch : onFallbackCut} className="pixel-cut-action">
                 {cut
