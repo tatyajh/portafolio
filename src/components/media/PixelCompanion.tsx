@@ -81,11 +81,19 @@ interface PixelCompanionProps {
 
 // Zonas que Lía no debe tapar cuando corre a señalar algo.
 // Cada zona tiene un peso: el título y los botones nunca se deben tapar;
-// el nombre y las frases pequeñas, mejor no, pero pesan menos.
-const AVOID: [string, number][] = [
-  ['[data-splash-title]', 10], ['.splash-routes', 10], ['main h2', 10],
-  ['.splash-name', 2], ['.splash-script', 2], ['.splash-roles', 2],
+// el nombre y las frases pequeñas, mejor no, pero pesan menos. Los textos
+// se miden por lo que ocupan las letras, no por el ancho del bloque.
+const AVOID: [string, number, 'text' | 'box'][] = [
+  ['[data-splash-title]', 10, 'text'], ['.splash-routes .pixel-button', 10, 'box'],
+  ['main h2', 10, 'text'], ['.language-toggle', 10, 'box'],
+  ['.splash-name', 2, 'text'], ['.splash-script', 2, 'text'], ['.splash-roles', 2, 'text'], ['.splash-aside', 2, 'text'],
 ];
+const measure = (el: Element, mode: 'text' | 'box') => {
+  if (mode === 'box') return el.getBoundingClientRect();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  return range.getBoundingClientRect();
+};
 const BUBBLE = { width: 250, height: 130 };
 
 type Box = { left: number; top: number; right: number; bottom: number };
@@ -93,11 +101,13 @@ const overlap = (p: Box, q: Box) =>
   Math.max(0, Math.min(p.right, q.right) - Math.max(p.left, q.left)) *
   Math.max(0, Math.min(p.bottom, q.bottom) - Math.max(p.top, q.top));
 
-function pickSpot(t: DOMRect, a: DOMRect) {
+function pickSpot(t: DOMRect, a: DOMRect, bubbleSize = BUBBLE) {
   const vw = window.innerWidth, vh = window.innerHeight;
-  const bw = Math.min(BUBBLE.width, vw * 0.68);
-  const avoid = AVOID.flatMap(([sel, weight]) => Array.from(document.querySelectorAll(sel)).map(el => ({ r: el.getBoundingClientRect(), weight })));
-  const minTop = BUBBLE.height + 24, maxTop = vh - a.height - 8;
+  const bw = Math.min(bubbleSize.width, vw * 0.68);
+  const avoid = AVOID.flatMap(([sel, weight, mode]) => Array.from(document.querySelectorAll(sel)).map(el => ({ r: measure(el, mode), weight })));
+  // Lo que señala tampoco se puede tapar, ni con ella ni con su globo.
+  avoid.push({ r: new DOMRect(t.left - 8, t.top - 8, t.width + 16, t.height + 16), weight: 12 });
+  const minTop = bubbleSize.height + 24, maxTop = vh - a.height - 8;
   const clamp = (x: number, y: number) => ({
     left: Math.min(Math.max(x, 8), vw - a.width - 8),
     top: Math.min(Math.max(y, minTop), maxTop),
@@ -119,7 +129,7 @@ function pickSpot(t: DOMRect, a: DOMRect) {
     const opensRight = c.left + bw <= vw - 8 || c.left + a.width - bw < 8;
     const bubbleLeft = opensRight ? c.left : c.left + a.width - bw;
     const body = { left: c.left, top: c.top, right: c.left + a.width, bottom: c.top + a.height };
-    const bubble = { left: bubbleLeft, top: c.top - BUBBLE.height - 16, right: bubbleLeft + bw, bottom: c.top };
+    const bubble = { left: bubbleLeft, top: c.top - bubbleSize.height - 16, right: bubbleLeft + bw, bottom: c.top };
     const covered = avoid.reduce((sum, { r, weight }) => sum + (overlap(body, r) + overlap(bubble, r)) * weight, 0);
     const distance = Math.hypot(c.left + a.width / 2 - (t.left + t.width / 2), c.top - t.top);
     const score = covered + distance;
@@ -151,6 +161,7 @@ export default function PixelCompanion({
   const wasDraggingRef = useRef(false);
   const dragStateRef = useRef<LiaDragState | null>(null);
   // Capítulo donde está la persona: define qué pistas da Lía.
+  const [pointMessage, setPointMessage] = useState<string | null>(null);
   const [nodeId, setNodeId] = useState<string | null>(null);
   const pointingRef = useRef(false);
   useEffect(() => {
@@ -177,17 +188,18 @@ export default function PixelCompanion({
   const liaX = useMotionValue(0);
   const liaY = useMotionValue(0);
   // Cuando Lía corre a señalar algo: su mensaje, hacia dónde mira y si va corriendo.
-  const [pointMessage, setPointMessage] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   // Si Lía se para en la mitad izquierda, su globo se abre hacia la derecha para no cortarse.
   const [bubbleStart, setBubbleStart] = useState(false);
+  // Señal corta ("¡Hey! ¡Mira!") mientras señala algo en la portada.
+  const [compact, setCompact] = useState(false);
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
     let back: number | undefined;
     const onPoint = (event: Event) => {
       // Sin texto propio, Lía muestra el mensaje que ya tenía (ej. en la portada).
-      const { selector, es, en } = (event as CustomEvent<{ selector: string; es?: string; en?: string }>).detail;
+      const { selector, es, en, compact: isCompact = false } = (event as CustomEvent<{ selector: string; es?: string; en?: string; compact?: boolean }>).detail;
       const target = document.querySelector(selector);
       const avatar = guideRef.current?.querySelector('.pixel-companion-avatar');
       if (!target || !avatar) return;
@@ -195,7 +207,19 @@ export default function PixelCompanion({
       const a = avatar.getBoundingClientRect();
       // Busca dónde pararse junto al objeto sin tapar lo importante
       // (título, nombre, botones), contando también su globo.
-      const { left: destLeft, top: destTop, opensRight } = pickSpot(t, a);
+      const { left: destLeft, top: destTop, opensRight } = pickSpot(t, a, isCompact ? { width: 130, height: 56 } : BUBBLE);
+      // Si el único lugar libre queda lejos, no corre: el objeto brinca para que se note.
+      const far = Math.hypot(destLeft + a.width / 2 - (t.left + t.width / 2), destTop - t.top) > window.innerHeight * 0.4;
+      if (far) {
+        target.classList.remove('is-hinted');
+        void (target as HTMLElement).offsetWidth;
+        target.classList.add('is-hinted');
+        window.setTimeout(() => target.classList.remove('is-hinted'), 2600);
+        setCompact(false);
+        setPointMessage(null);
+        setShowMessage(true);
+        return;
+      }
       const toTheLeft = t.left + t.width / 2 > destLeft + a.width / 2;
       const options = { duration: prefersReducedMotion ? 0 : 1.1, ease: 'easeInOut' as const };
       pointingRef.current = true;
@@ -207,7 +231,8 @@ export default function PixelCompanion({
       animate(liaX, liaX.get() + destLeft - a.left, options);
       animate(liaY, liaY.get() + destTop - a.top, { ...options, onComplete: () => {
         setRunning(false);
-        setPointMessage((locale === 'en' ? en : es) ?? null);
+        setCompact(isCompact);
+        setPointMessage(isCompact ? (locale === 'en' ? 'Hey! Look!' : '¡Hey! ¡Mira!') : (locale === 'en' ? en : es) ?? null);
         setShowMessage(true);
         // Después vuelve a su esquina para no tapar el Índice.
         // De regreso también va sin globo, para que no se vea cortado en el camino.
@@ -217,6 +242,7 @@ export default function PixelCompanion({
           setPointMessage(null);
           setFlipped(false);
           setBubbleStart(false);
+          setCompact(false);
           setRunning(true);
           animate(liaX, 0, options);
           animate(liaY, 0, { ...options, onComplete: () => {
@@ -224,7 +250,7 @@ export default function PixelCompanion({
             // En la portada la misión sigue a la vista; en los capítulos, no.
             if (!exploring) setShowMessage(true);
           } });
-        }, 9000);
+        }, isCompact ? 3500 : 9000);
       } });
     };
     window.addEventListener('lia-point', onPoint);
@@ -406,7 +432,7 @@ export default function PixelCompanion({
       <motion.div
         ref={guideRef}
         style={{ x: liaX, y: liaY }}
-        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''} ${running ? 'is-running' : ''} ${flipped ? 'is-flipped' : ''} ${bubbleStart ? 'is-bubble-start' : ''}`}
+        className={`pixel-companion ${unlocked ? 'is-unlocked' : ''} ${exploring ? 'is-exploring' : ''} ${isDragging ? 'is-dragging' : ''} ${running ? 'is-running' : ''} ${flipped ? 'is-flipped' : ''} ${bubbleStart ? 'is-bubble-start' : ''} ${compact ? 'is-compact' : ''}`}
         data-lia-companion
       >
       <AnimatePresence mode="wait">
@@ -430,12 +456,12 @@ export default function PixelCompanion({
             </button>
             <span>LÍA</span>
             <p>{messageText}</p>
-            {hasVideo && messageIndex % messages.length === 0 && !pointMessage && (
+            {!compact && hasVideo && messageIndex % messages.length === 0 && !pointMessage && (
               <button type="button" onClick={playChapterVideo} className="pixel-cut-action">
                 {LIA_VIDEO_TIP[lang].button}
               </button>
             )}
-            {fallbackAvailable && !unlocked && (
+            {!compact && fallbackAvailable && !unlocked && (
               <button type="button" onClick={cut ? onFallbackStitch : onFallbackCut} className="pixel-cut-action">
                 {cut
                   ? locale === 'en' ? 'You stitch it' : 'Cósela tú'

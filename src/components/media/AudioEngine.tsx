@@ -202,7 +202,7 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
     if (hasInteracted || hasStitched) return;
     const target = hasCutTitle ? '.splash-stage .collage-piece--aguja' : '.splash-stage .collage-piece--tijeras';
     const timer = window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('lia-point', { detail: { selector: target } }));
+      window.dispatchEvent(new CustomEvent('lia-point', { detail: { selector: target, compact: true } }));
     }, hasCutTitle ? 900 : 1800);
     return () => window.clearTimeout(timer);
   }, [hasInteracted, hasCutTitle, hasStitched]);
@@ -251,8 +251,8 @@ export default function AudioEngine({ initialNode = 'inicio' }: AudioEngineProps
               </p>
               <p className="splash-aside font-script">
                 {selectCopy(locale,
-                  'también toco saxofón y subo videos de pole, aunque no los hago bien',
-                  "I also play the sax and post pole videos, even though I'm not good at them")}
+                  'también toco saxofón mal y subo videos de pole feítos',
+                  'I also play the sax badly and post not-so-pretty pole videos')}
               </p>
 
               {/* Las rutas se abren al cortar y coser el título. */}

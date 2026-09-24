@@ -949,7 +949,10 @@ body {
 /* Mientras corre no se ve el globo: evita que aparezca cortado en el camino */
 .pixel-companion.is-running .pixel-companion-message { display: none; }
 .pixel-companion.is-flipped .pixel-companion-art { scale: -1 1; }
-.pixel-companion.is-bubble-start { justify-items: start; }
+/* Globo hacia la derecha: solo se corre el globo, hasta alinearse con el borde izquierdo de Lía */
+.pixel-companion { --lia-avatar-w: 104px; }
+@media (min-width: 640px) { .pixel-companion { --lia-avatar-w: 156px; } }
+.pixel-companion.is-bubble-start .pixel-companion-message { translate: calc(100% - var(--lia-avatar-w)) 0; }
 .pixel-cut-action { border-color: var(--color-ink); color: var(--color-ink); font-family: var(--font-pixel), monospace; font-size: .8rem; }
 :where(button, a, [tabindex]):focus-visible { outline: 2px dashed var(--color-gold-mid); outline-offset: 5px; }
 /* Celular: la ilustración se recorta al centro, el texto va al ancho de la
@@ -969,6 +972,7 @@ body {
   .paper-fragment-shadow { filter: drop-shadow(0 .4vw .5vw rgba(40, 25, 15, .32)); }
   .splash-aside { font-size: min(4.4vw, 2.4vh); max-width: 80vw; margin-top: 1vw; }
   .splash-screen .pixel-companion-avatar { width: 88px; height: 106px; }
+  .splash-screen .pixel-companion { --lia-avatar-w: 88px; }
   .splash-screen .pixel-companion-message { width: min(60vw, 230px); padding: .6rem 1.8rem .6rem .8rem; }
   .splash-screen .pixel-companion-message p { font-size: .85rem; }
   .splash-routes { flex-direction: column; gap: 5vw; margin-top: 7vw; }
@@ -1015,3 +1019,17 @@ body {
 .pixel-companion-message > span::before { content: ''; display: inline-block; width: 13px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--tri) center / contain no-repeat; }
 .pixel-companion-message::after { content: ''; position: absolute; right: 26px; bottom: -17px; width: 20px; height: 18px; background: var(--tri) center / contain no-repeat; transform: rotate(180deg); }
 .pixel-companion.is-bubble-start .pixel-companion-message::after { right: auto; left: 26px; }
+
+/* Señal corta de Lía mientras señala algo en la portada */
+.pixel-companion.is-compact .pixel-companion-message { width: auto; padding: .45rem 1.6rem .45rem .7rem; }
+.pixel-companion.is-compact .pixel-companion-message > span { display: none; }
+.pixel-companion.is-compact .pixel-companion-message p { margin: 0; white-space: nowrap; }
+
+/* Tablet vertical: el globo de Lía cabe a la derecha de los botones sin taparlos */
+@media (max-aspect-ratio: 1/1) and (min-width: 500px) {
+  .splash-screen .pixel-companion:not(.is-compact) .pixel-companion-message { width: calc(25vw - 16px); }
+}
+
+/* Cuando Lía no puede acercarse, lo que señala brinca para llamar la atención */
+.collage-piece.is-hinted { animation: hint-hop .65s ease-in-out 4; }
+@keyframes hint-hop { 0%, 100% { transform: none; } 40% { transform: translateY(-14%) rotate(-8deg) scale(1.12); } 70% { transform: rotate(5deg); } }
